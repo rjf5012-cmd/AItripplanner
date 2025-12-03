@@ -1084,14 +1084,23 @@
           body: JSON.stringify(payload)
         });
 
-        const data = await response.json().catch(() => ({}));
+     const data = await response.json().catch(() => ({}));
 
-        if (!response.ok) {
-          const msg = data?.error || "Unexpected error from the server.";
-          showError(msg);
-          setLoading(false);
-          return;
-        }
+if (!response.ok) {
+  console.log("Error from /api/generate-itinerary:", {
+    status: response.status,
+    raw: data,
+  });
+
+  const msg =
+    (data && typeof data.error === "string" && data.error) ||
+    `Server error (${response.status}).`;
+
+  showError(msg);
+  setLoading(false);
+  return;
+}
+
 
         const suggestions = Array.isArray(data.suggestions) ? data.suggestions : [];
         if (!suggestions.length) {
