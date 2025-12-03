@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <title>Plan a Trip | AITripPlan — AI Trip Itinerary Generator</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Use AITripPlan to generate a personalized day-by-day trip itinerary. Enter your destination, trip length, budget, and interests and get a full travel plan in seconds." />
+  <meta name="description" content="Use AITripPlan to generate a personalized day-by-day trip itinerary. Get AI suggestions, then drag and drop activities into your plan." />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="canonical" href="https://aitripplan.com/plan.html" />
 
@@ -51,7 +51,7 @@
       text-decoration: none;
     }
 
-    /* Header / Nav (same as index.html) */
+    /* Header / Nav (same as other pages) */
     header.site-header {
       position: fixed;
       inset-inline: 0;
@@ -449,7 +449,7 @@
       margin-top: 4px;
     }
 
-    /* Result panel */
+    /* Status pills */
     .result-meta {
       display: flex;
       justify-content: space-between;
@@ -489,40 +489,6 @@
     .status-pill.error .status-dot {
       background: #ef4444;
       box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.26);
-    }
-
-    .result-window {
-      border-radius: 16px;
-      border: 1px solid var(--border-subtle);
-      background: linear-gradient(180deg, #ffffff, #f9fafb);
-      padding: 12px;
-      min-height: 220px;
-      max-height: 520px;
-      overflow: auto;
-      font-size: 13px;
-      line-height: 1.7;
-      color: var(--text-main);
-      white-space: pre-wrap;
-      scrollbar-width: thin;
-      scrollbar-color: rgba(148, 163, 184, 0.9) #f3f4f6;
-    }
-
-    .result-window::-webkit-scrollbar {
-      width: 7px;
-    }
-
-    .result-window::-webkit-scrollbar-track {
-      background: #f3f4f6;
-    }
-
-    .result-window::-webkit-scrollbar-thumb {
-      background-color: rgba(148, 163, 184, 0.9);
-      border-radius: 999px;
-    }
-
-    .placeholder {
-      color: var(--text-muted);
-      font-size: 13px;
     }
 
     .result-footer {
@@ -616,10 +582,10 @@
     <div class="page-shell">
       <header class="page-header">
         <div class="page-eyebrow">Trip planner</div>
-        <h1 class="page-title">Generate your itinerary with AI</h1>
+        <h1 class="page-title">Generate & curate your itinerary</h1>
         <p class="page-subtitle">
-          Fill out a few details about your trip and let AITripPlan draft a realistic,
-          day-by-day plan. You can tweak your inputs and regenerate until it feels just right.
+          First, tell AITripPlan about your trip. Then drag and drop suggested activities
+          into each day and time slot to build your perfect itinerary.
         </p>
       </header>
 
@@ -736,11 +702,11 @@
 
             <div class="helper-row" style="margin-top: 6px;">
               <p class="helper-text">
-                The AI will create a <strong>day-by-day plan</strong> with morning, afternoon, and evening suggestions.
+                The AI will suggest a mix of activities. You decide where they fit in your day.
               </p>
               <button type="submit" class="btn-primary" id="generate-btn">
                 <span class="icon">🧭</span>
-                <span>Generate Itinerary</span>
+                <span>Generate Suggestions</span>
               </button>
             </div>
 
@@ -748,38 +714,57 @@
           </form>
         </section>
 
-        <!-- Right: Itinerary output -->
-        <section class="card" aria-label="Generated itinerary">
+        <!-- Right: Drag-and-drop itinerary builder -->
+        <section class="card" aria-label="Drag-and-drop itinerary builder">
           <div class="card-title-row">
-            <h2 class="card-title">Your AI Itinerary</h2>
-            <span class="card-pill">Step 2 · Review & refine</span>
+            <h2 class="card-title">Build Your Itinerary</h2>
+            <span class="card-pill">Step 2 · Drag & drop your plan</span>
           </div>
 
           <div class="result-meta">
             <div class="status-pill" id="status-pill">
               <span class="status-dot" id="status-dot"></span>
-              <span id="status-text">Ready when you are.</span>
+              <span id="status-text">Describe your trip and generate suggestions.</span>
             </div>
-            <span>Adjust your details and regenerate to explore different versions of your trip.</span>
+            <span style="font-size:11px; color:#6b7280;">
+              Drag activities into each day and time slot to curate your trip.
+            </span>
           </div>
 
-          <div class="result-window" id="result-window" aria-live="polite">
-            <div class="placeholder" id="placeholder">
-              Your day-by-day itinerary will appear here. You can copy it into your notes,
-              send it to your travel group, or print it as a checklist.
+          <div style="display:flex; gap:12px; margin-top:10px; flex-wrap:wrap;">
+            <!-- Suggestions list -->
+            <div style="flex:1 1 220px; min-width:220px; max-height:420px; overflow:auto; border-radius:14px; border:1px solid #e5e7eb; background:#f9fafb; padding:8px;">
+              <div style="font-size:12px; font-weight:600; margin-bottom:6px; color:#4b5563;">
+                Suggestions from AI
+              </div>
+              <div id="suggestions-list" style="display:flex; flex-direction:column; gap:6px; font-size:12px;">
+                <div id="suggestions-placeholder" style="color:#9ca3af;">
+                  Generate suggestions to see draggable activities here.
+                </div>
+              </div>
+            </div>
+
+            <!-- Itinerary grid -->
+            <div style="flex:2 1 320px; min-width:280px;">
+              <div style="font-size:12px; font-weight:600; margin-bottom:6px; color:#4b5563;">
+                Your itinerary board
+              </div>
+              <div id="itinerary-grid" style="display:grid; gap:8px;">
+                <!-- Filled via JS based on number of days -->
+              </div>
             </div>
           </div>
 
-          <div class="result-footer">
-            <span>Tip: Start with a flexible plan, then lock in must-book tickets.</span>
+          <div class="result-footer" style="margin-top:10px;">
+            <span>Once you’re happy, export your itinerary as plain text.</span>
             <button
               type="button"
               class="btn-primary"
-              style="padding-inline: 12px; font-size: 11px;"
-              onclick="copyItinerary()"
+              style="padding-inline: 10px; font-size: 11px;"
+              onclick="exportItineraryText()"
             >
               <span class="icon">📋</span>
-              <span>Copy Text</span>
+              <span>Export as Text</span>
             </button>
           </div>
         </section>
@@ -803,19 +788,23 @@
     const generateBtn = document.getElementById("generate-btn");
     const statusPill = document.getElementById("status-pill");
     const statusText = document.getElementById("status-text");
-    const resultWindow = document.getElementById("result-window");
-    const placeholder = document.getElementById("placeholder");
     const formError = document.getElementById("form-error");
+
+    const suggestionsList = document.getElementById("suggestions-list");
+    const suggestionsPlaceholder = document.getElementById("suggestions-placeholder");
+    const itineraryGrid = document.getElementById("itinerary-grid");
+
+    let currentSuggestions = [];
+    let itineraryState = {}; // itineraryState[slotId] = suggestion
+    let currentDays = 0;
 
     function setStatus(state, message) {
       statusPill.classList.remove("loading", "error");
-      formError.style.display = "none";
-
       if (state === "idle") {
         statusText.textContent = message || "Ready when you are.";
       } else if (state === "loading") {
         statusPill.classList.add("loading");
-        statusText.textContent = message || "Generating your itinerary...";
+        statusText.textContent = message || "Generating suggestions...";
       } else if (state === "error") {
         statusPill.classList.add("error");
         statusText.textContent = message || "Something went wrong. Try again.";
@@ -828,13 +817,8 @@
         generateBtn.innerHTML = '<span class="icon">⏳</span><span>Generating...</span>';
       } else {
         generateBtn.disabled = false;
-        generateBtn.innerHTML = '<span class="icon">🧭</span><span>Generate Itinerary</span>';
+        generateBtn.innerHTML = '<span class="icon">🧭</span><span>Generate Suggestions</span>';
       }
-    }
-
-    function showResult(text) {
-      placeholder.style.display = "none";
-      resultWindow.textContent = text;
     }
 
     function showError(message) {
@@ -843,10 +827,15 @@
       setStatus("error", "There was a problem with your request.");
     }
 
+    function clearBoard() {
+      itineraryState = {};
+      itineraryGrid.innerHTML = "";
+    }
+
     function buildPrompt(data) {
       const lines = [];
-
-      lines.push("You are an expert travel planner. Create a realistic, detailed, and efficient day-by-day itinerary.");
+      lines.push("Create a list of suggested activities for a drag-and-drop trip planner.");
+      lines.push("Do NOT plan the schedule. Just give flexible building blocks.");
       lines.push("");
       lines.push("Trip details:");
       lines.push(`- Destination: ${data.destination}`);
@@ -858,25 +847,13 @@
       lines.push(`- Travel style & interests: ${data.style || "Not specified"}`);
       lines.push(`- Must-see / must-avoid: ${data.musts || "Not specified"}`);
       lines.push("");
-      lines.push("Formatting instructions:");
-      lines.push('- Start with a short title, e.g. “5-Day Food & Culture Trip to Rome”.');
-      lines.push("- Then provide an overview paragraph summarizing the trip vibe.");
-      lines.push("- Then list each day in order, using this structure:");
-      lines.push("  Day 1: Neighborhood / Theme");
-      lines.push("  - Morning: ...");
-      lines.push("  - Afternoon: ...");
-      lines.push("  - Evening: ...");
-      lines.push("");
-      lines.push("- Keep suggestions realistic for the budget level and pacing.");
-      lines.push("- Mix famous highlights with a few under-the-radar local spots where appropriate.");
-      lines.push("- Include quick food suggestions (cafés, markets, casual or notable restaurants) without sounding like ads.");
-      lines.push("- Include simple logistics tips (e.g. walk vs. metro, ticket reservations) when helpful.");
-      lines.push('- At the end, add a short “Practical Tips” section with 4–6 bullets.');
-
+      lines.push("Return 12–24 activities suitable for morning, afternoon, or evening.");
+      lines.push("Include a mix of famous highlights and some local, less touristic options.");
+      lines.push("Prefer activities that are practical and realistic for the destination.");
       return lines.join("\n");
     }
 
-    // Chips
+    // Interest chips
     document.querySelectorAll(".chip").forEach((chip) => {
       chip.addEventListener("click", () => {
         const textarea = document.getElementById("style");
@@ -895,7 +872,7 @@
       formError.style.display = "none";
 
       const destination = document.getElementById("destination").value.trim();
-      const days = document.getElementById("days").value.trim();
+      const daysValue = document.getElementById("days").value.trim();
       const month = document.getElementById("month").value;
       const budget = document.getElementById("budget").value;
       const travelers = document.getElementById("travelers").value.trim();
@@ -907,70 +884,277 @@
         showError("Please enter a destination.");
         return;
       }
-      if (!days || Number.isNaN(Number(days)) || Number(days) <= 0) {
+      if (!daysValue || Number.isNaN(Number(daysValue)) || Number(daysValue) <= 0) {
         showError("Please enter a valid trip length in days.");
         return;
       }
 
+      const days = Number(daysValue);
+
       const payload = {
         destination,
-        days: Number(days),
+        days,
         month,
         budget,
         travelers,
         pace,
         style,
         musts,
-        prompt: null
+        prompt: ""
       };
       payload.prompt = buildPrompt(payload);
 
       setLoading(true);
-      setStatus("loading", "Generating your itinerary...");
+      setStatus("loading", "Generating suggestions from AI...");
+      clearBoard();
+      suggestionsList.innerHTML = "";
+      suggestionsPlaceholder.style.display = "block";
 
       try {
         const response = await fetch("/api/generate-itinerary", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload)
         });
 
-        if (!response.ok) {
-          console.error("API response status:", response.status);
-          throw new Error("Non-200 response from API");
-        }
-
         const data = await response.json().catch(() => ({}));
-        const itinerary = (data && (data.itinerary || data.result || "")) || "";
 
-        if (!itinerary) {
-          throw new Error("Empty itinerary in response");
+        if (!response.ok) {
+          const msg = data?.error || "Unexpected error from the server.";
+          showError(msg);
+          setLoading(false);
+          return;
         }
 
-        showResult(itinerary);
-        setStatus("idle", "Itinerary generated. Adjust your details to explore new versions.");
+        const suggestions = Array.isArray(data.suggestions) ? data.suggestions : [];
+        if (!suggestions.length) {
+          showError("No suggestions received. Try again with more detail.");
+          setLoading(false);
+          return;
+        }
+
+        currentSuggestions = suggestions;
+        currentDays = days;
+        renderSuggestions(suggestions);
+        buildItineraryGrid(days);
+        setStatus("idle", "Drag suggestions into the board to build your itinerary.");
       } catch (err) {
         console.error("Itinerary generation error:", err);
-        showError("Something went wrong while generating your itinerary. Please try again in a moment.");
+        showError("Something went wrong while generating suggestions. Please try again.");
       } finally {
         setLoading(false);
       }
     });
 
-    async function copyItinerary() {
-      const text = resultWindow.textContent.trim();
-      if (!text || placeholder.style.display !== "none") {
-        alert("There is no itinerary to copy yet.");
+    function renderSuggestions(suggestions) {
+      suggestionsList.innerHTML = "";
+      suggestionsPlaceholder.style.display = "none";
+
+      suggestions.forEach((s) => {
+        const card = document.createElement("div");
+        card.className = "suggestion-card";
+        card.draggable = true;
+        card.dataset.suggestionId = s.id;
+
+        card.style.borderRadius = "10px";
+        card.style.border = "1px solid #e5e7eb";
+        card.style.background = "#ffffff";
+        card.style.padding = "6px 8px";
+        card.style.cursor = "grab";
+        card.style.boxShadow = "0 2px 6px rgba(15,23,42,0.06)";
+
+        card.addEventListener("dragstart", onDragStartSuggestion);
+
+        const title = document.createElement("div");
+        title.style.fontWeight = "600";
+        title.style.fontSize = "12px";
+        title.textContent = s.title || "Activity";
+
+        const meta = document.createElement("div");
+        meta.style.fontSize = "11px";
+        meta.style.color = "#6b7280";
+        meta.style.marginTop = "2px";
+        meta.textContent = s.timeOfDay ? s.timeOfDay.toUpperCase() : "FLEX";
+
+        const desc = document.createElement("div");
+        desc.style.fontSize = "11px";
+        desc.style.color = "#4b5563";
+        desc.style.marginTop = "4px";
+        desc.textContent = s.description || "";
+
+        card.appendChild(title);
+        card.appendChild(meta);
+        card.appendChild(desc);
+        suggestionsList.appendChild(card);
+      });
+    }
+
+    function buildItineraryGrid(days) {
+      itineraryGrid.innerHTML = "";
+      itineraryState = {};
+
+      const slots = ["morning", "afternoon", "evening"];
+
+      for (let d = 1; d <= days; d++) {
+        const dayCard = document.createElement("div");
+        dayCard.style.borderRadius = "14px";
+        dayCard.style.border = "1px solid #e5e7eb";
+        dayCard.style.background = "#f9fafb";
+        dayCard.style.padding = "8px";
+
+        const dayHeader = document.createElement("div");
+        dayHeader.style.display = "flex";
+        dayHeader.style.justifyContent = "space-between";
+        dayHeader.style.alignItems = "center";
+        dayHeader.style.fontSize = "12px";
+        dayHeader.style.fontWeight = "600";
+        dayHeader.style.marginBottom = "4px";
+        dayHeader.style.color = "#374151";
+        dayHeader.textContent = `Day ${d}`;
+        dayCard.appendChild(dayHeader);
+
+        const slotGrid = document.createElement("div");
+        slotGrid.style.display = "grid";
+        slotGrid.style.gridTemplateColumns = "repeat(3, minmax(0, 1fr))";
+        slotGrid.style.gap = "6px";
+
+        slots.forEach((slotName) => {
+          const slotId = `day${d}-${slotName}`;
+          const slot = document.createElement("div");
+          slot.className = "itinerary-slot";
+          slot.dataset.slotId = slotId;
+          slot.dataset.day = String(d);
+          slot.dataset.timeOfDay = slotName;
+
+          slot.style.minHeight = "80px";
+          slot.style.borderRadius = "10px";
+          slot.style.border = "1px dashed #d1d5db";
+          slot.style.background = "#ffffff";
+          slot.style.padding = "4px";
+          slot.style.fontSize = "11px";
+          slot.style.display = "flex";
+          slot.style.flexDirection = "column";
+          slot.style.gap = "4px";
+
+          slot.addEventListener("dragover", onDragOverSlot);
+          slot.addEventListener("drop", onDropOnSlot);
+          slot.addEventListener("dragleave", onDragLeaveSlot);
+
+          const label = document.createElement("div");
+          label.style.color = "#9ca3af";
+          label.style.fontWeight = "600";
+          label.textContent = slotName.charAt(0).toUpperCase() + slotName.slice(1);
+          label.className = "slot-label";
+
+          slot.appendChild(label);
+          slotGrid.appendChild(slot);
+        });
+
+        dayCard.appendChild(slotGrid);
+        itineraryGrid.appendChild(dayCard);
+      }
+    }
+
+    function onDragStartSuggestion(event) {
+      const id = event.currentTarget.dataset.suggestionId;
+      event.dataTransfer.setData("text/plain", id);
+      event.dataTransfer.effectAllowed = "move";
+    }
+
+    function onDragOverSlot(event) {
+      event.preventDefault();
+      event.dataTransfer.dropEffect = "move";
+      event.currentTarget.style.background = "#eff6ff";
+      event.currentTarget.style.borderColor = "#60a5fa";
+    }
+
+    function onDragLeaveSlot(event) {
+      event.currentTarget.style.background = "#ffffff";
+      event.currentTarget.style.borderColor = "#d1d5db";
+    }
+
+    function onDropOnSlot(event) {
+      event.preventDefault();
+      const slot = event.currentTarget;
+      const slotId = slot.dataset.slotId;
+      slot.style.background = "#ffffff";
+      slot.style.borderColor = "#d1d5db";
+
+      const suggestionId = event.dataTransfer.getData("text/plain");
+      const suggestion = currentSuggestions.find((s) => s.id === suggestionId);
+      if (!suggestion) return;
+
+      // Clear old content (except label)
+      const children = Array.from(slot.children);
+      children.forEach((child, idx) => {
+        if (idx > 0) slot.removeChild(child); // keep first (label)
+      });
+
+      const pill = document.createElement("div");
+      pill.style.borderRadius = "8px";
+      pill.style.border = "1px solid #e5e7eb";
+      pill.style.background = "#f3f4f6";
+      pill.style.padding = "4px 6px";
+      pill.style.fontSize = "11px";
+      pill.style.cursor = "grab";
+
+      const title = document.createElement("div");
+      title.style.fontWeight = "600";
+      title.textContent = suggestion.title || "Activity";
+
+      const desc = document.createElement("div");
+      desc.style.color = "#4b5563";
+      desc.textContent = suggestion.description || "";
+
+      pill.appendChild(title);
+      pill.appendChild(desc);
+      slot.appendChild(pill);
+
+      itineraryState[slotId] = suggestion;
+    }
+
+    async function exportItineraryText() {
+      if (!currentDays || !Object.keys(itineraryState).length) {
+        alert("Drag at least one activity into the itinerary board before exporting.");
         return;
       }
+
+      const lines = [];
+      lines.push("Trip Itinerary");
+      lines.push("==============");
+      lines.push("");
+
+      const slots = ["morning", "afternoon", "evening"];
+
+      for (let d = 1; d <= currentDays; d++) {
+        lines.push(`Day ${d}`);
+        slots.forEach((slotName) => {
+          const slotId = `day${d}-${slotName}`;
+          const activity = itineraryState[slotId];
+          if (activity) {
+            lines.push(`  ${slotName.charAt(0).toUpperCase() + slotName.slice(1)}: ${activity.title}`);
+            if (activity.description) {
+              lines.push(`    • ${activity.description}`);
+            }
+            if (activity.notes) {
+              lines.push(`    Notes: ${activity.notes}`);
+            }
+          } else {
+            lines.push(`  ${slotName.charAt(0).toUpperCase() + slotName.slice(1)}: (open / free time)`);
+          }
+        });
+        lines.push("");
+      }
+
+      const text = lines.join("\n");
       try {
         await navigator.clipboard.writeText(text);
-        setStatus("idle", "Copied to clipboard. Share it with your travel group.");
+        setStatus("idle", "Exported to clipboard. Paste it into your notes or doc.");
+        alert("Itinerary copied to clipboard.");
       } catch (err) {
         console.error("Clipboard error:", err);
-        alert("Unable to copy text. Please select and copy manually.");
+        alert("Unable to copy automatically. A text version will be shown in a prompt.");
+        window.prompt("Copy your itinerary:", text);
       }
     }
   </script>
