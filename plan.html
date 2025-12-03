@@ -978,10 +978,38 @@
       if (vibe) parts.push("Trip vibe: " + vibe + ".");
       if (prefs) parts.push("Preferences: " + prefs + ".");
 
-      const finalPrompt =
-        "Generate activity suggestions for this trip. " +
+      // 🔴 New, stronger prompt for day-by-day coverage
+      let finalPrompt =
+        "You are planning a day-by-day trip itinerary. " +
         parts.join(" ") +
-        " Respond only with JSON object: { \"suggestions\": [ ... ] }.";
+        " ";
+
+      if (days) {
+        const numDays = parseInt(days, 10);
+        if (!isNaN(numDays) && numDays > 0) {
+          finalPrompt +=
+            "Create at least " +
+            (numDays * 3) +
+            " distinct activity suggestions in total. " +
+            "Distribute them across " +
+            numDays +
+            " days using the 'dayHint' field (integer days 1 through " +
+            numDays +
+            "). " +
+            "For each day, try to include one morning, one afternoon, and one evening activity. ";
+        }
+      }
+
+      finalPrompt +=
+        "Return ONLY valid JSON in this exact shape: " +
+        "{ \"suggestions\": [ " +
+        "{ \"id\": string, \"title\": string, " +
+        "\"timeOfDay\": \"morning\" | \"afternoon\" | \"evening\" | \"flex\", " +
+        "\"dayHint\": number | null, " +
+        "\"description\": string, " +
+        "\"notes\": string } " +
+        "] }. " +
+        "Do not include any explanation or text before or after the JSON.";
 
       setLoading(true);
 
