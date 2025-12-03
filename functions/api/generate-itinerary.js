@@ -77,7 +77,7 @@ export async function onRequest({ request, env }) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "gpt-5.1", // change if your account uses a different model
+        model: "gpt-4o-mini", // change if your account uses a different model
         response_format: { type: "json_object" },
         messages: [
           {
