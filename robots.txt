@@ -1,0 +1,10 @@
+# AITripPlan robots.txt
+
+User-agent: *
+Allow: /
+
+# Block internal API routes from crawling (no value for search)
+Disallow: /api/
+
+# Sitemap
+Sitemap: https://aitripplan.com/sitemap.xml
