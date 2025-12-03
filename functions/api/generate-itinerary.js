@@ -49,7 +49,7 @@ export async function onRequestPost({ request, env }) {
         Authorization: `Bearer ${env.OPENAI_API_KEY}`,
       },
       body: JSON.stringify({
-        model: "gpt-4.1-mini",
+        model: "gpt-4.1-mini", // same model family you're already using successfully
         messages: [
           {
             role: "system",
@@ -59,14 +59,7 @@ export async function onRequestPost({ request, env }) {
               "Return a single JSON object with a 'suggestions' array. " +
               "Each suggestion must have: " +
               "id (string), title (string), timeOfDay ('morning'|'afternoon'|'evening'|'flex'), " +
-              "dayHint (number or null), description (string), and notes (string). " +
-              "If the user prompt includes a line like 'Trip length: X days.', then: " +
-              "1) You MUST create at least 3 suggestions per day (one morning, one afternoon, one evening) " +
-              "   so the minimum total suggestions is X * 3. " +
-              "2) Use dayHint as an integer from 1 to X indicating which day the activity fits best. " +
-              "3) You may optionally add extra flexible ('flex') ideas with dayHint = null that work on any day. " +
-              "If no trip length is given, assume 3 days and still create at least 9 suggestions. " +
-              "The final response MUST be valid JSON and MUST NOT include markdown, comments, or extra text.",
+              "dayHint (number or null), description (string), and notes (string).",
           },
           {
             role: "user",
@@ -74,8 +67,6 @@ export async function onRequestPost({ request, env }) {
           },
         ],
         temperature: 0.7,
-        // You can tweak this if you ever need more/less detail
-        max_tokens: 900,
       }),
     });
 
