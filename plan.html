@@ -272,7 +272,6 @@
       margin-bottom: 3px;
     }
 
-    /* ⬇️ include select so it looks like inputs */
     input,
     textarea,
     select {
@@ -395,6 +394,20 @@
       max-height: 430px;
       overflow-y: auto;
       padding-right: 2px;
+    }
+
+    /* NEW: day group styling */
+    .day-group {
+      margin-bottom: 10px;
+    }
+
+    .day-heading {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+      padding-left: 2px;
     }
 
     .suggestion-card {
@@ -609,7 +622,7 @@
               </div>
             </div>
 
-            <!-- NEW: Budget selector -->
+            <!-- Budget selector -->
             <div class="field-row">
               <div class="field-col">
                 <label for="budget">Rough budget</label>
@@ -678,7 +691,7 @@
             <div>
               <div class="planner-card-title suggestions-title">Suggested activities</div>
               <div class="planner-card-sub">
-                Ideas will be grouped by morning, afternoon, and evening so you can sketch your days.
+                Ideas are grouped by day hint so you can quickly sketch your itinerary.
               </div>
             </div>
             <div class="suggestions-meta" id="metaSummary">
@@ -741,6 +754,7 @@
       }
     }
 
+    // NEW: group by dayHint with headings
     function renderSuggestions(suggestions) {
       suggestionsContainer.innerHTML = "";
 
@@ -753,60 +767,96 @@
 
       emptyState.style.display = "none";
 
-      suggestions.forEach((s, idx) => {
-        const card = document.createElement("article");
-        card.className = "suggestion-card";
-
-        const topRow = document.createElement("div");
-        topRow.className = "suggestion-top-row";
-
-        const title = document.createElement("div");
-        title.className = "suggestion-title";
-        title.textContent = s.title || "Activity " + (idx + 1);
-
-        const chips = document.createElement("div");
-        chips.className = "chip-row";
-
-        // Time of day chip
-        const todChip = document.createElement("span");
-        todChip.className = "chip accent";
-        let tod = (s.timeOfDay || "flex").toString().toLowerCase();
-        if (tod === "morning") todChip.textContent = "Morning";
-        else if (tod === "afternoon") todChip.textContent = "Afternoon";
-        else if (tod === "evening") todChip.textContent = "Evening";
-        else todChip.textContent = "Flexible";
-        chips.appendChild(todChip);
-
-        // Day hint chip
-        if (typeof s.dayHint === "number" && isFinite(s.dayHint)) {
-          const dayChip = document.createElement("span");
-          dayChip.className = "chip";
-          dayChip.textContent = "Day " + s.dayHint;
-          chips.appendChild(dayChip);
-        }
-
-        topRow.appendChild(title);
-        topRow.appendChild(chips);
-
-        const desc = document.createElement("p");
-        desc.className = "suggestion-desc";
-        desc.textContent =
-          s.description ||
-          "No description provided, but this activity sounded interesting.";
-
-        const notes = document.createElement("p");
-        notes.className = "suggestion-notes";
-        notes.textContent =
-          s.notes || "No extra notes from the AI for this one.";
-
-        card.appendChild(topRow);
-        card.appendChild(desc);
-        card.appendChild(notes);
-
-        suggestionsContainer.appendChild(card);
+      // Group suggestions by dayHint (number) or "flex" for null/undefined
+      const groups = new Map();
+      suggestions.forEach((s) => {
+        let key =
+          typeof s.dayHint === "number" && isFinite(s.dayHint)
+            ? s.dayHint
+            : "flex";
+        if (!groups.has(key)) groups.set(key, []);
+        groups.get(key).push(s);
       });
 
-      metaSummary.textContent = suggestions.length + " ideas generated.";
+      const numericKeys = Array.from(groups.keys()).filter(
+        (k) => k !== "flex" && k !== null
+      );
+      numericKeys.sort((a, b) => a - b);
+
+      const orderedKeys = [...numericKeys];
+      if (groups.has("flex")) orderedKeys.push("flex");
+
+      orderedKeys.forEach((key) => {
+        const groupDiv = document.createElement("div");
+        groupDiv.className = "day-group";
+
+        const heading = document.createElement("div");
+        heading.className = "day-heading";
+        heading.textContent = key === "flex" ? "Any day" : "Day " + key;
+        groupDiv.appendChild(heading);
+
+        const items = groups.get(key);
+
+        items.forEach((s, idx) => {
+          const card = document.createElement("article");
+          card.className = "suggestion-card";
+
+          const topRow = document.createElement("div");
+          topRow.className = "suggestion-top-row";
+
+          const title = document.createElement("div");
+          title.className = "suggestion-title";
+          title.textContent = s.title || "Activity";
+
+          const chips = document.createElement("div");
+          chips.className = "chip-row";
+
+          const todChip = document.createElement("span");
+          todChip.className = "chip accent";
+          let tod = (s.timeOfDay || "flex").toString().toLowerCase();
+          if (tod === "morning") todChip.textContent = "Morning";
+          else if (tod === "afternoon") todChip.textContent = "Afternoon";
+          else if (tod === "evening") todChip.textContent = "Evening";
+          else todChip.textContent = "Flexible";
+          chips.appendChild(todChip);
+
+          if (typeof s.dayHint === "number" && isFinite(s.dayHint)) {
+            const dayChip = document.createElement("span");
+            dayChip.className = "chip";
+            dayChip.textContent = "Day " + s.dayHint;
+            chips.appendChild(dayChip);
+          }
+
+          topRow.appendChild(title);
+          topRow.appendChild(chips);
+
+          const desc = document.createElement("p");
+          desc.className = "suggestion-desc";
+          desc.textContent =
+            s.description ||
+            "No description provided, but this activity sounded interesting.";
+
+          const notes = document.createElement("p");
+          notes.className = "suggestion-notes";
+          notes.textContent =
+            s.notes || "No extra notes from the AI for this one.";
+
+          card.appendChild(topRow);
+          card.appendChild(desc);
+          card.appendChild(notes);
+
+          groupDiv.appendChild(card);
+        });
+
+        suggestionsContainer.appendChild(groupDiv);
+      });
+
+      const dayBucketCount = orderedKeys.length;
+      metaSummary.textContent =
+        suggestions.length +
+        " ideas across " +
+        dayBucketCount +
+        (dayBucketCount === 1 ? " day bucket." : " day buckets.");
     }
 
     form.addEventListener("submit", async (e) => {
