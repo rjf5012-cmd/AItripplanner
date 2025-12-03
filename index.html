@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>AI Trip Itinerary Generator | Smart Travel Planner</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Generate a personalized travel itinerary in seconds using AI. Enter your destination, dates, budget, and travel style to get a day-by-day plan instantly." />
+
+  <!-- Canonical (update with your final domain) -->
+  <link rel="canonical" href="https://yourdomain.com/" />
+
+  <!-- Favicon (update path as needed) -->
+  <link rel="icon" type="image/png" href="/favicon.png" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="AI Trip Itinerary Generator" />
+  <meta property="og:description" content="Instant AI-powered itineraries based on your destination, budget, and travel style." />
+  <meta property="og:url" content="https://yourdomain.com/" />
+  <meta property="og:image" content="https://yourdomain.com/og-image.png" />
+
+  <style>
+    :root {
+      --page-bg: #f3f4f6;
+      --shell-bg: #ffffff;
+      --shell-border: rgba(148, 163, 184, 0.45);
+
+      --card-bg: #ffffff;
+      --card-border: rgba(226, 232, 240, 1);
+
+      --accent: #2563eb;
+      --accent-soft: rgba(37, 99, 235, 0.12);
+      --accent-strong: #1d4ed8;
+
+      --accent-green: #22c55e;
+      --accent-pink: #ec4899;
+      --accent-yellow: #facc15;
+
+      --text-main: #0f172a;
+      --text-soft: #4b5563;
+      --text-muted: #6b7280;
+
+      --danger: #ef4444;
+
+      --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.10);
+      --radius-lg: 18px;
+      --radius-xl: 28px;
+      --radius-pill: 999px;
+      --transition-fast: 150ms ease-out;
+
+      --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: var(--font-sans);
+      background:
+        radial-gradient(circle at 0% 0%, rgba(37, 99, 235, 0.08), transparent 60%),
+        radial-gradient(circle at 100% 0%, rgba(236, 72, 153, 0.08), transparent 60%),
+        var(--page-bg);
+      color: var(--text-main);
+      min-height: 100%;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      padding: 32px 16px 48px;
+    }
+
+    .shell {
+      width: 100%;
+      max-width: 1120px;
+      background:
+        radial-gradient(circle at 15% -20%, rgba(37, 99, 235, 0.12), transparent 65%),
+        radial-gradient(circle at 85% -30%, rgba(236, 72, 153, 0.12), transparent 70%),
+        var(--shell-bg);
+      border-radius: 32px;
+      border: 1px solid var(--shell-border);
+      box-shadow: var(--shadow-soft);
+      padding: 28px 20px 28px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    @media (min-width: 900px) {
+      .shell {
+        padding: 32px 28px 32px;
+      }
+    }
+
+    .grid {
+      display: grid;
+      gap: 20px;
+    }
+
+    @media (min-width: 900px) {
+      .grid {
+        grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.2fr);
+        gap: 24px;
+      }
+    }
+
+    header {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .badge-row {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+    }
+
+    .badge-pill {
+      padding: 4px 12px;
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(37, 99, 235, 0.35);
+      background: linear-gradient(90deg, rgba(37, 99, 235, 0.12), rgba(34, 197, 94, 0.10));
+      color: #1d4ed8;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 600;
+    }
+
+    .headline {
+      font-size: clamp(26px, 3vw, 32px);
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-main);
+    }
+
+    .headline span.accent {
+      background: linear-gradient(135deg, #2563eb, #22c55e, #ec4899);
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: var(--text-soft);
+      max-width: 700px;
+      line-height: 1.6;
+    }
+
+    .trust-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 4px;
+      font-size: 11px;
+      color: var(--text-muted);
+      align-items: center;
+    }
+
+    .trust-kpi {
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(239, 246, 255, 0.95);
+      border: 1px solid rgba(191, 219, 254, 1);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .trust-kpi span.icon {
+      font-size: 15px;
+    }
+
+    .trust-kpi strong {
+      color: var(--accent-strong);
+      font-weight: 600;
+    }
+
+    /* Card base */
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--card-border);
+      padding: 18px 16px 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    @media (min-width: 900px) {
+      .card {
+        padding: 20px 18px 20px;
+      }
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(135deg, rgba(37, 99, 235, 0.06), transparent 60%),
+        linear-gradient(315deg, rgba(34, 197, 94, 0.05), transparent 55%);
+      opacity: 0;
+      transition: opacity var(--transition-fast);
+      pointer-events: none;
+    }
+
+    .card:hover::before {
+      opacity: 1;
+    }
+
+    .card-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .card-title {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--text-muted);
+    }
+
+    .card-pill {
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(209, 213, 219, 1);
+      background: rgba(249, 250, 251, 0.9);
+      color: var(--text-soft);
+    }
+
+    /* Form */
+    form {
+      display: grid;
+      gap: 12px;
+    }
+
+    .field-group {
+      display: grid;
+      gap: 6px;
+      font-size: 13px;
+    }
+
+    label {
+      color: var(--text-soft);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .label-help {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 12px;
+      border: 1px solid rgba(209, 213, 219, 1);
+      background: #ffffff;
+      color: var(--text-main);
+      font: inherit;
+      font-size: 13px;
+      outline: none;
+      transition:
+        border-color var(--transition-fast),
+        box-shadow var(--transition-fast),
+        background var(--transition-fast),
+        transform var(--transition-fast);
+    }
+
+    textarea {
+      min-height: 64px;
+      resize: vertical;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: rgba(148, 163, 184, 0.9);
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: rgba(37, 99, 235, 0.8);
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.25);
+      transform: translateY(-0.5px);
+      background: #f9fafb;
+    }
+
+    .inline-fields {
+      display: grid;
+      gap: 10px;
+    }
+
+    @media (min-width: 640px) {
+      .inline-fields {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    .inline-fields-2 {
+      display: grid;
+      gap: 10px;
+    }
+
+    @media (min-width: 640px) {
+      .inline-fields-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    .helper-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .helper-text {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .chip {
+      padding: 4px 11px;
+      border-radius: 999px;
+      border: 1px solid rgba(209, 213, 219, 1);
+      font-size: 11px;
+      color: var(--text-muted);
+      cursor: pointer;
+      background: #f9fafb;
+      transition:
+        background var(--transition-fast),
+        border-color var(--transition-fast),
+        color var(--transition-fast),
+        transform var(--transition-fast),
+        box-shadow var(--transition-fast);
+    }
+
+    .chip:hover {
+      border-color: rgba(37, 99, 235, 0.8);
+      color: var(--accent-strong);
+      background: #eff6ff;
+      box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08);
+      transform: translateY(-0.5px);
+    }
+
+    /* Button */
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 9px 16px;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(135deg, #2563eb, #22c55e, #ec4899);
+      color: #f9fafb;
+      font-weight: 600;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow: 0 10px 26px rgba(37, 99, 235, 0.35);
+      transition:
+        transform var(--transition-fast),
+        box-shadow var(--transition-fast),
+        filter var(--transition-fast),
+        opacity var(--transition-fast);
+      white-space: nowrap;
+    }
+
+    .btn-primary span.icon {
+      font-size: 15px;
+    }
+
+    .btn-primary:hover {
+      filter: brightness(1.03);
+      transform: translateY(-1px);
+      box-shadow: 0 16px 36px rgba(37, 99, 235, 0.45);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+      box-shadow: 0 8px 22px rgba(37, 99, 235, 0.35);
+    }
+
+    .btn-primary[disabled] {
+      opacity: 0.75;
+      cursor: default;
+      box-shadow: none;
+      transform: none;
+    }
+
+    /* Result panel */
+    .result-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+      font-size: 11px;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 11px;
+      border-radius: 999px;
+      border: 1px solid rgba(209, 213, 219, 1);
+      background: #f9fafb;
+      font-size: 11px;
+      color: var(--text-soft);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-green);
+      box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.22);
+    }
+
+    .status-pill.loading .status-dot {
+      background: var(--accent-yellow);
+      box-shadow: 0 0 0 4px rgba(250, 204, 21, 0.26);
+    }
+
+    .status-pill.error .status-dot {
+      background: var(--danger);
+      box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.26);
+    }
+
+    .result-window {
+      border-radius: 16px;
+      border: 1px solid rgba(226, 232, 240, 1);
+      background:
+        linear-gradient(180deg, #ffffff, #f9fafb);
+      padding: 12px 12px;
+      min-height: 200px;
+      max-height: 520px;
+      overflow: auto;
+      font-size: 13px;
+      line-height: 1.7;
+      color: var(--text-main);
+      white-space: pre-wrap;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(148, 163, 184, 0.9) #f3f4f6;
+    }
+
+    .result-window::-webkit-scrollbar {
+      width: 7px;
+    }
+
+    .result-window::-webkit-scrollbar-track {
+      background: #f3f4f6;
+    }
+
+    .result-window::-webkit-scrollbar-thumb {
+      background-color: rgba(148, 163, 184, 0.9);
+      border-radius: 999px;
+    }
+
+    .placeholder {
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+
+    .error-text {
+      color: var(--danger);
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    footer {
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(209, 213, 219, 1);
+      font-size: 11px;
+      color: var(--text-muted);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    footer a {
+      color: var(--accent-strong);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <main class="shell" aria-labelledby="page-title">
+    <header>
+      <div class="badge-row">
+        <div class="badge-pill">AI-Powered Trip Planner</div>
+        <span>Plan a professional-looking itinerary without the spreadsheets.</span>
+      </div>
+      <h1 class="headline" id="page-title">
+        Build your next <span class="accent">trip itinerary</span> in seconds.
+      </h1>
+      <p class="subtitle">
+        Enter your destination, dates, budget, and travel style. Our AI turns it into a
+        clear, day-by-day itinerary with activities, food ideas, and simple logistics
+        you can share with your travel group.
+      </p>
+      <div class="trust-row">
+        <div class="trust-kpi">
+          <span class="icon">⚡</span>
+          <span><strong>&lt; 10 seconds</strong> to your first draft</span>
+        </div>
+        <span>Regenerate and tweak as many times as you want until the plan feels right.</span>
+      </div>
+    </header>
+
+    <section class="grid" aria-label="Trip planner layout">
+      <!-- Left: Form -->
+      <section class="card" aria-label="Trip details form">
+        <div class="card-title-row">
+          <h2 class="card-title">Trip Details</h2>
+          <span class="card-pill">Step 1 · Describe your trip</span>
+        </div>
+
+        <form id="trip-form">
+          <div class="field-group">
+            <label for="destination">Destination</label>
+            <input
+              id="destination"
+              name="destination"
+              type="text"
+              required
+              placeholder="e.g. Rome, Italy"
+              autocomplete="off"
+            />
+            <p class="label-help">City, region, or country. You can also say “multi-city: Paris & Amsterdam”.</p>
+          </div>
+
+          <div class="inline-fields">
+            <div class="field-group">
+              <label for="days">Trip length (days)</label>
+              <input
+                id="days"
+                name="days"
+                type="number"
+                min="1"
+                max="30"
+                required
+                placeholder="e.g. 5"
+              />
+            </div>
+            <div class="field-group">
+              <label for="month">When are you going?</label>
+              <select id="month" name="month">
+                <option value="">Not sure yet</option>
+                <option>January</option>
+                <option>February</option>
+                <option>March</option>
+                <option>April</option>
+                <option>May</option>
+                <option>June</option>
+                <option>July</option>
+                <option>August</option>
+                <option>September</option>
+                <option>October</option>
+                <option>November</option>
+                <option>December</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label for="budget">Budget level</label>
+              <select id="budget" name="budget">
+                <option value="">Flexible</option>
+                <option value="shoestring">Shoestring</option>
+                <option value="budget">Budget</option>
+                <option value="midrange">Mid-range</option>
+                <option value="luxury">Luxury</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="inline-fields-2">
+            <div class="field-group">
+              <label for="travelers">Who's going?</label>
+              <input
+                id="travelers"
+                name="travelers"
+                type="text"
+                placeholder="e.g. solo, couple, family with kids 6 & 8"
+              />
+            </div>
+            <div class="field-group">
+              <label for="pace">Preferred pace</label>
+              <select id="pace" name="pace">
+                <option value="">Mix of busy & relaxed</option>
+                <option value="slow">Slow and chill</option>
+                <option value="moderate">Moderate</option>
+                <option value="full">Full days, pack it in</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label for="style">Travel style & interests</label>
+            <textarea
+              id="style"
+              name="style"
+              placeholder="e.g. food markets, coffee shops, live music, light hiking, less interested in museums"
+            ></textarea>
+            <div class="chip-row" aria-label="Quick interest suggestions">
+              <button type="button" class="chip" data-append="Street food">Street food</button>
+              <button type="button" class="chip" data-append="Museums & history">Museums & history</button>
+              <button type="button" class="chip" data-append="Hidden local spots">Hidden local spots</button>
+              <button type="button" class="chip" data-append="Nightlife & bars">Nightlife & bars</button>
+              <button type="button" class="chip" data-append="Kid-friendly activities">Kid-friendly activities</button>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label for="musts">Must-see or must-avoid</label>
+            <textarea
+              id="musts"
+              name="musts"
+              placeholder="e.g. Must see the Colosseum, avoid long lines, prefer walking to taxis"
+            ></textarea>
+          </div>
+
+          <div class="helper-row" style="margin-top: 6px;">
+            <p class="helper-text">
+              The AI will generate a <strong>day-by-day plan</strong> with morning, afternoon, and evening suggestions.
+            </p>
+            <button type="submit" class="btn-primary" id="generate-btn">
+              <span class="icon">🧭</span>
+              <span>Generate Itinerary</span>
+            </button>
+          </div>
+
+          <p class="error-text" id="form-error" role="alert" style="display:none;"></p>
+        </form>
+      </section>
+
+      <!-- Right: Itinerary output -->
+      <section class="card" aria-label="Generated itinerary">
+        <div class="card-title-row">
+          <h2 class="card-title">Your AI Itinerary</h2>
+          <span class="card-pill">Step 2 · Review & refine</span>
+        </div>
+
+        <div class="result-meta">
+          <div class="status-pill" id="status-pill">
+            <span class="status-dot" id="status-dot"></span>
+            <span id="status-text">Ready when you are.</span>
+          </div>
+          <span>Adjust your details and regenerate to explore different versions of your trip.</span>
+        </div>
+
+        <div class="result-window" id="result-window" aria-live="polite">
+          <div class="placeholder" id="placeholder">
+            Your day-by-day itinerary will appear here. You can copy it into your notes,
+            send it to your travel group, or print it as a checklist.
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <footer>
+      <span>Always double-check opening hours, safety guidance, and local conditions before you travel.</span>
+      <span>Built with AI-assisted planning.</span>
+    </footer>
+  </main>
+
+  <script>
+    // --- Helpers: UI state ---
+    const form = document.getElementById("trip-form");
+    const generateBtn = document.getElementById("generate-btn");
+    const statusPill = document.getElementById("status-pill");
+    const statusText = document.getElementById("status-text");
+    const resultWindow = document.getElementById("result-window");
+    const placeholder = document.getElementById("placeholder");
+    const formError = document.getElementById("form-error");
+
+    function setStatus(state, message) {
+      statusPill.classList.remove("loading", "error");
+      formError.style.display = "none";
+
+      if (state === "idle") {
+        statusText.textContent = message || "Ready when you are.";
+      } else if (state === "loading") {
+        statusPill.classList.add("loading");
+        statusText.textContent = message || "Generating your itinerary...";
+      } else if (state === "error") {
+        statusPill.classList.add("error");
+        statusText.textContent = message || "Something went wrong. Try again.";
+      }
+    }
+
+    function setLoading(isLoading) {
+      generateBtn.disabled = isLoading;
+      generateBtn.innerHTML = isLoading
+        ? '<span class="icon">⏳</span><span>Generating...</span>'
+        : '<span class="icon">🧭</span><span>Generate Itinerary</span>';
+    }
+
+    function showResult(text) {
+      placeholder.style.display = "none";
+      resultWindow.textContent = text;
+    }
+
+    function showError(message) {
+      formError.textContent = message;
+      formError.style.display = "block";
+      setStatus("error", "There was a problem with your request.");
+    }
+
+    // --- Chips: quick interest appending ---
+    document.querySelectorAll(".chip").forEach((chip) => {
+      chip.addEventListener("click", () => {
+        const textarea = document.getElementById("style");
+        const value = chip.getAttribute("data-append");
+        if (!textarea) return;
+
+        const current = textarea.value.trim();
+        textarea.value = current
+          ? current + (current.endsWith(".") ? " " : ", ") + value
+          : value;
+        textarea.focus();
+      });
+    });
+
+    // --- Core: Build the AI prompt we send to the backend ---
+    function buildPrompt(data) {
+      const lines = [];
+
+      lines.push(
+        "You are an expert travel planner. Create a realistic, detailed, and efficient day-by-day itinerary."
+      );
+      lines.push("");
+      lines.push("Trip details:");
+      lines.push(`- Destination: ${data.destination}`);
+      lines.push(`- Trip length: ${data.days} days`);
+      lines.push(`- When: ${data.month || "Not specified"}`);
+      lines.push(`- Budget level: ${data.budget || "Not specified"}`);
+      lines.push(`- Who's going: ${data.travelers || "Not specified"}`);
+      lines.push(`- Preferred pace: ${data.pace || "Not specified"}`);
+      lines.push(
+        `- Travel style & interests: ${data.style || "Not specified"}`
+      );
+      lines.push(`- Must-see / must-avoid: ${data.musts || "Not specified"}`);
+      lines.push("");
+      lines.push("Formatting instructions:");
+      lines.push(
+        "- Start with a short title, e.g. “5-Day Food & Culture Trip to Rome”."
+      );
+      lines.push(
+        "- Then provide an overview paragraph summarizing the trip vibe."
+      );
+      lines.push(
+        "- Then list each day in order, using this structure:"
+      );
+      lines.push("  Day 1: Neighborhood / Theme");
+      lines.push("  - Morning: ...");
+      lines.push("  - Afternoon: ...");
+      lines.push("  - Evening: ...");
+      lines.push("");
+      lines.push(
+        "- Keep suggestions realistic for the budget level and pacing."
+      );
+      lines.push(
+        "- Mix famous highlights with a few under-the-radar local spots where appropriate."
+      );
+      lines.push(
+        "- Include quick food suggestions (cafés, markets, casual or notable restaurants) without sounding like ads."
+      );
+      lines.push(
+        "- Include simple logistics tips (e.g. walk vs. metro, ticket reservations) when helpful."
+      );
+      lines.push(
+        "- At the end, add a short “Practical Tips” section with 4–6 bullets."
+      );
+
+      return lines.join("\n");
+    }
+
+    // --- Form submit: call backend API ---
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      formError.style.display = "none";
+
+      const destination = document.getElementById("destination").value.trim();
+      const days = document.getElementById("days").value.trim();
+      const month = document.getElementById("month").value;
+      const budget = document.getElementById("budget").value;
+      const travelers = document.getElementById("travelers").value.trim();
+      const pace = document.getElementById("pace").value;
+      const style = document.getElementById("style").value.trim();
+      const musts = document.getElementById("musts").value.trim();
+
+      if (!destination) {
+        showError("Please enter a destination.");
+        return;
+      }
+      if (!days || Number(days) <= 0) {
+        showError("Please enter a valid trip length in days.");
+        return;
+      }
+
+      const payload = {
+        destination,
+        days: Number(days),
+        month,
+        budget,
+        travelers,
+        pace,
+        style,
+        musts,
+        prompt: null
+      };
+      payload.prompt = buildPrompt(payload);
+
+      setLoading(true);
+      setStatus("loading", "Generating your itinerary...");
+
+      try {
+        // Cloudflare Pages Functions:
+        // Create /functions/api/generate-itinerary.js
+        // This fetch call will hit that function as /api/generate-itinerary
+        const response = await fetch("/api/generate-itinerary", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          throw new Error("Non-200 response from API");
+        }
+
+        const data = await response.json();
+        const itinerary = data.itinerary || data.result || "";
+
+        if (!itinerary) {
+          throw new Error("Empty itinerary in response");
+        }
+
+        showResult(itinerary);
+        setStatus("idle", "Itinerary generated. Refine your inputs to explore variants.");
+      } catch (err) {
+        console.error("Itinerary generation error:", err);
+        showError("Something went wrong while generating your itinerary. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    });
+  </script>
+</body>
+</html>
