@@ -396,18 +396,35 @@
       padding-right: 2px;
     }
 
-    /* NEW: day group styling */
+    /* Day group styling (bucketed view) */
     .day-group {
-      margin-bottom: 10px;
+      margin-bottom: 18px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .day-group:last-of-type {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
     }
 
     .day-heading {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .day-sub {
+      font-size: 12px;
       color: var(--text-muted);
-      margin-bottom: 4px;
-      padding-left: 2px;
+      margin-bottom: 6px;
+    }
+
+    .day-suggestions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
 
     .suggestion-card {
@@ -754,7 +771,7 @@
       }
     }
 
-    // NEW: group by dayHint with headings
+    // Group suggestions into day buckets, sort by time-of-day, add "Any day" group
     function renderSuggestions(suggestions) {
       suggestionsContainer.innerHTML = "";
 
@@ -767,96 +784,172 @@
 
       emptyState.style.display = "none";
 
-      // Group suggestions by dayHint (number) or "flex" for null/undefined
-      const groups = new Map();
+      // Group by dayHint, collect flexible
+      const dayBuckets = new Map(); // number -> array
+      const flexible = [];
+
       suggestions.forEach((s) => {
-        let key =
+        const day =
           typeof s.dayHint === "number" && isFinite(s.dayHint)
             ? s.dayHint
-            : "flex";
-        if (!groups.has(key)) groups.set(key, []);
-        groups.get(key).push(s);
+            : null;
+
+        if (day === null) {
+          flexible.push(s);
+        } else {
+          if (!dayBuckets.has(day)) dayBuckets.set(day, []);
+          dayBuckets.get(day).push(s);
+        }
       });
 
-      const numericKeys = Array.from(groups.keys()).filter(
-        (k) => k !== "flex" && k !== null
-      );
-      numericKeys.sort((a, b) => a - b);
+      // Sort days
+      const sortedDays = Array.from(dayBuckets.keys()).sort((a, b) => a - b);
 
-      const orderedKeys = [...numericKeys];
-      if (groups.has("flex")) orderedKeys.push("flex");
+      // Sort by time-of-day within a day
+      const timeOrder = { morning: 0, afternoon: 1, evening: 2, flex: 3 };
+      function sortByTimeOfDay(list) {
+        return list.sort((a, b) => {
+          const ta = (a.timeOfDay || "flex").toString().toLowerCase();
+          const tb = (b.timeOfDay || "flex").toString().toLowerCase();
+          const wa = Object.prototype.hasOwnProperty.call(timeOrder, ta)
+            ? timeOrder[ta]
+            : 4;
+          const wb = Object.prototype.hasOwnProperty.call(timeOrder, tb)
+            ? timeOrder[tb]
+            : 4;
+          if (wa !== wb) return wa - wb;
+          return (a.title || "").localeCompare(b.title || "");
+        });
+      }
 
-      orderedKeys.forEach((key) => {
-        const groupDiv = document.createElement("div");
-        groupDiv.className = "day-group";
+      // Helper to build a card
+      function buildCard(s, idx) {
+        const card = document.createElement("article");
+        card.className = "suggestion-card";
+
+        const topRow = document.createElement("div");
+        topRow.className = "suggestion-top-row";
+
+        const title = document.createElement("div");
+        title.className = "suggestion-title";
+        title.textContent = s.title || "Activity " + (idx + 1);
+
+        const chips = document.createElement("div");
+        chips.className = "chip-row";
+
+        const todChip = document.createElement("span");
+        todChip.className = "chip accent";
+        const tod = (s.timeOfDay || "flex").toString().toLowerCase();
+        if (tod === "morning") todChip.textContent = "Morning";
+        else if (tod === "afternoon") todChip.textContent = "Afternoon";
+        else if (tod === "evening") todChip.textContent = "Evening";
+        else todChip.textContent = "Flexible";
+
+        chips.appendChild(todChip);
+
+        if (typeof s.dayHint === "number" && isFinite(s.dayHint)) {
+          const dayChip = document.createElement("span");
+          dayChip.className = "chip";
+          dayChip.textContent = "Day " + s.dayHint;
+          chips.appendChild(dayChip);
+        }
+
+        topRow.appendChild(title);
+        topRow.appendChild(chips);
+
+        const desc = document.createElement("p");
+        desc.className = "suggestion-desc";
+        desc.textContent =
+          s.description ||
+          "No description provided, but this activity sounded interesting.";
+
+        const notes = document.createElement("p");
+        notes.className = "suggestion-notes";
+        notes.textContent =
+          s.notes || "No extra notes from the AI for this one.";
+
+        card.appendChild(topRow);
+        card.appendChild(desc);
+        card.appendChild(notes);
+
+        return card;
+      }
+
+      // Render day buckets
+      sortedDays.forEach((day) => {
+        const items = sortByTimeOfDay(dayBuckets.get(day) || []);
+
+        const groupEl = document.createElement("section");
+        groupEl.className = "day-group";
 
         const heading = document.createElement("div");
         heading.className = "day-heading";
-        heading.textContent = key === "flex" ? "Any day" : "Day " + key;
-        groupDiv.appendChild(heading);
+        heading.textContent = "Day " + day;
 
-        const items = groups.get(key);
+        const sub = document.createElement("div");
+        sub.className = "day-sub";
+        sub.textContent = "Ideas for morning, afternoon, and evening.";
+
+        const listEl = document.createElement("div");
+        listEl.className = "day-suggestions";
 
         items.forEach((s, idx) => {
-          const card = document.createElement("article");
-          card.className = "suggestion-card";
-
-          const topRow = document.createElement("div");
-          topRow.className = "suggestion-top-row";
-
-          const title = document.createElement("div");
-          title.className = "suggestion-title";
-          title.textContent = s.title || "Activity";
-
-          const chips = document.createElement("div");
-          chips.className = "chip-row";
-
-          const todChip = document.createElement("span");
-          todChip.className = "chip accent";
-          let tod = (s.timeOfDay || "flex").toString().toLowerCase();
-          if (tod === "morning") todChip.textContent = "Morning";
-          else if (tod === "afternoon") todChip.textContent = "Afternoon";
-          else if (tod === "evening") todChip.textContent = "Evening";
-          else todChip.textContent = "Flexible";
-          chips.appendChild(todChip);
-
-          if (typeof s.dayHint === "number" && isFinite(s.dayHint)) {
-            const dayChip = document.createElement("span");
-            dayChip.className = "chip";
-            dayChip.textContent = "Day " + s.dayHint;
-            chips.appendChild(dayChip);
-          }
-
-          topRow.appendChild(title);
-          topRow.appendChild(chips);
-
-          const desc = document.createElement("p");
-          desc.className = "suggestion-desc";
-          desc.textContent =
-            s.description ||
-            "No description provided, but this activity sounded interesting.";
-
-          const notes = document.createElement("p");
-          notes.className = "suggestion-notes";
-          notes.textContent =
-            s.notes || "No extra notes from the AI for this one.";
-
-          card.appendChild(topRow);
-          card.appendChild(desc);
-          card.appendChild(notes);
-
-          groupDiv.appendChild(card);
+          listEl.appendChild(buildCard(s, idx));
         });
 
-        suggestionsContainer.appendChild(groupDiv);
+        groupEl.appendChild(heading);
+        groupEl.appendChild(sub);
+        groupEl.appendChild(listEl);
+
+        suggestionsContainer.appendChild(groupEl);
       });
 
-      const dayBucketCount = orderedKeys.length;
-      metaSummary.textContent =
-        suggestions.length +
-        " ideas across " +
-        dayBucketCount +
-        (dayBucketCount === 1 ? " day bucket." : " day buckets.");
+      // Render flexible suggestions (any day) last
+      if (flexible.length > 0) {
+        const items = sortByTimeOfDay(flexible);
+
+        const groupEl = document.createElement("section");
+        groupEl.className = "day-group";
+
+        const heading = document.createElement("div");
+        heading.className = "day-heading";
+        heading.textContent = "Any day ideas";
+
+        const sub = document.createElement("div");
+        sub.className = "day-sub";
+        sub.textContent = "Flexible suggestions you can plug into any day.";
+
+        const listEl = document.createElement("div");
+        listEl.className = "day-suggestions";
+
+        items.forEach((s, idx) => {
+          listEl.appendChild(buildCard(s, idx));
+        });
+
+        groupEl.appendChild(heading);
+        groupEl.appendChild(sub);
+        groupEl.appendChild(listEl);
+
+        suggestionsContainer.appendChild(groupEl);
+      }
+
+      const total = suggestions.length;
+      const dayCount = sortedDays.length;
+      if (dayCount > 0) {
+        metaSummary.textContent =
+          total +
+          " ideas across " +
+          dayCount +
+          " day" +
+          (dayCount === 1 ? "" : "s") +
+          (flexible.length ? " (+ flexible ideas)" : "");
+      } else {
+        metaSummary.textContent =
+          total +
+          " flexible idea" +
+          (total === 1 ? "" : "s") +
+          " with no specific day.";
+      }
     }
 
     form.addEventListener("submit", async (e) => {
