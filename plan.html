@@ -2,35 +2,25 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Plan a Trip | AITripPlan — AI Trip Itinerary Generator</title>
+  <title>Build Your AI Trip Plan | AITripPlan.com</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Use AITripPlan to generate a personalized trip itinerary. Get AI suggestions, then drag and drop activities into your plan." />
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-  <link rel="canonical" href="https://aitripplan.com/plan.html" />
+  <meta name="description" content="Generate smart trip ideas with AI and quickly turn them into a simple itinerary." />
 
-  <!-- Font (Inter) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
 
   <style>
     :root {
-      --bg-page: #f3f4f6;
-      --bg-soft: #eef2ff;
-      --bg-card: #ffffff;
-      --text-main: #0f172a;
-      --text-soft: #4b5563;
-      --text-muted: #6b7280;
-      --border-subtle: rgba(209, 213, 219, 1);
-      --border-strong: #d1d5db;
-      --accent: #2563eb;
-      --accent-green: #22c55e;
-      --accent-yellow: #facc15;
-      --shadow-soft: 0 14px 30px rgba(15, 23, 42, 0.10);
-      --radius-lg: 18px;
-      --radius-xl: 24px;
-      --radius-pill: 999px;
-      --transition-fast: 140ms ease-out;
+      --bg: #020617;
+      --bg-soft: #020617;
+      --card-bg: #020617;
+      --card-border: rgba(148,163,184,0.4);
+      --accent: #22c55e;
+      --accent-soft: rgba(34,197,94,0.18);
+      --accent-strong: #4ade80;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --danger: #f97373;
+      --radius-lg: 16px;
     }
 
     * {
@@ -39,12 +29,13 @@
 
     body {
       margin: 0;
-      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background:
-        radial-gradient(circle at 0% 0%, rgba(37, 99, 235, 0.06), transparent 55%),
-        radial-gradient(circle at 100% 0%, rgba(236, 72, 153, 0.06), transparent 55%),
-        var(--bg-page);
-      color: var(--text-main);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #0b1120 0, #020617 40%, #020617 100%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
     a {
@@ -52,1246 +43,775 @@
       text-decoration: none;
     }
 
-    /* Header / Nav */
-    header.site-header {
-      position: fixed;
-      inset-inline: 0;
+    header {
+      border-bottom: 1px solid rgba(148,163,184,0.25);
+      backdrop-filter: blur(18px);
+      background: linear-gradient(
+        to bottom,
+        rgba(15,23,42,0.95),
+        rgba(15,23,42,0.85),
+        transparent
+      );
+      position: sticky;
       top: 0;
       z-index: 40;
-      background: rgba(255, 255, 255, 0.92);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(209, 213, 219, 0.85);
     }
 
     .nav-inner {
       max-width: 1120px;
       margin: 0 auto;
-      padding: 12px 18px;
+      padding: 14px 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 18px;
+      gap: 16px;
     }
 
-    .nav-left {
+    .brand {
       display: flex;
       align-items: center;
       gap: 10px;
     }
 
-    .logo-mark {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 34px;
-      height: 34px;
+    .brand-mark {
+      width: 32px;
+      height: 32px;
       border-radius: 999px;
-      box-shadow: 0 5px 14px rgba(15, 23, 42, 0.18);
+      background: radial-gradient(circle at 30% 20%, #facc15, #22c55e 45%, #0ea5e9 90%);
+      box-shadow:
+        0 0 0 2px rgba(15,23,42,0.7),
+        0 12px 25px rgba(15,23,42,0.8);
+      position: relative;
       overflow: hidden;
     }
 
-    .logo-word {
-      font-weight: 700;
+    .brand-mark::after {
+      content: "";
+      position: absolute;
+      inset: 18%;
+      border-radius: 999px;
+      border: 2px solid rgba(15,23,42,0.85);
+      border-top-color: transparent;
+      border-right-color: transparent;
+      transform: rotate(-25deg);
+      opacity: 0.9;
+    }
+
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.1;
+    }
+
+    .brand-title {
+      font-weight: 650;
+      letter-spacing: 0.03em;
       font-size: 18px;
-      letter-spacing: -0.03em;
     }
 
-    .logo-word span.accent {
-      background: linear-gradient(135deg, #2563eb, #22c55e, #ec4899);
-      -webkit-background-clip: text;
-      color: transparent;
+    .brand-subtitle {
+      font-size: 11px;
+      color: var(--muted);
     }
 
-    nav.primary-nav {
+    .nav-links {
       display: flex;
       align-items: center;
       gap: 18px;
       font-size: 14px;
-      color: var(--text-muted);
+      color: var(--muted);
     }
 
-    nav.primary-nav a {
+    .nav-links a {
+      padding: 4px 0;
       position: relative;
-      padding-bottom: 2px;
     }
 
-    nav.primary-nav a::after {
+    .nav-links a.active::after,
+    .nav-links a:hover::after {
       content: "";
       position: absolute;
       left: 0;
       right: 0;
-      bottom: 0;
+      bottom: -4px;
       height: 2px;
       border-radius: 999px;
-      background: linear-gradient(90deg, #2563eb, #22c55e);
-      transform: scaleX(0);
-      transform-origin: center;
-      transition: transform 140ms ease-out;
-    }
-
-    nav.primary-nav a:hover::after {
-      transform: scaleX(1);
+      background: linear-gradient(90deg, #22c55e, #0ea5e9);
     }
 
     .nav-cta {
-      padding: 7px 14px;
-      border-radius: var(--radius-pill);
-      border: none;
-      background: linear-gradient(135deg, #2563eb, #22c55e, #ec4899);
-      color: #f9fafb;
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.35);
+      background: radial-gradient(circle at top left, rgba(34,197,94,0.14), transparent 60%);
       font-size: 13px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      cursor: pointer;
-      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      white-space: nowrap;
+      gap: 6px;
     }
 
-    .nav-cta span.icon {
-      font-size: 15px;
-    }
-
-    .nav-cta:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 12px 28px rgba(37, 99, 235, 0.40);
+    .nav-cta span.badge {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: rgba(15,23,42,0.85);
+      border: 1px solid rgba(148,163,184,0.4);
     }
 
     main {
-      padding-top: 80px;
-      padding-bottom: 40px;
+      flex: 1;
+      padding: 32px 16px 40px;
     }
 
-    /* Page Layout */
-    .page-shell {
+    .page-inner {
       max-width: 1120px;
       margin: 0 auto;
-      padding: 18px;
-    }
-
-    .page-header {
-      margin-bottom: 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .page-eyebrow {
-      font-size: 11px;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-    }
-
-    .page-title {
-      font-size: 24px;
-      font-weight: 700;
-      letter-spacing: -0.03em;
-    }
-
-    .page-subtitle {
-      font-size: 14px;
-      color: var(--text-soft);
-      max-width: 620px;
-    }
-
-    .planner-grid {
       display: grid;
-      gap: 18px;
-      align-items: flex-start;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.4fr);
+      gap: 28px;
     }
 
-    @media (min-width: 900px) {
-      .planner-grid {
-        grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.2fr);
+    @media (max-width: 880px) {
+      .page-inner {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      header {
+        position: static;
       }
     }
 
-    /* Card */
-    .card {
-      background: var(--bg-card);
-      border-radius: var(--radius-xl);
-      border: 1px solid rgba(209, 213, 219, 0.9);
-      box-shadow: var(--shadow-soft);
-      padding: 20px 18px 20px;
-      position: relative;
-      overflow: hidden;
+    .panel {
+      background: radial-gradient(circle at top left, #020617, #020617);
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(148,163,184,0.35);
+      padding: 20px 20px 18px;
+      box-shadow:
+        0 18px 45px rgba(15,23,42,0.9),
+        0 0 0 1px rgba(15,23,42,0.9);
     }
 
-    .card::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background:
-        linear-gradient(135deg, rgba(37, 99, 235, 0.06), transparent 60%),
-        linear-gradient(315deg, rgba(34, 197, 94, 0.05), transparent 55%);
-      opacity: 0;
-      transition: opacity var(--transition-fast);
-      pointer-events: none;
+    .panel-header {
+      margin-bottom: 14px;
     }
 
-    .card:hover::before {
-      opacity: 1;
-    }
-
-    .card-title-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 12px;
-    }
-
-    .card-title {
-      font-size: 13px;
+    .eyebrow {
+      font-size: 11px;
       text-transform: uppercase;
       letter-spacing: 0.16em;
-      color: var(--text-muted);
-    }
-
-    .card-pill {
-      font-size: 11px;
-      padding: 4px 9px;
-      border-radius: var(--radius-pill);
-      border: 1px solid var(--border-subtle);
-      background: #f9fafb;
-      color: var(--text-soft);
-      white-space: nowrap;
-    }
-
-    /* Form */
-    form {
-      display: grid;
-      gap: 12px;
-    }
-
-    .field-group {
-      display: grid;
-      gap: 6px;
-      font-size: 13px;
-    }
-
-    label {
-      color: var(--text-soft);
-      font-size: 11px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      font-weight: 600;
-    }
-
-    .label-help {
-      font-size: 11px;
-      color: var(--text-muted);
-      margin-top: 2px;
-    }
-
-    input[type="text"],
-    input[type="number"],
-    select,
-    textarea {
-      width: 100%;
-      padding: 8px 10px;
-      border-radius: 12px;
-      border: 1px solid var(--border-subtle);
-      background: #ffffff;
-      color: var(--text-main);
-      font: inherit;
-      font-size: 13px;
-      outline: none;
-      transition:
-        border-color var(--transition-fast),
-        box-shadow var(--transition-fast),
-        background var(--transition-fast),
-        transform var(--transition-fast);
-    }
-
-    textarea {
-      min-height: 64px;
-      resize: vertical;
-    }
-
-    input::placeholder,
-    textarea::placeholder {
-      color: rgba(148, 163, 184, 0.9);
-    }
-
-    input:focus,
-    select:focus,
-    textarea:focus {
-      border-color: rgba(37, 99, 235, 0.9);
-      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.18);
-      transform: translateY(-0.5px);
-      background: #f9fafb;
-    }
-
-    .inline-fields {
-      display: grid;
-      gap: 10px;
-    }
-
-    @media (min-width: 640px) {
-      .inline-fields {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-      }
-    }
-
-    .inline-fields-2 {
-      display: grid;
-      gap: 10px;
-    }
-
-    @media (min-width: 640px) {
-      .inline-fields-2 {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-    }
-
-    .helper-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .helper-text {
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-
-    .chip-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 4px;
-    }
-
-    .chip {
-      padding: 4px 11px;
-      border-radius: var(--radius-pill);
-      border: 1px solid var(--border-subtle);
-      font-size: 11px;
-      color: var(--text-muted);
-      cursor: pointer;
-      background: #f9fafb;
-      transition:
-        background var(--transition-fast),
-        border-color var(--transition-fast),
-        color var(--transition-fast),
-        transform var(--transition-fast),
-        box-shadow var(--transition-fast);
-    }
-
-    .chip:hover {
-      border-color: rgba(37, 99, 235, 0.9);
-      color: #1d4ed8;
-      background: #eff6ff;
-      box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08);
-      transform: translateY(-0.5px);
-    }
-
-    .btn-primary {
+      color: var(--accent-strong);
       display: inline-flex;
       align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 9px 16px;
-      border-radius: var(--radius-pill);
-      border: none;
-      background: linear-gradient(135deg, #2563eb, #22c55e, #ec4899);
-      color: #f9fafb;
-      font-weight: 600;
-      font-size: 12px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      cursor: pointer;
-      box-shadow: 0 10px 26px rgba(37, 99, 235, 0.35);
-      transition:
-        transform var(--transition-fast),
-        box-shadow var(--transition-fast),
-        filter var(--transition-fast),
-        opacity var(--transition-fast);
-      white-space: nowrap;
+      gap: 6px;
     }
 
-    .btn-primary span.icon {
-      font-size: 15px;
-    }
-
-    .btn-primary:hover:not([disabled]) {
-      filter: brightness(1.03);
-      transform: translateY(-1px);
-      box-shadow: 0 16px 36px rgba(37, 99, 235, 0.45);
-    }
-
-    .btn-primary[disabled] {
-      opacity: 0.75;
-      cursor: default;
-      box-shadow: none;
-      transform: none;
-    }
-
-    .error-text {
-      color: #ef4444;
-      font-size: 12px;
-      margin-top: 4px;
-    }
-
-    /* Status / meta */
-    .result-meta {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 10px;
-      font-size: 11px;
-      color: var(--text-muted);
-      flex-wrap: wrap;
-    }
-
-    .status-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 5px 11px;
-      border-radius: var(--radius-pill);
-      border: 1px solid var(--border-subtle);
-      background: #f9fafb;
-      font-size: 11px;
-      color: var(--text-soft);
-    }
-
-    .status-dot {
-      width: 8px;
-      height: 8px;
+    .eyebrow-dot {
+      width: 7px;
+      height: 7px;
       border-radius: 50%;
-      background: var(--accent-green);
-      box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.22);
-    }
-
-    .status-pill.loading .status-dot {
-      background: var(--accent-yellow);
-      box-shadow: 0 0 0 4px rgba(250, 204, 21, 0.26);
-    }
-
-    .status-pill.error .status-dot {
-      background: #ef4444;
-      box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.26);
-    }
-
-    .result-footer {
-      margin-top: 8px;
-      font-size: 11px;
-      color: var(--text-muted);
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    /* Layout for suggestions + board */
-    .planner-right {
-      display: flex;
-      gap: 12px;
-      margin-top: 10px;
-      flex-wrap: wrap;
-    }
-
-    .suggestion-panel {
-      flex: 1 1 220px;
-      min-width: 220px;
-      max-height: 420px;
-      overflow: auto;
-      border-radius: 16px;
-      border: 1px solid var(--border-subtle);
-      background: #f9fafb;
-      padding: 8px;
+      background: var(--accent-strong);
+      box-shadow: 0 0 0 4px rgba(34,197,94,0.2);
     }
 
     .panel-title {
+      margin: 6px 0 2px;
+      font-size: 22px;
+      letter-spacing: 0.01em;
+    }
+
+    .panel-subtitle {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    label {
       font-size: 12px;
-      font-weight: 600;
-      margin-bottom: 6px;
-      color: #4b5563;
+      color: var(--muted);
+      margin-bottom: 3px;
+      display: inline-block;
+    }
+
+    .field-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .field-col {
+      flex: 1;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid rgba(148,163,184,0.45);
+      background: rgba(15,23,42,0.9);
+      color: var(--text);
+      font-size: 13px;
+      padding: 8px 9px;
+      outline: none;
+      transition: border-color 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      border-color: var(--accent-strong);
+      box-shadow: 0 0 0 1px rgba(34,197,94,0.55);
+      background: rgba(15,23,42,1);
+    }
+
+    textarea {
+      min-height: 70px;
+      resize: vertical;
+    }
+
+    .helper {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .actions {
+      margin-top: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 10px;
+    }
+
+    button.primary {
+      border-radius: 999px;
+      border: none;
+      padding: 9px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      color: #020617;
+      background: linear-gradient(135deg, #22c55e, #0ea5e9);
+      box-shadow:
+        0 12px 30px rgba(34,197,94,0.4),
+        0 0 0 1px rgba(15,23,42,0.9);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.08s ease;
+    }
+
+    button.primary:hover:not(:disabled) {
+      transform: translateY(-1px);
+      filter: brightness(1.03);
+      box-shadow:
+        0 16px 40px rgba(34,197,94,0.5),
+        0 0 0 1px rgba(15,23,42,0.9);
+    }
+
+    button.primary:active:not(:disabled) {
+      transform: translateY(0);
+      box-shadow:
+        0 10px 24px rgba(15,23,42,0.95),
+        0 0 0 1px rgba(15,23,42,0.9);
+    }
+
+    button.primary:disabled {
+      opacity: 0.6;
+      cursor: default;
+      box-shadow: none;
+    }
+
+    .spinner-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: 2px solid #0f172a;
+      border-top-color: #f9fafb;
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .status-text {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .status-text strong {
+      color: var(--accent-strong);
+    }
+
+    .status-error {
+      color: var(--danger);
+    }
+
+    .suggestions-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .suggestions-title {
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    .suggestions-meta {
+      font-size: 11px;
+      color: var(--muted);
     }
 
     .suggestions-list {
       display: flex;
       flex-direction: column;
-      gap: 6px;
-      font-size: 12px;
-    }
-
-    .suggestions-placeholder {
-      color: #9ca3af;
-      font-size: 12px;
-      line-height: 1.5;
+      gap: 10px;
+      max-height: 520px;
+      overflow-y: auto;
+      padding-right: 4px;
     }
 
     .suggestion-card {
-      border-radius: 10px;
-      border: 1px solid var(--border-subtle);
-      background: #ffffff;
-      padding: 6px 8px;
-      cursor: grab;
-      box-shadow: 0 2px 5px rgba(15, 23, 42, 0.06);
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-      transition:
-        box-shadow var(--transition-fast),
-        transform var(--transition-fast),
-        border-color var(--transition-fast),
-        background var(--transition-fast);
-    }
-
-    .suggestion-card:hover {
-      box-shadow: 0 4px 10px rgba(15, 23, 42, 0.10);
-      transform: translateY(-1px);
-      border-color: rgba(37, 99, 235, 0.65);
-      background: #fdfefe;
-    }
-
-    .suggestion-title {
-      font-weight: 600;
-      font-size: 12px;
-      color: #111827;
-    }
-
-    .suggestion-meta {
-      font-size: 11px;
-      color: #6b7280;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
-
-    .suggestion-desc {
-      font-size: 11px;
-      color: #4b5563;
-    }
-
-    .itinerary-column {
-      flex: 2 1 320px;
-      min-width: 280px;
-    }
-
-    .itinerary-board-title {
-      font-size: 12px;
-      font-weight: 600;
-      margin-bottom: 6px;
-      color: #4b5563;
-    }
-
-    .itinerary-grid {
-      display: grid;
-      gap: 8px;
-    }
-
-    .itinerary-day {
-      border-radius: 16px;
-      border: 1px solid var(--border-subtle);
-      background: #f9fafb;
-      padding: 8px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .itinerary-day-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 12px;
-      font-weight: 600;
-      color: #374151;
-    }
-
-    .itinerary-day-sub {
-      font-size: 11px;
-      color: #9ca3af;
-    }
-
-    .day-slot-grid {
-      display: grid;
-      gap: 6px;
-    }
-
-    @media (min-width: 700px) {
-      .day-slot-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-      }
-    }
-
-    .itinerary-slot {
-      min-height: 80px;
-      border-radius: 10px;
-      border: 1px dashed var(--border-strong);
-      background: #ffffff;
-      padding: 4px;
-      font-size: 11px;
+      border-radius: 12px;
+      border: 1px solid rgba(148,163,184,0.45);
+      background: radial-gradient(circle at top left, rgba(15,23,42,0.9), #020617);
+      padding: 10px 11px;
       display: flex;
       flex-direction: column;
       gap: 4px;
-      transition:
-        border-color var(--transition-fast),
-        background var(--transition-fast),
-        box-shadow var(--transition-fast),
-        transform var(--transition-fast);
     }
 
-    .itinerary-slot.is-drag-over {
-      background: #eef2ff;
-      border-style: solid;
-      border-color: rgba(37, 99, 235, 0.85);
-      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.25);
-      transform: translateY(-1px);
-    }
-
-    .slot-label {
-      color: #9ca3af;
-      font-weight: 600;
-    }
-
-    .slot-activity {
-      border-radius: 8px;
-      border: 1px solid #e5e7eb;
-      background: #f3f4f6;
-      padding: 4px 6px;
-      font-size: 11px;
+    .suggestion-top-row {
       display: flex;
-      flex-direction: column;
-      gap: 3px;
-      cursor: grab;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
     }
 
-    .slot-activity-title {
-      font-weight: 600;
-      color: #111827;
+    .suggestion-title {
+      font-size: 14px;
+      font-weight: 500;
     }
 
-    .slot-activity-desc {
-      color: #4b5563;
+    .chip-row {
+      display: flex;
+      gap: 6px;
+      font-size: 10px;
     }
 
-    footer.site-footer {
-      border-top: 1px solid rgba(209, 213, 219, 1);
-      padding: 18px 18px 26px;
+    .chip {
+      border-radius: 999px;
+      padding: 2px 7px;
+      border: 1px solid rgba(148,163,184,0.45);
+      background: rgba(15,23,42,0.9);
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .chip.accent {
+      border-color: rgba(34,197,94,0.75);
+      color: var(--accent-strong);
+      background: rgba(34,197,94,0.1);
+    }
+
+    .suggestion-desc {
       font-size: 12px;
-      color: var(--text-muted);
+      color: #e5e7eb;
+    }
+
+    .suggestion-notes {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .empty-state {
+      border-radius: 12px;
+      border: 1px dashed rgba(148,163,184,0.4);
+      padding: 12px;
+      font-size: 12px;
+      color: var(--muted);
+      background: radial-gradient(circle at top left, rgba(15,23,42,0.8), #020617);
+    }
+
+    footer {
+      border-top: 1px solid rgba(148,163,184,0.3);
+      padding: 12px 16px 16px;
+      font-size: 11px;
+      color: var(--muted);
     }
 
     .footer-inner {
       max-width: 1120px;
       margin: 0 auto;
       display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      align-items: center;
       justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
     }
 
     .footer-links {
       display: flex;
-      flex-wrap: wrap;
       gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      text-decoration: none;
+      color: var(--muted);
     }
 
     .footer-links a:hover {
-      text-decoration: underline;
-    }
-
-    @media (max-width: 640px) {
-      .nav-inner {
-        padding-inline: 14px;
-      }
+      color: var(--accent-strong);
     }
   </style>
 </head>
 <body>
-  <!-- Header -->
-  <header class="site-header">
+  <header>
     <div class="nav-inner">
-      <div class="nav-left">
-        <div class="logo-mark" aria-hidden="true">
-          <svg width="34" height="34" viewBox="0 0 34 34" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="logoGrad" x1="4" y1="4" x2="30" y2="30">
-                <stop offset="0%" stop-color="#2563EB" />
-                <stop offset="50%" stop-color="#22C55E" />
-                <stop offset="100%" stop-color="#EC4899" />
-              </linearGradient>
-            </defs>
-            <circle cx="17" cy="17" r="17" fill="white" />
-            <circle cx="17" cy="17" r="14" fill="url(#logoGrad)" />
-            <path d="M17 8 L20.5 17 L17 26 L13.5 17 Z" fill="white" opacity="0.95" />
-            <circle cx="17" cy="17" r="3" fill="white" />
-          </svg>
+      <a href="/" class="brand">
+        <div class="brand-mark"></div>
+        <div class="brand-text">
+          <span class="brand-title">AITripPlan</span>
+          <span class="brand-subtitle">Trip ideas in seconds</span>
         </div>
-        <div class="logo-word">
-          AITrip<span class="accent">Plan</span>
-        </div>
-      </div>
-
-      <nav class="primary-nav" aria-label="Primary navigation">
+      </a>
+      <nav class="nav-links">
         <a href="/">Home</a>
-        <a href="/plan.html">Plan a Trip</a>
+        <a href="/plan.html" class="active">Trip planner</a>
         <a href="/about.html">About</a>
         <a href="/faq.html">FAQ</a>
-        <button class="nav-cta" type="button" onclick="window.location.href='/plan.html'">
-          <span class="icon">🧭</span>
-          <span>Launch Planner</span>
-        </button>
+        <a href="/privacy.html">Privacy</a>
+        <span class="nav-cta">
+          <span class="badge">Beta</span>
+          <span>AI-powered itinerary ideas</span>
+        </span>
       </nav>
     </div>
   </header>
 
   <main>
-    <div class="page-shell">
-      <header class="page-header">
-        <div class="page-eyebrow">Trip planner</div>
-        <h1 class="page-title">Generate & curate your itinerary</h1>
-        <p class="page-subtitle">
-          Tell AITripPlan about your trip, then drag and drop suggested activities into each day and time slot
-          to build a clean, tailored itinerary.
-        </p>
-      </header>
-
-      <section class="planner-grid" aria-label="Trip planner layout">
-        <!-- Left: Form -->
-        <section class="card" aria-label="Trip details form">
-          <div class="card-title-row">
-            <h2 class="card-title">Trip Details</h2>
-            <span class="card-pill">Step 1 · Describe your trip</span>
+    <div class="page-inner">
+      <!-- Left: simple form -->
+      <section class="panel">
+        <div class="panel-header">
+          <div class="eyebrow">
+            <span class="eyebrow-dot"></span>
+            Trip input
           </div>
+          <h1 class="panel-title">Tell the AI where you’re going</h1>
+          <p class="panel-subtitle">
+            Keep it high-level & fast. The AI will return a list of ideas you can skim through.
+          </p>
+        </div>
 
-          <form id="trip-form" novalidate>
-            <div class="field-group">
+        <form id="tripForm">
+          <div class="field-row">
+            <div class="field-col">
               <label for="destination">Destination</label>
               <input
                 id="destination"
                 name="destination"
                 type="text"
-                required
-                placeholder="e.g. Rome, Italy"
+                placeholder="e.g. Lisbon, Portugal"
                 autocomplete="off"
+                required
               />
-              <p class="label-help">City, region, or country. You can also say “multi-city: Paris & Amsterdam”.</p>
             </div>
-
-            <div class="inline-fields">
-              <div class="field-group">
-                <label for="days">Trip length (days)</label>
-                <input
-                  id="days"
-                  name="days"
-                  type="number"
-                  min="1"
-                  max="30"
-                  required
-                  placeholder="e.g. 5"
-                />
-              </div>
-              <div class="field-group">
-                <label for="month">When are you going?</label>
-                <select id="month" name="month">
-                  <option value="">Not sure yet</option>
-                  <option>January</option>
-                  <option>February</option>
-                  <option>March</option>
-                  <option>April</option>
-                  <option>May</option>
-                  <option>June</option>
-                  <option>July</option>
-                  <option>August</option>
-                  <option>September</option>
-                  <option>October</option>
-                  <option>November</option>
-                  <option>December</option>
-                </select>
-              </div>
-              <div class="field-group">
-                <label for="budget">Budget level</label>
-                <select id="budget" name="budget">
-                  <option value="">Flexible</option>
-                  <option value="shoestring">Shoestring</option>
-                  <option value="budget">Budget</option>
-                  <option value="midrange">Mid-range</option>
-                  <option value="luxury">Luxury</option>
-                </select>
-              </div>
+            <div class="field-col">
+              <label for="days">Trip length (days)</label>
+              <input
+                id="days"
+                name="days"
+                type="number"
+                min="1"
+                max="30"
+                placeholder="4"
+              />
             </div>
-
-            <div class="inline-fields-2">
-              <div class="field-group">
-                <label for="travelers">Who's going?</label>
-                <input
-                  id="travelers"
-                  name="travelers"
-                  type="text"
-                  placeholder="e.g. solo, couple, family with kids 6 & 8"
-                />
-              </div>
-              <div class="field-group">
-                <label for="pace">Preferred pace</label>
-                <select id="pace" name="pace">
-                  <option value="">Mix of busy & relaxed</option>
-                  <option value="slow">Slow and chill</option>
-                  <option value="moderate">Moderate</option>
-                  <option value="full">Full days, pack it in</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="field-group">
-              <label for="style">Travel style & interests</label>
-              <textarea
-                id="style"
-                name="style"
-                placeholder="e.g. food markets, coffee shops, live music, light hiking, less interested in museums"
-              ></textarea>
-              <div class="chip-row" aria-label="Quick interest suggestions">
-                <button type="button" class="chip" data-append="Street food">Street food</button>
-                <button type="button" class="chip" data-append="Museums & history">Museums & history</button>
-                <button type="button" class="chip" data-append="Hidden local spots">Hidden local spots</button>
-                <button type="button" class="chip" data-append="Nightlife & bars">Nightlife & bars</button>
-                <button type="button" class="chip" data-append="Kid-friendly activities">Kid-friendly activities</button>
-              </div>
-            </div>
-
-            <div class="field-group">
-              <label for="musts">Must-see or must-avoid</label>
-              <textarea
-                id="musts"
-                name="musts"
-                placeholder="e.g. Must see the Colosseum, avoid long lines, prefer walking to taxis"
-              ></textarea>
-            </div>
-
-            <div class="helper-row" style="margin-top: 6px;">
-              <p class="helper-text">
-                AI suggests the building blocks. You decide how to arrange your days.
-              </p>
-              <button type="submit" class="btn-primary" id="generate-btn">
-                <span class="icon">🧭</span>
-                <span>Generate Suggestions</span>
-              </button>
-            </div>
-
-            <p class="error-text" id="form-error" role="alert" style="display:none;"></p>
-          </form>
-        </section>
-
-        <!-- Right: Drag-and-drop itinerary builder -->
-        <section class="card" aria-label="Drag-and-drop itinerary builder">
-          <div class="card-title-row">
-            <h2 class="card-title">Build Your Itinerary</h2>
-            <span class="card-pill">Step 2 · Drag & drop your plan</span>
           </div>
 
-          <div class="result-meta">
-            <div class="status-pill" id="status-pill">
-              <span class="status-dot" id="status-dot"></span>
-              <span id="status-text">Describe your trip and generate suggestions.</span>
+          <div class="field-row">
+            <div class="field-col">
+              <label for="start">Start date (optional)</label>
+              <input id="start" name="start" type="date" />
             </div>
-            <span style="font-size:11px; color:#6b7280;">
-              Drag activities into each day and time slot to curate your trip.
+            <div class="field-col">
+              <label for="travelers">Who’s going?</label>
+              <input
+                id="travelers"
+                name="travelers"
+                type="text"
+                placeholder="Couple, family with kids, solo, friends..."
+              />
+            </div>
+          </div>
+
+          <div>
+            <label for="vibe">What kind of trip is this?</label>
+            <input
+              id="vibe"
+              name="vibe"
+              type="text"
+              placeholder="Relaxed, food-focused, museums, nightlife, outdoors..."
+            />
+          </div>
+
+          <div>
+            <label for="prefs">Anything specific to include or avoid?</label>
+            <textarea
+              id="prefs"
+              name="prefs"
+              placeholder="Example: No rental car. Prefer walkable areas and casual restaurants. One nice dinner."
+            ></textarea>
+            <p class="helper">
+              The AI will use this to personalize activity ideas. You don’t need to be super detailed.
+            </p>
+          </div>
+
+          <div class="actions">
+            <button type="submit" class="primary" id="generateBtn">
+              <span class="spinner-dot" id="spinner" style="display: none;"></span>
+              <span id="btnText">Generate trip ideas</span>
+            </button>
+            <span class="status-text" id="statusText">
+              Powered by AI. Usually just a few seconds.
             </span>
           </div>
 
-          <div class="planner-right">
-            <!-- Suggestions list -->
-            <div class="suggestion-panel">
-              <div class="panel-title">Suggestions from AI</div>
-              <div id="suggestions-list" class="suggestions-list">
-                <div id="suggestions-placeholder" class="suggestions-placeholder">
-                  Generate suggestions to see draggable activities here.
-                </div>
-              </div>
-            </div>
+          <p class="helper" style="margin-top: 4px;">
+            We don’t save your itinerary inputs right now; everything is generated on the fly.
+          </p>
+        </form>
+      </section>
 
-            <!-- Itinerary grid -->
-            <div class="itinerary-column">
-              <div class="itinerary-board-title">Your itinerary board</div>
-              <div id="itinerary-grid" class="itinerary-grid">
-                <!-- Filled via JS based on number of days -->
-              </div>
-            </div>
+      <!-- Right: results -->
+      <section class="panel">
+        <div class="suggestions-header">
+          <div>
+            <h2 class="suggestions-title">Suggested activities</h2>
+            <p class="panel-subtitle">
+              Once generated, your ideas will show up here in a simple list.
+            </p>
           </div>
+          <div class="suggestions-meta" id="metaSummary">
+            No results yet.
+          </div>
+        </div>
 
-          <div class="result-footer">
-            <span>When you’re ready, export your itinerary as clean text.</span>
-            <button
-              type="button"
-              class="btn-primary"
-              style="padding-inline: 10px; font-size: 11px;"
-              onclick="exportItineraryText()"
-            >
-              <span class="icon">📋</span>
-              <span>Export as Text</span>
-            </button>
+        <div id="suggestionsContainer" class="suggestions-list">
+          <div class="empty-state" id="emptyState">
+            <strong>Nothing here yet.</strong> Enter a destination and click
+            <em>Generate trip ideas</em> to see AI suggestions for your itinerary.
           </div>
-        </section>
+        </div>
+
+        <p class="helper" style="margin-top: 10px;">
+          Tip: After you like the quality of ideas, we can add drag-and-drop days and export tools.
+        </p>
       </section>
     </div>
   </main>
 
-  <footer class="site-footer">
+  <footer>
     <div class="footer-inner">
-      <span>© 2025 AITripPlan.com · Not official travel advice. Always verify important details before you travel.</span>
+      <span>© <span id="yearSpan"></span> AITripPlan.com</span>
       <div class="footer-links">
-        <a href="/privacy.html">Privacy</a>
         <a href="/about.html">About</a>
         <a href="/faq.html">FAQ</a>
+        <a href="/privacy.html">Privacy</a>
       </div>
     </div>
   </footer>
 
   <script>
-    const form = document.getElementById("trip-form");
-    const generateBtn = document.getElementById("generate-btn");
-    const statusPill = document.getElementById("status-pill");
-    const statusText = document.getElementById("status-text");
-    const formError = document.getElementById("form-error");
+    // Year in footer
+    document.getElementById("yearSpan").textContent = new Date().getFullYear();
 
-    const suggestionsList = document.getElementById("suggestions-list");
-    const suggestionsPlaceholder = document.getElementById("suggestions-placeholder");
-    const itineraryGrid = document.getElementById("itinerary-grid");
+    const form = document.getElementById("tripForm");
+    const generateBtn = document.getElementById("generateBtn");
+    const spinner = document.getElementById("spinner");
+    const btnText = document.getElementById("btnText");
+    const statusText = document.getElementById("statusText");
+    const suggestionsContainer = document.getElementById("suggestionsContainer");
+    const emptyState = document.getElementById("emptyState");
+    const metaSummary = document.getElementById("metaSummary");
 
-    let currentSuggestions = [];
-    let itineraryState = {}; // itineraryState[slotId] = suggestion
-    let currentDays = 0;
-
-    function setStatus(state, message) {
-      statusPill.classList.remove("loading", "error");
-      if (state === "idle") {
-        statusText.textContent = message || "Ready when you are.";
-      } else if (state === "loading") {
-        statusPill.classList.add("loading");
-        statusText.textContent = message || "Generating suggestions...";
-      } else if (state === "error") {
-        statusPill.classList.add("error");
-        statusText.textContent = message || "Something went wrong. Try again.";
-      }
-    }
-
-    function setLoading(isLoading) {
+    function setLoading(isLoading, msg) {
       if (isLoading) {
         generateBtn.disabled = true;
-        generateBtn.innerHTML = '<span class="icon">⏳</span><span>Generating...</span>';
+        spinner.style.display = "inline-block";
+        btnText.textContent = "Generating...";
+        statusText.innerHTML = msg || "<strong>Thinking...</strong> Asking AI for ideas.";
       } else {
         generateBtn.disabled = false;
-        generateBtn.innerHTML = '<span class="icon">🧭</span><span>Generate Suggestions</span>';
-      }
-    }
-
-    function showError(message) {
-      formError.textContent = message;
-      formError.style.display = "block";
-      setStatus("error", "There was a problem with your request.");
-    }
-
-    function clearBoard() {
-      itineraryState = {};
-      itineraryGrid.innerHTML = "";
-    }
-
-    function buildPrompt(data) {
-      const lines = [];
-      lines.push("Create a list of suggested activities for a drag-and-drop trip planner.");
-      lines.push("Do NOT plan the schedule. Just give flexible building blocks.");
-      lines.push("");
-      lines.push("Trip details:");
-      lines.push(`- Destination: ${data.destination}`);
-      lines.push(`- Trip length: ${data.days} days`);
-      lines.push(`- When: ${data.month || "Not specified"}`);
-      lines.push(`- Budget level: ${data.budget || "Not specified"}`);
-      lines.push(`- Who's going: ${data.travelers || "Not specified"}`);
-      lines.push(`- Preferred pace: ${data.pace || "Not specified"}`);
-      lines.push(`- Travel style & interests: ${data.style || "Not specified"}`);
-      lines.push(`- Must-see / must-avoid: ${data.musts || "Not specified"}`);
-      lines.push("");
-      lines.push("Return 12–24 activities suitable for morning, afternoon, or evening.");
-      lines.push("Include a mix of famous highlights and some local, less touristic options.");
-      lines.push("Prefer activities that are practical and realistic for the destination.");
-      return lines.join("\n");
-    }
-
-    // Interest chips
-    document.querySelectorAll(".chip").forEach((chip) => {
-      chip.addEventListener("click", () => {
-        const textarea = document.getElementById("style");
-        const value = chip.getAttribute("data-append");
-        if (!textarea) return;
-        const current = textarea.value.trim();
-        textarea.value = current
-          ? current + (current.endsWith(".") ? " " : ", ") + value
-          : value;
-        textarea.focus();
-      });
-    });
-
-    form.addEventListener("submit", async (event) => {
-      event.preventDefault();
-      formError.style.display = "none";
-
-      const destination = document.getElementById("destination").value.trim();
-      const daysValue = document.getElementById("days").value.trim();
-      const month = document.getElementById("month").value;
-      const budget = document.getElementById("budget").value;
-      const travelers = document.getElementById("travelers").value.trim();
-      const pace = document.getElementById("pace").value;
-      const style = document.getElementById("style").value.trim();
-      const musts = document.getElementById("musts").value.trim();
-
-      if (!destination) {
-        showError("Please enter a destination.");
-        return;
-      }
-      if (!daysValue || Number.isNaN(Number(daysValue)) || Number(daysValue) <= 0) {
-        showError("Please enter a valid trip length in days.");
-        return;
-      }
-
-      const days = Number(daysValue);
-
-      const payload = {
-        destination,
-        days,
-        month,
-        budget,
-        travelers,
-        pace,
-        style,
-        musts,
-        prompt: ""
-      };
-      payload.prompt = buildPrompt(payload);
-
-      setLoading(true);
-      setStatus("loading", "Generating suggestions from AI...");
-      clearBoard();
-      suggestionsList.innerHTML = "";
-      suggestionsPlaceholder.style.display = "block";
-
-      try {
-        const response = await fetch("/api/generate-itinerary", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        });
-
-     const data = await response.json().catch(() => ({}));
-
-if (!response.ok) {
-  console.log("Error from /api/generate-itinerary:", {
-    status: response.status,
-    raw: data,
-  });
-
-  const msg =
-    (data && typeof data.error === "string" && data.error) ||
-    `Server error (${response.status}).`;
-
-  showError(msg);
-  setLoading(false);
-  return;
-}
-
-
-        const suggestions = Array.isArray(data.suggestions) ? data.suggestions : [];
-        if (!suggestions.length) {
-          showError("No suggestions received. Try again with more detail.");
-          setLoading(false);
-          return;
+        spinner.style.display = "none";
+        btnText.textContent = "Generate trip ideas";
+        if (!msg) {
+          statusText.textContent = "Powered by AI. Usually just a few seconds.";
+        } else {
+          statusText.innerHTML = msg;
         }
-
-        currentSuggestions = suggestions;
-        currentDays = days;
-        renderSuggestions(suggestions);
-        buildItineraryGrid(days);
-        setStatus("idle", "Drag suggestions into the board to build your itinerary.");
-      } catch (err) {
-        console.error("Itinerary generation error:", err);
-        showError("Something went wrong while generating suggestions. Please try again.");
-      } finally {
-        setLoading(false);
       }
-    });
+    }
 
-    function renderSuggestions(suggestions) {
-      suggestionsList.innerHTML = "";
-      suggestionsPlaceholder.style.display = "none";
+    function renderSuggestions(suggestions, meta) {
+      suggestionsContainer.innerHTML = "";
+      if (!Array.isArray(suggestions) || suggestions.length === 0) {
+        suggestionsContainer.appendChild(emptyState);
+        emptyState.style.display = "block";
+        metaSummary.textContent = "No results. Try tweaking your input.";
+        return;
+      }
 
-      suggestions.forEach((s) => {
-        const card = document.createElement("div");
+      emptyState.style.display = "none";
+
+      suggestions.forEach((s, idx) => {
+        const card = document.createElement("article");
         card.className = "suggestion-card";
-        card.draggable = true;
-        card.dataset.suggestionId = s.id;
 
-        card.addEventListener("dragstart", onDragStartSuggestion);
+        const topRow = document.createElement("div");
+        topRow.className = "suggestion-top-row";
 
         const title = document.createElement("div");
         title.className = "suggestion-title";
-        title.textContent = s.title || "Activity";
+        title.textContent = s.title || "Activity " + (idx + 1);
 
-        const meta = document.createElement("div");
-        meta.className = "suggestion-meta";
-        meta.textContent = s.timeOfDay ? s.timeOfDay.toUpperCase() : "FLEX";
+        const chips = document.createElement("div");
+        chips.className = "chip-row";
 
-        const desc = document.createElement("div");
+        const todChip = document.createElement("span");
+        todChip.className = "chip accent";
+        let tod = (s.timeOfDay || "flex").toString().toLowerCase();
+        if (tod === "flex") todChip.textContent = "Flexible";
+        else if (tod === "morning") todChip.textContent = "Morning";
+        else if (tod === "afternoon") todChip.textContent = "Afternoon";
+        else if (tod === "evening") todChip.textContent = "Evening";
+        else todChip.textContent = "Any time";
+
+        chips.appendChild(todChip);
+
+        if (typeof s.dayHint === "number" && isFinite(s.dayHint)) {
+          const dayChip = document.createElement("span");
+          dayChip.className = "chip";
+          dayChip.textContent = "Day " + s.dayHint;
+          chips.appendChild(dayChip);
+        }
+
+        topRow.appendChild(title);
+        topRow.appendChild(chips);
+
+        const desc = document.createElement("p");
         desc.className = "suggestion-desc";
-        desc.textContent = s.description || "";
+        desc.textContent =
+          s.description ||
+          "No description provided, but this activity sounded interesting.";
 
-        card.appendChild(title);
-        card.appendChild(meta);
-        if (desc.textContent.trim()) card.appendChild(desc);
-        suggestionsList.appendChild(card);
+        const notes = document.createElement("p");
+        notes.className = "suggestion-notes";
+        notes.textContent =
+          s.notes || "No extra notes from the AI for this one.";
+
+        card.appendChild(topRow);
+        card.appendChild(desc);
+        card.appendChild(notes);
+
+        suggestionsContainer.appendChild(card);
       });
-    }
 
-    function buildItineraryGrid(days) {
-      itineraryGrid.innerHTML = "";
-      itineraryState = {};
-
-      const slots = ["morning", "afternoon", "evening"];
-
-      for (let d = 1; d <= days; d++) {
-        const dayCard = document.createElement("div");
-        dayCard.className = "itinerary-day";
-
-        const dayHeader = document.createElement("div");
-        dayHeader.className = "itinerary-day-header";
-        dayHeader.textContent = `Day ${d}`;
-        dayCard.appendChild(dayHeader);
-
-        const slotGrid = document.createElement("div");
-        slotGrid.className = "day-slot-grid";
-
-        slots.forEach((slotName) => {
-          const slotId = `day${d}-${slotName}`;
-          const slot = document.createElement("div");
-          slot.className = "itinerary-slot";
-          slot.dataset.slotId = slotId;
-          slot.dataset.day = String(d);
-          slot.dataset.timeOfDay = slotName;
-
-          slot.addEventListener("dragover", onDragOverSlot);
-          slot.addEventListener("drop", onDropOnSlot);
-          slot.addEventListener("dragleave", onDragLeaveSlot);
-
-          const label = document.createElement("div");
-          label.className = "slot-label";
-          label.textContent = slotName.charAt(0).toUpperCase() + slotName.slice(1);
-
-          slot.appendChild(label);
-          slotGrid.appendChild(slot);
-        });
-
-        dayCard.appendChild(slotGrid);
-        itineraryGrid.appendChild(dayCard);
+      if (meta && meta.error) {
+        metaSummary.textContent =
+          suggestions.length + " ideas (with fallback: " + meta.error + ")";
+      } else {
+        metaSummary.textContent = suggestions.length + " ideas generated.";
       }
     }
 
-    function onDragStartSuggestion(event) {
-      const id = event.currentTarget.dataset.suggestionId;
-      event.dataTransfer.setData("text/plain", id);
-      event.dataTransfer.effectAllowed = "move";
-    }
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
 
-    function onDragOverSlot(event) {
-      event.preventDefault();
-      event.dataTransfer.dropEffect = "move";
-      event.currentTarget.classList.add("is-drag-over");
-    }
+      const destination = document.getElementById("destination").value.trim();
+      const days = document.getElementById("days").value.trim();
+      const start = document.getElementById("start").value.trim();
+      const travelers = document.getElementById("travelers").value.trim();
+      const vibe = document.getElementById("vibe").value.trim();
+      const prefs = document.getElementById("prefs").value.trim();
 
-    function onDragLeaveSlot(event) {
-      event.currentTarget.classList.remove("is-drag-over");
-    }
-
-    function onDropOnSlot(event) {
-      event.preventDefault();
-      const slot = event.currentTarget;
-      const slotId = slot.dataset.slotId;
-      slot.classList.remove("is-drag-over");
-
-      const suggestionId = event.dataTransfer.getData("text/plain");
-      const suggestion = currentSuggestions.find((s) => s.id === suggestionId);
-      if (!suggestion) return;
-
-      // Clear old content (except label)
-      const children = Array.from(slot.children);
-      children.forEach((child, idx) => {
-        if (idx > 0) slot.removeChild(child); // keep first (label)
-      });
-
-      const pill = document.createElement("div");
-      pill.className = "slot-activity";
-
-      const title = document.createElement("div");
-      title.className = "slot-activity-title";
-      title.textContent = suggestion.title || "Activity";
-
-      const desc = document.createElement("div");
-      desc.className = "slot-activity-desc";
-      desc.textContent = suggestion.description || "";
-
-      pill.appendChild(title);
-      if (desc.textContent.trim()) pill.appendChild(desc);
-      slot.appendChild(pill);
-
-      itineraryState[slotId] = suggestion;
-    }
-
-    async function exportItineraryText() {
-      if (!currentDays || !Object.keys(itineraryState).length) {
-        alert("Drag at least one activity into the itinerary board before exporting.");
+      if (!destination) {
+        statusText.innerHTML =
+          "<span class='status-error'>Please enter a destination first.</span>";
         return;
       }
 
-      const lines = [];
-      lines.push("Trip Itinerary");
-      lines.push("==============");
-      lines.push("");
+      const promptParts = [];
+      promptParts.push("Destination: " + destination + ".");
+      if (days) promptParts.push("Trip length: " + days + " days.");
+      if (start) promptParts.push("Start date: " + start + ".");
+      if (travelers) promptParts.push("Who is going: " + travelers + ".");
+      if (vibe) promptParts.push("Trip vibe: " + vibe + ".");
+      if (prefs) promptParts.push("Preferences: " + prefs + ".");
 
-      const slots = ["morning", "afternoon", "evening"];
+      const finalPrompt =
+        "Generate activity suggestions for this trip. " +
+        promptParts.join(" ") +
+        " Respond only with JSON object: { \"suggestions\": [ ... ] }.";
 
-      for (let d = 1; d <= currentDays; d++) {
-        lines.push(`Day ${d}`);
-        slots.forEach((slotName) => {
-          const slotId = `day${d}-${slotName}`;
-          const activity = itineraryState[slotId];
-          const label = slotName.charAt(0).toUpperCase() + slotName.slice(1);
+      setLoading(true);
 
-          if (activity) {
-            lines.push(`  ${label}: ${activity.title}`);
-            if (activity.description) {
-              lines.push(`    • ${activity.description}`);
-            }
-            if (activity.notes) {
-              lines.push(`    Notes: ${activity.notes}`);
-            }
-          } else {
-            lines.push(`  ${label}: (open / free time)`);
-          }
-        });
-        lines.push("");
-      }
-
-      const text = lines.join("\n");
       try {
-        await navigator.clipboard.writeText(text);
-        setStatus("idle", "Exported to clipboard. Paste it into your notes or doc.");
-        alert("Itinerary copied to clipboard.");
+        const res = await fetch("/api/generate-itinerary", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ prompt: finalPrompt })
+        });
+
+        const dataText = await res.text();
+        console.log("Raw /api/generate-itinerary response:", dataText);
+
+        let data;
+        try {
+          data = JSON.parse(dataText);
+        } catch (err) {
+          console.error("Failed to parse JSON:", err);
+          setLoading(false, "<span class='status-error'>Server returned invalid JSON. Check console logs.</span>");
+          return;
+        }
+
+        const suggestions = Array.isArray(data.suggestions)
+          ? data.suggestions
+          : [];
+
+        renderSuggestions(suggestions, { error: data.error });
+        if (data.error) {
+          statusText.innerHTML =
+            "<span class='status-error'>Using fallback ideas: " +
+            data.error +
+            "</span>";
+        } else {
+          statusText.innerHTML = "<strong>Done.</strong> Scroll through your ideas.";
+        }
       } catch (err) {
-        console.error("Clipboard error:", err);
-        alert("Unable to copy automatically. A text version will be shown in a prompt.");
-        window.prompt("Copy your itinerary:", text);
+        console.error("Error calling /api/generate-itinerary:", err);
+        setLoading(false, "<span class='status-error'>Network error. Check console logs.</span>");
+        return;
       }
-    }
+
+      setLoading(false);
+    });
   </script>
 </body>
 </html>
