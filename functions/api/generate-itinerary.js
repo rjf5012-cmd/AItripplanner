@@ -55,11 +55,19 @@ export async function onRequestPost({ request, env }) {
             role: "system",
             content:
               "You are an expert travel planner for a simple itinerary builder. " +
-              "You ALWAYS respond with valid JSON only, no extra text. " +
+              "You ALWAYS respond with valid JSON only, no extra text before or after. " +
               "Return a single JSON object with a 'suggestions' array. " +
-              "Each suggestion must have: " +
-              "id (string), title (string), timeOfDay ('morning'|'afternoon'|'evening'|'flex'), " +
-              "dayHint (number or null), description (string), and notes (string).",
+              "Each suggestion object MUST have EXACTLY these keys: " +
+              "id (string), title (string), timeOfDay (one of 'morning','afternoon','evening','flex'), " +
+              "dayHint (number or null), description (short string), and notes (short string). " +
+              "If the user prompt includes a trip length in days (for example: 'Trip length: 4 days.'), " +
+              "you MUST assume that is the number of days in the itinerary. " +
+              "In that case, you MUST: " +
+              "(1) assign dayHint values as integers from 1 up to that trip length, " +
+              "(2) spread suggestions across ALL days so that every day from 1 to the trip length has at least one suggestion, and " +
+              "(3) aim for about 3 suggestions per day (morning, afternoon, evening). " +
+              "The total number of suggestions when a trip length is given should be at least 2 times the number of days and at most 18. " +
+              "If no trip length is specified, return 8–10 general suggestions with dayHint set to null.",
           },
           {
             role: "user",
