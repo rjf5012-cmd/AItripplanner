@@ -120,6 +120,8 @@
       gap: 18px;
       font-size: 14px;
       color: var(--muted);
+      flex-wrap: wrap;
+      justify-content: flex-end;
     }
 
     .nav-links a {
@@ -287,6 +289,7 @@
       align-items: center;
       justify-content: flex-start;
       gap: 10px;
+      flex-wrap: wrap;
     }
 
     button.primary {
@@ -362,6 +365,7 @@
       justify-content: space-between;
       gap: 10px;
       margin-bottom: 10px;
+      flex-wrap: wrap;
     }
 
     .suggestions-title {
@@ -409,6 +413,7 @@
       display: flex;
       gap: 6px;
       font-size: 10px;
+      flex-wrap: wrap;
     }
 
     .chip {
@@ -513,7 +518,7 @@
           </div>
           <h1 class="panel-title">Tell the AI where you’re going</h1>
           <p class="panel-subtitle">
-            Keep it high-level &amp; fast. The AI will return a list of ideas you can skim through.
+            Keep it high-level & fast. The AI will return a list of ideas you can skim through.
           </p>
         </div>
 
@@ -583,7 +588,7 @@
 
           <div class="actions">
             <button type="submit" class="primary" id="generateBtn">
-              <span class="spinner-dot" id="spinner" style="display: none;"></span>
+              <span class="spinner-dot" id="spinner" style="display:none;"></span>
               <span id="btnText">Generate trip ideas</span>
             </button>
             <span class="status-text" id="statusText">
@@ -654,7 +659,8 @@
         generateBtn.disabled = true;
         spinner.style.display = "inline-block";
         btnText.textContent = "Generating...";
-        statusText.innerHTML = msg || "<strong>Thinking...</strong> Asking AI for ideas.";
+        statusText.innerHTML =
+          msg || "<strong>Thinking...</strong> Asking AI for ideas.";
       } else {
         generateBtn.disabled = false;
         spinner.style.display = "none";
@@ -668,9 +674,7 @@
     }
 
     function renderSuggestions(suggestions) {
-      console.log("Rendering suggestions:", suggestions);
       suggestionsContainer.innerHTML = "";
-
       if (!Array.isArray(suggestions) || suggestions.length === 0) {
         emptyState.style.display = "block";
         suggestionsContainer.appendChild(emptyState);
@@ -696,13 +700,11 @@
 
         const todChip = document.createElement("span");
         todChip.className = "chip accent";
-
         let tod = (s.timeOfDay || "flex").toString().toLowerCase();
         if (tod === "morning") todChip.textContent = "Morning";
         else if (tod === "afternoon") todChip.textContent = "Afternoon";
         else if (tod === "evening") todChip.textContent = "Evening";
-        else if (tod === "flex") todChip.textContent = "Flexible";
-        else todChip.textContent = "Any time";
+        else todChip.textContent = "Flexible";
 
         chips.appendChild(todChip);
 
@@ -753,20 +755,18 @@
         return;
       }
 
-      const promptParts = [];
-      promptParts.push("Destination: " + destination + ".");
-      if (days) promptParts.push("Trip length: " + days + " days.");
-      if (start) promptParts.push("Start date: " + start + ".");
-      if (travelers) promptParts.push("Who is going: " + travelers + ".");
-      if (vibe) promptParts.push("Trip vibe: " + vibe + ".");
-      if (prefs) promptParts.push("Preferences: " + prefs + ".");
+      const parts = [];
+      parts.push("Destination: " + destination + ".");
+      if (days) parts.push("Trip length: " + days + " days.");
+      if (start) parts.push("Start date: " + start + ".");
+      if (travelers) parts.push("Who is going: " + travelers + ".");
+      if (vibe) parts.push("Trip vibe: " + vibe + ".");
+      if (prefs) parts.push("Preferences: " + prefs + ".");
 
       const finalPrompt =
         "Generate activity suggestions for this trip. " +
-        promptParts.join(" ") +
-        " Respond only with a JSON object: { \"suggestions\": [ ... ] }.";
-
-      console.log("Sending prompt to /api/generate-itinerary:", finalPrompt);
+        parts.join(" ") +
+        " Respond only with JSON object: { \"suggestions\": [ ... ] }.";
 
       setLoading(true);
 
@@ -774,31 +774,28 @@
         const res = await fetch("/api/generate-itinerary", {
           method: "POST",
           headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
           },
-          body: JSON.stringify({ prompt: finalPrompt })
+          body: JSON.stringify({ prompt: finalPrompt }),
         });
 
-        console.log("Response status from /api/generate-itinerary:", res.status);
-
         const text = await res.text();
-        console.log("Raw /api/generate-itinerary response:", text);
-
         let data;
         try {
           data = JSON.parse(text);
         } catch (err) {
-          console.error("Failed to parse JSON from /api/generate-itinerary:", err);
-          setLoading(false, "<span class='status-error'>Server did not return valid JSON.</span>");
+          console.error("Failed to parse JSON from server:", err, text);
+          setLoading(false,
+            "<span class='status-error'>Server returned invalid JSON. Check console logs.</span>"
+          );
           return;
         }
 
         if (!res.ok) {
-          console.error("Non-OK response:", data);
-          setLoading(
-            false,
+          console.error("Server error:", data);
+          setLoading(false,
             "<span class='status-error'>Server error: " +
-              (data.error || "Unknown error") +
+              (data.error || res.status) +
               "</span>"
           );
           return;
@@ -812,8 +809,7 @@
         setLoading(false, "<strong>Done.</strong> Scroll through your ideas.");
       } catch (err) {
         console.error("Network error calling /api/generate-itinerary:", err);
-        setLoading(
-          false,
+        setLoading(false,
           "<span class='status-error'>Network error. Check console logs.</span>"
         );
       }
