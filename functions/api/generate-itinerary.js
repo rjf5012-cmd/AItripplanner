@@ -41,6 +41,39 @@ export async function onRequestPost({ request, env }) {
       );
     }
 
+    // --- Derive number of days from the prompt (Trip length: X days.) ---
+    let inferredDays = 3; // sensible default
+    const match = userPrompt.match(/Trip length:\s*(\d+)\s*days/i);
+    if (match && match[1]) {
+      const parsed = parseInt(match[1], 10);
+      if (Number.isFinite(parsed) && parsed > 0) {
+        inferredDays = parsed;
+      }
+    }
+
+    // Hard cap so we don't ask for 30 * 3 = 90 suggestions
+    const days = Math.min(Math.max(inferredDays, 1), 7);
+    const totalSuggestions = days * 3;
+
+    // --- Build an augmented prompt that the model can follow easily ---
+    const itineraryInstructions = [
+      `The trip should last exactly ${days} day(s).`,
+      `You MUST return exactly ${totalSuggestions} suggestions in the "suggestions" array.`,
+      `Distribute suggestions evenly across the days so there are exactly 3 suggestions per day.`,
+      `For each day d (1 to ${days}) you MUST include exactly:`,
+      `- 1 suggestion with "timeOfDay": "morning"`,
+      `- 1 suggestion with "timeOfDay": "afternoon"`,
+      `- 1 suggestion with "timeOfDay": "evening"`,
+      `Set "dayHint" to the correct day number (1–${days}) for each suggestion.`,
+      `Keep titles short and scannable; keep description and notes concise (1–2 sentences each).`,
+    ].join("\n");
+
+    const combinedPrompt =
+      userPrompt +
+      "\n\n" +
+      "Trip structure constraints:\n" +
+      itineraryInstructions;
+
     // Call OpenAI Chat Completions API – same pattern as your working /api/gifts
     const openaiRes = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
@@ -49,7 +82,7 @@ export async function onRequestPost({ request, env }) {
         Authorization: `Bearer ${env.OPENAI_API_KEY}`,
       },
       body: JSON.stringify({
-        model: "gpt-4.1-mini", // same model family you're already using successfully
+        model: "gpt-4.1-mini",
         messages: [
           {
             role: "system",
@@ -63,7 +96,7 @@ export async function onRequestPost({ request, env }) {
           },
           {
             role: "user",
-            content: userPrompt,
+            content: combinedPrompt,
           },
         ],
         temperature: 0.7,
@@ -94,7 +127,7 @@ export async function onRequestPost({ request, env }) {
       );
     }
 
-    const message = openaiJson?.choices?.[0]?.message?.content;
+    let message = openaiJson?.choices?.[0]?.message?.content;
     if (!message || typeof message !== "string") {
       return jsonResponse(
         { error: "No content returned from OpenAI." },
@@ -102,11 +135,26 @@ export async function onRequestPost({ request, env }) {
       );
     }
 
+    // --- Clean up possible ```json fences around the content ---
+    let cleaned = message.trim();
+    if (cleaned.startsWith("```")) {
+      // Remove leading ```json or ``` fence
+      const firstNewline = cleaned.indexOf("\n");
+      if (firstNewline !== -1) {
+        cleaned = cleaned.slice(firstNewline + 1);
+      }
+      // Remove trailing ```
+      if (cleaned.endsWith("```")) {
+        cleaned = cleaned.slice(0, -3);
+      }
+      cleaned = cleaned.trim();
+    }
+
     let parsed;
     try {
-      parsed = JSON.parse(message);
+      parsed = JSON.parse(cleaned);
     } catch (e) {
-      console.error("Failed to parse OpenAI JSON content:", e, message);
+      console.error("Failed to parse OpenAI JSON content:", e, cleaned);
       return jsonResponse(
         { error: "Failed to parse AI response as JSON." },
         502
@@ -116,6 +164,12 @@ export async function onRequestPost({ request, env }) {
     const suggestions = Array.isArray(parsed.suggestions)
       ? parsed.suggestions
       : [];
+
+    // Optional: light sanity check on count; don't fail, just return what we have
+    // (you can enforce stricter behavior later if you want)
+    if (!suggestions.length) {
+      console.warn("AI returned zero suggestions.", parsed);
+    }
 
     return jsonResponse({ suggestions });
   } catch (err) {
