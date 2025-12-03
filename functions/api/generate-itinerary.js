@@ -41,7 +41,7 @@ export async function onRequestPost({ request, env }) {
       );
     }
 
-    // Call OpenAI Chat Completions API – same pattern as your working /api/gifts
+    // Call OpenAI Chat Completions API – similar to your working /api/gifts
     const openaiRes = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -49,25 +49,22 @@ export async function onRequestPost({ request, env }) {
         Authorization: `Bearer ${env.OPENAI_API_KEY}`,
       },
       body: JSON.stringify({
-        model: "gpt-4.1-mini", // same model family you're already using successfully
+        model: "gpt-4.1-mini",
         messages: [
           {
             role: "system",
             content:
               "You are an expert travel planner for a simple itinerary builder. " +
-              "You ALWAYS respond with valid JSON only, no extra text before or after. " +
+              "You ALWAYS respond with valid JSON only, no extra text. " +
               "Return a single JSON object with a 'suggestions' array. " +
-              "Each suggestion object MUST have EXACTLY these keys: " +
-              "id (string), title (string), timeOfDay (one of 'morning','afternoon','evening','flex'), " +
-              "dayHint (number or null), description (short string), and notes (short string). " +
-              "If the user prompt includes a trip length in days (for example: 'Trip length: 4 days.'), " +
-              "you MUST assume that is the number of days in the itinerary. " +
-              "In that case, you MUST: " +
-              "(1) assign dayHint values as integers from 1 up to that trip length, " +
-              "(2) spread suggestions across ALL days so that every day from 1 to the trip length has at least one suggestion, and " +
-              "(3) aim for about 3 suggestions per day (morning, afternoon, evening). " +
-              "The total number of suggestions when a trip length is given should be at least 2 times the number of days and at most 18. " +
-              "If no trip length is specified, return 8–10 general suggestions with dayHint set to null.",
+              "Each suggestion must have: " +
+              "id (string), title (string), timeOfDay ('morning'|'afternoon'|'evening'|'flex'), " +
+              "dayHint (number or null), description (string), and notes (string). " +
+              "If the user prompt mentions a trip length like 'Trip length: X days.', " +
+              "distribute suggestions across days 1..X using the 'dayHint' field so that " +
+              "each day has at least one morning, one afternoon, and one evening option when possible. " +
+              "You may also include a few flexible ('flex') ideas with dayHint = null. " +
+              "The final response MUST be valid JSON and MUST NOT include markdown, comments, or extra text.",
           },
           {
             role: "user",
