@@ -41,7 +41,7 @@ export async function onRequestPost({ request, env }) {
       );
     }
 
-    // Call OpenAI Chat Completions API – similar to your working /api/gifts
+    // Call OpenAI Chat Completions API – same pattern as your working /api/gifts
     const openaiRes = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -60,10 +60,12 @@ export async function onRequestPost({ request, env }) {
               "Each suggestion must have: " +
               "id (string), title (string), timeOfDay ('morning'|'afternoon'|'evening'|'flex'), " +
               "dayHint (number or null), description (string), and notes (string). " +
-              "If the user prompt mentions a trip length like 'Trip length: X days.', " +
-              "distribute suggestions across days 1..X using the 'dayHint' field so that " +
-              "each day has at least one morning, one afternoon, and one evening option when possible. " +
-              "You may also include a few flexible ('flex') ideas with dayHint = null. " +
+              "If the user prompt includes a line like 'Trip length: X days.', then: " +
+              "1) You MUST create at least 3 suggestions per day (one morning, one afternoon, one evening) " +
+              "   so the minimum total suggestions is X * 3. " +
+              "2) Use dayHint as an integer from 1 to X indicating which day the activity fits best. " +
+              "3) You may optionally add extra flexible ('flex') ideas with dayHint = null that work on any day. " +
+              "If no trip length is given, assume 3 days and still create at least 9 suggestions. " +
               "The final response MUST be valid JSON and MUST NOT include markdown, comments, or extra text.",
           },
           {
@@ -72,6 +74,8 @@ export async function onRequestPost({ request, env }) {
           },
         ],
         temperature: 0.7,
+        // You can tweak this if you ever need more/less detail
+        max_tokens: 900,
       }),
     });
 
