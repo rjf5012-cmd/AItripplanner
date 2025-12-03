@@ -4,32 +4,33 @@
   <meta charset="UTF-8" />
   <title>Plan a Trip | AITripPlan — AI Trip Itinerary Generator</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Use AITripPlan to generate a personalized day-by-day trip itinerary. Get AI suggestions, then drag and drop activities into your plan." />
+  <meta name="description" content="Use AITripPlan to generate a personalized trip itinerary. Get AI suggestions, then drag and drop activities into your plan." />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="canonical" href="https://aitripplan.com/plan.html" />
 
   <!-- Font (Inter) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
   <style>
     :root {
       --bg-page: #f3f4f6;
+      --bg-soft: #eef2ff;
       --bg-card: #ffffff;
       --text-main: #0f172a;
       --text-soft: #4b5563;
       --text-muted: #6b7280;
+      --border-subtle: rgba(209, 213, 219, 1);
+      --border-strong: #d1d5db;
       --accent: #2563eb;
       --accent-green: #22c55e;
-      --accent-pink: #ec4899;
       --accent-yellow: #facc15;
-      --border-subtle: rgba(209, 213, 219, 1);
-      --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.10);
+      --shadow-soft: 0 14px 30px rgba(15, 23, 42, 0.10);
       --radius-lg: 18px;
-      --radius-xl: 28px;
+      --radius-xl: 24px;
       --radius-pill: 999px;
-      --transition-fast: 150ms ease-out;
+      --transition-fast: 140ms ease-out;
     }
 
     * {
@@ -40,8 +41,8 @@
       margin: 0;
       font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background:
-        radial-gradient(circle at 0% 0%, rgba(37, 99, 235, 0.06), transparent 60%),
-        radial-gradient(circle at 100% 0%, rgba(236, 72, 153, 0.06), transparent 60%),
+        radial-gradient(circle at 0% 0%, rgba(37, 99, 235, 0.06), transparent 55%),
+        radial-gradient(circle at 100% 0%, rgba(236, 72, 153, 0.06), transparent 55%),
         var(--bg-page);
       color: var(--text-main);
     }
@@ -51,21 +52,21 @@
       text-decoration: none;
     }
 
-    /* Header / Nav (same as other pages) */
+    /* Header / Nav */
     header.site-header {
       position: fixed;
       inset-inline: 0;
       top: 0;
       z-index: 40;
-      background: rgba(255, 255, 255, 0.9);
+      background: rgba(255, 255, 255, 0.92);
       backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(209, 213, 219, 0.8);
+      border-bottom: 1px solid rgba(209, 213, 219, 0.85);
     }
 
     .nav-inner {
       max-width: 1120px;
       margin: 0 auto;
-      padding: 14px 18px;
+      padding: 12px 18px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -85,7 +86,7 @@
       width: 34px;
       height: 34px;
       border-radius: 999px;
-      box-shadow: 0 5px 14px rgba(15, 23, 42, 0.20);
+      box-shadow: 0 5px 14px rgba(15, 23, 42, 0.18);
       overflow: hidden;
     }
 
@@ -134,7 +135,7 @@
 
     .nav-cta {
       padding: 7px 14px;
-      border-radius: 999px;
+      border-radius: var(--radius-pill);
       border: none;
       background: linear-gradient(135deg, #2563eb, #22c55e, #ec4899);
       color: #f9fafb;
@@ -147,6 +148,7 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
+      white-space: nowrap;
     }
 
     .nav-cta span.icon {
@@ -196,7 +198,6 @@
       max-width: 620px;
     }
 
-    /* Grid */
     .planner-grid {
       display: grid;
       gap: 18px;
@@ -209,21 +210,15 @@
       }
     }
 
-    /* Card base */
+    /* Card */
     .card {
       background: var(--bg-card);
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--border-subtle);
-      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
-      padding: 18px 16px 18px;
+      border-radius: var(--radius-xl);
+      border: 1px solid rgba(209, 213, 219, 0.9);
+      box-shadow: var(--shadow-soft);
+      padding: 20px 18px 20px;
       position: relative;
       overflow: hidden;
-    }
-
-    @media (min-width: 900px) {
-      .card {
-        padding: 20px 18px 20px;
-      }
     }
 
     .card::before {
@@ -260,10 +255,11 @@
     .card-pill {
       font-size: 11px;
       padding: 4px 9px;
-      border-radius: 999px;
+      border-radius: var(--radius-pill);
       border: 1px solid var(--border-subtle);
       background: #f9fafb;
       color: var(--text-soft);
+      white-space: nowrap;
     }
 
     /* Form */
@@ -325,8 +321,8 @@
     input:focus,
     select:focus,
     textarea:focus {
-      border-color: rgba(37, 99, 235, 0.8);
-      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.25);
+      border-color: rgba(37, 99, 235, 0.9);
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.18);
       transform: translateY(-0.5px);
       background: #f9fafb;
     }
@@ -375,7 +371,7 @@
 
     .chip {
       padding: 4px 11px;
-      border-radius: 999px;
+      border-radius: var(--radius-pill);
       border: 1px solid var(--border-subtle);
       font-size: 11px;
       color: var(--text-muted);
@@ -390,7 +386,7 @@
     }
 
     .chip:hover {
-      border-color: rgba(37, 99, 235, 0.8);
+      border-color: rgba(37, 99, 235, 0.9);
       color: #1d4ed8;
       background: #eff6ff;
       box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08);
@@ -431,11 +427,6 @@
       box-shadow: 0 16px 36px rgba(37, 99, 235, 0.45);
     }
 
-    .btn-primary:active:not([disabled]) {
-      transform: translateY(0);
-      box-shadow: 0 8px 22px rgba(37, 99, 235, 0.35);
-    }
-
     .btn-primary[disabled] {
       opacity: 0.75;
       cursor: default;
@@ -449,7 +440,7 @@
       margin-top: 4px;
     }
 
-    /* Status pills */
+    /* Status / meta */
     .result-meta {
       display: flex;
       justify-content: space-between;
@@ -466,7 +457,7 @@
       align-items: center;
       gap: 8px;
       padding: 5px 11px;
-      border-radius: 999px;
+      border-radius: var(--radius-pill);
       border: 1px solid var(--border-subtle);
       background: #f9fafb;
       font-size: 11px;
@@ -502,6 +493,190 @@
       align-items: center;
     }
 
+    /* Layout for suggestions + board */
+    .planner-right {
+      display: flex;
+      gap: 12px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .suggestion-panel {
+      flex: 1 1 220px;
+      min-width: 220px;
+      max-height: 420px;
+      overflow: auto;
+      border-radius: 16px;
+      border: 1px solid var(--border-subtle);
+      background: #f9fafb;
+      padding: 8px;
+    }
+
+    .panel-title {
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #4b5563;
+    }
+
+    .suggestions-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 12px;
+    }
+
+    .suggestions-placeholder {
+      color: #9ca3af;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .suggestion-card {
+      border-radius: 10px;
+      border: 1px solid var(--border-subtle);
+      background: #ffffff;
+      padding: 6px 8px;
+      cursor: grab;
+      box-shadow: 0 2px 5px rgba(15, 23, 42, 0.06);
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      transition:
+        box-shadow var(--transition-fast),
+        transform var(--transition-fast),
+        border-color var(--transition-fast),
+        background var(--transition-fast);
+    }
+
+    .suggestion-card:hover {
+      box-shadow: 0 4px 10px rgba(15, 23, 42, 0.10);
+      transform: translateY(-1px);
+      border-color: rgba(37, 99, 235, 0.65);
+      background: #fdfefe;
+    }
+
+    .suggestion-title {
+      font-weight: 600;
+      font-size: 12px;
+      color: #111827;
+    }
+
+    .suggestion-meta {
+      font-size: 11px;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .suggestion-desc {
+      font-size: 11px;
+      color: #4b5563;
+    }
+
+    .itinerary-column {
+      flex: 2 1 320px;
+      min-width: 280px;
+    }
+
+    .itinerary-board-title {
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #4b5563;
+    }
+
+    .itinerary-grid {
+      display: grid;
+      gap: 8px;
+    }
+
+    .itinerary-day {
+      border-radius: 16px;
+      border: 1px solid var(--border-subtle);
+      background: #f9fafb;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .itinerary-day-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    .itinerary-day-sub {
+      font-size: 11px;
+      color: #9ca3af;
+    }
+
+    .day-slot-grid {
+      display: grid;
+      gap: 6px;
+    }
+
+    @media (min-width: 700px) {
+      .day-slot-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    .itinerary-slot {
+      min-height: 80px;
+      border-radius: 10px;
+      border: 1px dashed var(--border-strong);
+      background: #ffffff;
+      padding: 4px;
+      font-size: 11px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      transition:
+        border-color var(--transition-fast),
+        background var(--transition-fast),
+        box-shadow var(--transition-fast),
+        transform var(--transition-fast);
+    }
+
+    .itinerary-slot.is-drag-over {
+      background: #eef2ff;
+      border-style: solid;
+      border-color: rgba(37, 99, 235, 0.85);
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.25);
+      transform: translateY(-1px);
+    }
+
+    .slot-label {
+      color: #9ca3af;
+      font-weight: 600;
+    }
+
+    .slot-activity {
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+      background: #f3f4f6;
+      padding: 4px 6px;
+      font-size: 11px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      cursor: grab;
+    }
+
+    .slot-activity-title {
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .slot-activity-desc {
+      color: #4b5563;
+    }
+
     footer.site-footer {
       border-top: 1px solid rgba(209, 213, 219, 1);
       padding: 18px 18px 26px;
@@ -525,10 +700,6 @@
       gap: 12px;
     }
 
-    .footer-links a {
-      color: var(--text-muted);
-    }
-
     .footer-links a:hover {
       text-decoration: underline;
     }
@@ -549,15 +720,15 @@
           <svg width="34" height="34" viewBox="0 0 34 34" xmlns="http://www.w3.org/2000/svg">
             <defs>
               <linearGradient id="logoGrad" x1="4" y1="4" x2="30" y2="30">
-                <stop offset="0%" stop-color="#2563EB"/>
-                <stop offset="50%" stop-color="#22C55E"/>
-                <stop offset="100%" stop-color="#EC4899"/>
+                <stop offset="0%" stop-color="#2563EB" />
+                <stop offset="50%" stop-color="#22C55E" />
+                <stop offset="100%" stop-color="#EC4899" />
               </linearGradient>
             </defs>
-            <circle cx="17" cy="17" r="17" fill="white"/>
-            <circle cx="17" cy="17" r="14" fill="url(#logoGrad)"/>
-            <path d="M17 8 L20.5 17 L17 26 L13.5 17 Z" fill="white" opacity="0.95"/>
-            <circle cx="17" cy="17" r="3" fill="white"/>
+            <circle cx="17" cy="17" r="17" fill="white" />
+            <circle cx="17" cy="17" r="14" fill="url(#logoGrad)" />
+            <path d="M17 8 L20.5 17 L17 26 L13.5 17 Z" fill="white" opacity="0.95" />
+            <circle cx="17" cy="17" r="3" fill="white" />
           </svg>
         </div>
         <div class="logo-word">
@@ -584,8 +755,8 @@
         <div class="page-eyebrow">Trip planner</div>
         <h1 class="page-title">Generate & curate your itinerary</h1>
         <p class="page-subtitle">
-          First, tell AITripPlan about your trip. Then drag and drop suggested activities
-          into each day and time slot to build your perfect itinerary.
+          Tell AITripPlan about your trip, then drag and drop suggested activities into each day and time slot
+          to build a clean, tailored itinerary.
         </p>
       </header>
 
@@ -702,7 +873,7 @@
 
             <div class="helper-row" style="margin-top: 6px;">
               <p class="helper-text">
-                The AI will suggest a mix of activities. You decide where they fit in your day.
+                AI suggests the building blocks. You decide how to arrange your days.
               </p>
               <button type="submit" class="btn-primary" id="generate-btn">
                 <span class="icon">🧭</span>
@@ -731,32 +902,28 @@
             </span>
           </div>
 
-          <div style="display:flex; gap:12px; margin-top:10px; flex-wrap:wrap;">
+          <div class="planner-right">
             <!-- Suggestions list -->
-            <div style="flex:1 1 220px; min-width:220px; max-height:420px; overflow:auto; border-radius:14px; border:1px solid #e5e7eb; background:#f9fafb; padding:8px;">
-              <div style="font-size:12px; font-weight:600; margin-bottom:6px; color:#4b5563;">
-                Suggestions from AI
-              </div>
-              <div id="suggestions-list" style="display:flex; flex-direction:column; gap:6px; font-size:12px;">
-                <div id="suggestions-placeholder" style="color:#9ca3af;">
+            <div class="suggestion-panel">
+              <div class="panel-title">Suggestions from AI</div>
+              <div id="suggestions-list" class="suggestions-list">
+                <div id="suggestions-placeholder" class="suggestions-placeholder">
                   Generate suggestions to see draggable activities here.
                 </div>
               </div>
             </div>
 
             <!-- Itinerary grid -->
-            <div style="flex:2 1 320px; min-width:280px;">
-              <div style="font-size:12px; font-weight:600; margin-bottom:6px; color:#4b5563;">
-                Your itinerary board
-              </div>
-              <div id="itinerary-grid" style="display:grid; gap:8px;">
+            <div class="itinerary-column">
+              <div class="itinerary-board-title">Your itinerary board</div>
+              <div id="itinerary-grid" class="itinerary-grid">
                 <!-- Filled via JS based on number of days -->
               </div>
             </div>
           </div>
 
-          <div class="result-footer" style="margin-top:10px;">
-            <span>Once you’re happy, export your itinerary as plain text.</span>
+          <div class="result-footer">
+            <span>When you’re ready, export your itinerary as clean text.</span>
             <button
               type="button"
               class="btn-primary"
@@ -956,35 +1123,23 @@
         card.draggable = true;
         card.dataset.suggestionId = s.id;
 
-        card.style.borderRadius = "10px";
-        card.style.border = "1px solid #e5e7eb";
-        card.style.background = "#ffffff";
-        card.style.padding = "6px 8px";
-        card.style.cursor = "grab";
-        card.style.boxShadow = "0 2px 6px rgba(15,23,42,0.06)";
-
         card.addEventListener("dragstart", onDragStartSuggestion);
 
         const title = document.createElement("div");
-        title.style.fontWeight = "600";
-        title.style.fontSize = "12px";
+        title.className = "suggestion-title";
         title.textContent = s.title || "Activity";
 
         const meta = document.createElement("div");
-        meta.style.fontSize = "11px";
-        meta.style.color = "#6b7280";
-        meta.style.marginTop = "2px";
+        meta.className = "suggestion-meta";
         meta.textContent = s.timeOfDay ? s.timeOfDay.toUpperCase() : "FLEX";
 
         const desc = document.createElement("div");
-        desc.style.fontSize = "11px";
-        desc.style.color = "#4b5563";
-        desc.style.marginTop = "4px";
+        desc.className = "suggestion-desc";
         desc.textContent = s.description || "";
 
         card.appendChild(title);
         card.appendChild(meta);
-        card.appendChild(desc);
+        if (desc.textContent.trim()) card.appendChild(desc);
         suggestionsList.appendChild(card);
       });
     }
@@ -997,26 +1152,15 @@
 
       for (let d = 1; d <= days; d++) {
         const dayCard = document.createElement("div");
-        dayCard.style.borderRadius = "14px";
-        dayCard.style.border = "1px solid #e5e7eb";
-        dayCard.style.background = "#f9fafb";
-        dayCard.style.padding = "8px";
+        dayCard.className = "itinerary-day";
 
         const dayHeader = document.createElement("div");
-        dayHeader.style.display = "flex";
-        dayHeader.style.justifyContent = "space-between";
-        dayHeader.style.alignItems = "center";
-        dayHeader.style.fontSize = "12px";
-        dayHeader.style.fontWeight = "600";
-        dayHeader.style.marginBottom = "4px";
-        dayHeader.style.color = "#374151";
+        dayHeader.className = "itinerary-day-header";
         dayHeader.textContent = `Day ${d}`;
         dayCard.appendChild(dayHeader);
 
         const slotGrid = document.createElement("div");
-        slotGrid.style.display = "grid";
-        slotGrid.style.gridTemplateColumns = "repeat(3, minmax(0, 1fr))";
-        slotGrid.style.gap = "6px";
+        slotGrid.className = "day-slot-grid";
 
         slots.forEach((slotName) => {
           const slotId = `day${d}-${slotName}`;
@@ -1026,25 +1170,13 @@
           slot.dataset.day = String(d);
           slot.dataset.timeOfDay = slotName;
 
-          slot.style.minHeight = "80px";
-          slot.style.borderRadius = "10px";
-          slot.style.border = "1px dashed #d1d5db";
-          slot.style.background = "#ffffff";
-          slot.style.padding = "4px";
-          slot.style.fontSize = "11px";
-          slot.style.display = "flex";
-          slot.style.flexDirection = "column";
-          slot.style.gap = "4px";
-
           slot.addEventListener("dragover", onDragOverSlot);
           slot.addEventListener("drop", onDropOnSlot);
           slot.addEventListener("dragleave", onDragLeaveSlot);
 
           const label = document.createElement("div");
-          label.style.color = "#9ca3af";
-          label.style.fontWeight = "600";
-          label.textContent = slotName.charAt(0).toUpperCase() + slotName.slice(1);
           label.className = "slot-label";
+          label.textContent = slotName.charAt(0).toUpperCase() + slotName.slice(1);
 
           slot.appendChild(label);
           slotGrid.appendChild(slot);
@@ -1064,21 +1196,18 @@
     function onDragOverSlot(event) {
       event.preventDefault();
       event.dataTransfer.dropEffect = "move";
-      event.currentTarget.style.background = "#eff6ff";
-      event.currentTarget.style.borderColor = "#60a5fa";
+      event.currentTarget.classList.add("is-drag-over");
     }
 
     function onDragLeaveSlot(event) {
-      event.currentTarget.style.background = "#ffffff";
-      event.currentTarget.style.borderColor = "#d1d5db";
+      event.currentTarget.classList.remove("is-drag-over");
     }
 
     function onDropOnSlot(event) {
       event.preventDefault();
       const slot = event.currentTarget;
       const slotId = slot.dataset.slotId;
-      slot.style.background = "#ffffff";
-      slot.style.borderColor = "#d1d5db";
+      slot.classList.remove("is-drag-over");
 
       const suggestionId = event.dataTransfer.getData("text/plain");
       const suggestion = currentSuggestions.find((s) => s.id === suggestionId);
@@ -1091,23 +1220,18 @@
       });
 
       const pill = document.createElement("div");
-      pill.style.borderRadius = "8px";
-      pill.style.border = "1px solid #e5e7eb";
-      pill.style.background = "#f3f4f6";
-      pill.style.padding = "4px 6px";
-      pill.style.fontSize = "11px";
-      pill.style.cursor = "grab";
+      pill.className = "slot-activity";
 
       const title = document.createElement("div");
-      title.style.fontWeight = "600";
+      title.className = "slot-activity-title";
       title.textContent = suggestion.title || "Activity";
 
       const desc = document.createElement("div");
-      desc.style.color = "#4b5563";
+      desc.className = "slot-activity-desc";
       desc.textContent = suggestion.description || "";
 
       pill.appendChild(title);
-      pill.appendChild(desc);
+      if (desc.textContent.trim()) pill.appendChild(desc);
       slot.appendChild(pill);
 
       itineraryState[slotId] = suggestion;
@@ -1131,8 +1255,10 @@
         slots.forEach((slotName) => {
           const slotId = `day${d}-${slotName}`;
           const activity = itineraryState[slotId];
+          const label = slotName.charAt(0).toUpperCase() + slotName.slice(1);
+
           if (activity) {
-            lines.push(`  ${slotName.charAt(0).toUpperCase() + slotName.slice(1)}: ${activity.title}`);
+            lines.push(`  ${label}: ${activity.title}`);
             if (activity.description) {
               lines.push(`    • ${activity.description}`);
             }
@@ -1140,7 +1266,7 @@
               lines.push(`    Notes: ${activity.notes}`);
             }
           } else {
-            lines.push(`  ${slotName.charAt(0).toUpperCase() + slotName.slice(1)}: (open / free time)`);
+            lines.push(`  ${label}: (open / free time)`);
           }
         });
         lines.push("");
