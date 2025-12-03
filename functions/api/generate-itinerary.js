@@ -1,8 +1,8 @@
 // functions/api/generate-itinerary.js
 
-export const onRequest = onRequestPost;
+export async function onRequest(context) {
+  const { request, env } = context;
 
-export async function onRequestPost({ request, env }) {
   try {
     if (request.method !== "POST") {
       return jsonResponse({ error: "Method not allowed" }, 405);
@@ -28,7 +28,8 @@ export async function onRequestPost({ request, env }) {
       );
     }
 
-    const userPrompt = (body && typeof body.prompt === "string" && body.prompt.trim()) || "";
+    const userPrompt =
+      (body && typeof body.prompt === "string" && body.prompt.trim()) || "";
     if (!userPrompt) {
       return jsonResponse(
         { error: "Invalid request: 'prompt' is required." },
@@ -38,12 +39,11 @@ export async function onRequestPost({ request, env }) {
 
     const safePrompt = userPrompt.slice(0, 6000);
 
-    // Ask the model for JSON suggestions
     const openAiRes = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${apiKey}`,
-        "Content-Type": "application/json"
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         model: "gpt-4o-mini", // adjust if needed
@@ -53,7 +53,7 @@ export async function onRequestPost({ request, env }) {
             role: "system",
             content:
               "You are an expert travel planner. " +
-              "Return ONLY valid JSON with an array of activity suggestions for a drag-and-drop trip planner."
+              "Return ONLY valid JSON with an array of activity suggestions for a drag-and-drop trip planner.",
           },
           {
             role: "user",
@@ -66,23 +66,27 @@ export async function onRequestPost({ request, env }) {
               '      "id": "string-unique-id",\n' +
               '      "title": "short activity title",\n' +
               '      "timeOfDay": "morning" | "afternoon" | "evening" | "flex",\n' +
-              "      \"dayHint\": number | null,\n" +
+              '      "dayHint": 1,\n' +
               '      "description": "1–3 sentence description",\n' +
               '      "notes": "optional quick notes for travelers"\n' +
               "    }\n" +
               "  ]\n" +
               "}\n" +
-              "Do NOT include any extra keys, text, or explanations outside this JSON."
-        }
+              "Do NOT include any extra keys, text, or explanations outside this JSON.",
+          },
         ],
         temperature: 0.8,
-        max_tokens: 900
-      })
+        max_tokens: 900,
+      }),
     });
 
     if (!openAiRes.ok) {
       const errorText = await openAiRes.text().catch(() => "");
-      console.error("[generate-itinerary] OpenAI error:", openAiRes.status, errorText);
+      console.error(
+        "[generate-itinerary] OpenAI error:",
+        openAiRes.status,
+        errorText
+      );
       return jsonResponse(
         { error: "Upstream AI request failed.", status: openAiRes.status },
         502
@@ -90,20 +94,26 @@ export async function onRequestPost({ request, env }) {
     }
 
     const openAiData = await openAiRes.json();
-    let raw = openAiData?.choices?.[0]?.message?.content || "";
+    const raw = openAiData?.choices?.[0]?.message?.content || "";
 
     let parsed;
     try {
       parsed = typeof raw === "string" ? JSON.parse(raw) : raw;
     } catch (e) {
-      console.error("[generate-itinerary] Failed to parse JSON from model:", e, raw);
+      console.error(
+        "[generate-itinerary] Failed to parse JSON from model:",
+        e,
+        raw
+      );
       return jsonResponse(
         { error: "AI returned invalid JSON. Please try again." },
         502
       );
     }
 
-    const suggestions = Array.isArray(parsed?.suggestions) ? parsed.suggestions : [];
+    const suggestions = Array.isArray(parsed?.suggestions)
+      ? parsed.suggestions
+      : [];
     if (!suggestions.length) {
       return jsonResponse(
         { error: "No suggestions returned. Try again with more details." },
@@ -126,7 +136,7 @@ function jsonResponse(data, status = 200) {
     status,
     headers: {
       "Content-Type": "application/json",
-      "Cache-Control": "no-store"
-    }
+      "Cache-Control": "no-store",
+    },
   });
 }
