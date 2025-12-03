@@ -272,8 +272,10 @@
       margin-bottom: 3px;
     }
 
+    /* ⬇️ include select so it looks like inputs */
     input,
-    textarea {
+    textarea,
+    select {
       width: 100%;
       border-radius: 10px;
       border: 1px solid var(--border-subtle);
@@ -287,7 +289,8 @@
     }
 
     input:focus,
-    textarea:focus {
+    textarea:focus,
+    select:focus {
       border-color: #2563eb;
       box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.25);
     }
@@ -544,7 +547,7 @@
         </div>
         <h1 class="planner-title" id="planner-title">Turn a destination into structured trip ideas.</h1>
         <p class="planner-subtitle">
-          Start simple: tell the AI where you’re going, who you’re with, and the vibe. You’ll get a list
+          Start simple: tell the AI where you’re going, who you’re with, the vibe, and your budget. You’ll get a list
           of activity ideas grouped by time of day, which you can turn into a full itinerary later.
         </p>
       </header>
@@ -603,6 +606,31 @@
                   type="text"
                   placeholder="Couple, family with kids, solo, friends..."
                 />
+              </div>
+            </div>
+
+            <!-- NEW: Budget selector -->
+            <div class="field-row">
+              <div class="field-col">
+                <label for="budget">Rough budget</label>
+                <select id="budget" name="budget">
+                  <option value="">No preference / mixed</option>
+                  <option value="budget / backpacker level">
+                    Budget / backpacker
+                  </option>
+                  <option value="mid-range, a mix of value and comfort">
+                    Mid-range — value & comfort
+                  </option>
+                  <option value="comfortable with some splurges">
+                    Comfortable with some splurges
+                  </option>
+                  <option value="mostly luxury experiences">
+                    Mostly luxury
+                  </option>
+                </select>
+                <p class="helper">
+                  Helps the AI choose neighborhoods, activities, and restaurant styles that fit your spend.
+                </p>
               </div>
             </div>
 
@@ -788,6 +816,7 @@
       const days = document.getElementById("days").value.trim();
       const dates = document.getElementById("dates").value.trim();
       const travelers = document.getElementById("travelers").value.trim();
+      const budget = document.getElementById("budget").value.trim();
       const vibe = document.getElementById("vibe").value.trim();
       const prefs = document.getElementById("prefs").value.trim();
 
@@ -802,6 +831,7 @@
       if (days) parts.push("Trip length: " + days + " days.");
       if (dates) parts.push("Rough dates: " + dates + ".");
       if (travelers) parts.push("Who is going: " + travelers + ".");
+      if (budget) parts.push("Budget level: " + budget + ".");
       if (vibe) parts.push("Trip vibe: " + vibe + ".");
       if (prefs) parts.push("Preferences: " + prefs + ".");
 
