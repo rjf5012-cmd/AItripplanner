@@ -1,142 +1,179 @@
 // functions/api/generate-itinerary.js
 
-export async function onRequest({ request, env }) {
-  // Only allow POST
-  if (request.method !== "POST") {
-    return new Response(
-      JSON.stringify({ error: "Method not allowed (POST only)" }),
-      {
-        status: 405,
-        headers: { "Content-Type": "application/json" }
-      }
-    );
-  }
+function jsonResponse(data, status = 200) {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
+    },
+  });
+}
 
-  const apiKey = env && env.OPENAI_API_KEY;
-  if (!apiKey) {
-    return new Response(
-      JSON.stringify({ error: "OPENAI_API_KEY is not set in environment variables" }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" }
-      }
-    );
-  }
+// Simple GET health-check so you can sanity-check in the browser
+export async function onRequestGet({ env }) {
+  return jsonResponse({
+    ok: true,
+    method: "GET",
+    path: "/api/generate-itinerary",
+    hasOpenAIKey: !!env.OPENAI_API_KEY,
+    note: "AITripPlan generate-itinerary health-check",
+  });
+}
 
-  // --- Read prompt from body (with a safe fallback) ---
-  let prompt = "Plan a short 2-day city trip with family-friendly activities.";
+// Main POST handler that the frontend uses
+export async function onRequestPost({ request, env }) {
   try {
-    const bodyText = await request.text();
-    if (bodyText) {
-      const body = JSON.parse(bodyText);
-      if (body && typeof body.prompt === "string") {
-        prompt = body.prompt.trim();
+    if (!env.OPENAI_API_KEY) {
+      return jsonResponse(
+        { error: "OPENAI_API_KEY is not configured in environment." },
+        500
+      );
+    }
+
+    const body = await request.json().catch(() => ({}));
+    const userPrompt = body?.prompt;
+    const mode =
+      body?.mode === "full-itinerary" ? "full-itinerary" : "ideas";
+
+    if (!userPrompt || typeof userPrompt !== "string") {
+      return jsonResponse(
+        { error: "Missing or invalid 'prompt' in request body." },
+        400
+      );
+    }
+
+    // --- Derive number of days from the prompt (Trip length: X days.) ---
+    let inferredDays = 3; // sensible default
+    const match = userPrompt.match(/Trip length:\s*(\d+)\s*days/i);
+    if (match && match[1]) {
+      const parsed = parseInt(match[1], 10);
+      if (Number.isFinite(parsed) && parsed > 0) {
+        inferredDays = parsed;
       }
     }
-  } catch (e) {
-    // If JSON parse fails, we just keep the default prompt
-  }
 
-  // --- Build OpenAI payload (keep strings simple to avoid syntax issues) ---
-  const payload = {
-    model: "gpt-4o-mini",
-    messages: [
-      {
-        role: "system",
-        content:
-          "You are an expert travel planner for a drag-and-drop itinerary builder. " +
-          "Respond ONLY with JSON. The JSON must be an object with a 'suggestions' array " +
-          "containing at most 10 activities. Each activity object must have: " +
-          "id (string), title (string), timeOfDay (one of 'morning','afternoon','evening','flex'), " +
-          "dayHint (number or null), description (short string), and notes (short string). " +
-          "No other keys. No text before or after the JSON."
-      },
-      {
-        role: "user",
-        content: prompt
-      }
-    ],
-    temperature: 0.8,
-    max_tokens: 500
-  };
+    // Hard cap so we don't ask for 30 * 3 = 90 suggestions
+    const days = Math.min(Math.max(inferredDays, 1), 7);
+    const totalSuggestions = days * 3;
 
-  try {
-    // --- Call OpenAI ---
-    const res = await fetch("https://api.openai.com/v1/chat/completions", {
+    // --- Build the actual prompt sent to the model ---
+    let combinedPrompt = userPrompt;
+
+    if (mode === "full-itinerary") {
+      const itineraryInstructions = [
+        `The trip should last exactly ${days} day(s).`,
+        `You MUST return exactly ${totalSuggestions} suggestions in the "suggestions" array.`,
+        `Distribute suggestions evenly across the days so there are exactly 3 suggestions per day.`,
+        `For each day d (1 to ${days}) you MUST include exactly:`,
+        `- 1 suggestion with "timeOfDay": "morning"`,
+        `- 1 suggestion with "timeOfDay": "afternoon"`,
+        `- 1 suggestion with "timeOfDay": "evening"`,
+        `Set "dayHint" to the correct day number (1–${days}) for each suggestion.`,
+        `Keep titles short and scannable; keep description and notes concise (1–2 sentences each).`,
+      ].join("\n");
+
+      combinedPrompt =
+        userPrompt +
+        "\n\nTrip structure constraints (full itinerary mode):\n" +
+        itineraryInstructions;
+    } else {
+      // "Ideas" mode – more relaxed, just gentle structure hints
+      const ideasInstructions = [
+        `The trip is approximately ${days} day(s) long.`,
+        `You do NOT need to fill every day. Focus on high-quality ideas.`,
+        `Use "timeOfDay" as "morning", "afternoon", "evening", or "flex" where it makes sense.`,
+        `Use "dayHint" between 1 and ${days} when the idea fits a specific day, or null when it's flexible.`,
+      ].join("\n");
+
+      combinedPrompt =
+        userPrompt +
+        "\n\nTrip structure notes (loose ideas mode):\n" +
+        ideasInstructions;
+    }
+
+    // Call OpenAI Chat Completions API – same pattern as your working /api/gifts
+    const openaiRes = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
-        "Authorization": "Bearer " + apiKey,
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${env.OPENAI_API_KEY}`,
       },
-      body: JSON.stringify(payload)
+      body: JSON.stringify({
+        model: "gpt-4.1-mini",
+        messages: [
+          {
+            role: "system",
+            content:
+              "You are an expert travel planner for a simple itinerary builder. " +
+              "You ALWAYS respond with valid JSON only, no extra text. " +
+              "Return a single JSON object with a 'suggestions' array. " +
+              "Each suggestion must have: " +
+              "id (string), title (string), timeOfDay ('morning'|'afternoon'|'evening'|'flex'), " +
+              "dayHint (number or null), description (string), and notes (string).",
+          },
+          {
+            role: "user",
+            content: combinedPrompt,
+          },
+        ],
+        temperature: 0.7,
+      }),
     });
 
-    const rootText = await res.text();
+    const raw = await openaiRes.text().catch(() => "");
 
-    if (!res.ok) {
-      return new Response(
-        JSON.stringify({
-          error: "OpenAI returned an error",
-          upstreamStatus: res.status,
-          upstreamBody: rootText
-        }),
+    if (!openaiRes.ok) {
+      console.error("OpenAI error:", openaiRes.status, raw);
+      return jsonResponse(
         {
-          status: 502,
-          headers: { "Content-Type": "application/json" }
-        }
+          error: "Error from OpenAI API.",
+          status: openaiRes.status,
+        },
+        502
       );
     }
 
-    // --- Parse OpenAI root JSON ---
-    let rootJson;
+    let openaiJson;
     try {
-      rootJson = JSON.parse(rootText);
+      openaiJson = JSON.parse(raw);
     } catch (e) {
-      return new Response(
-        JSON.stringify({
-          error: "Could not parse root JSON from OpenAI",
-          upstreamBody: rootText
-        }),
-        {
-          status: 502,
-          headers: { "Content-Type": "application/json" }
-        }
+      console.error("Failed to parse OpenAI root JSON:", e, raw);
+      return jsonResponse(
+        { error: "Failed to parse OpenAI root JSON." },
+        502
       );
     }
 
-    const choices = rootJson && rootJson.choices;
-    const firstChoice = choices && choices[0];
-    const message = firstChoice && firstChoice.message;
-    const content = message && message.content;
-
-    if (typeof content !== "string") {
-      return new Response(
-        JSON.stringify({
-          error: "Unexpected OpenAI response format (content is not a string)",
-          raw: rootJson
-        }),
-        {
-          status: 502,
-          headers: { "Content-Type": "application/json" }
-        }
+    let message = openaiJson?.choices?.[0]?.message?.content;
+    if (!message || typeof message !== "string") {
+      return jsonResponse(
+        { error: "No content returned from OpenAI." },
+        502
       );
     }
 
-    // --- Parse the JSON string inside message.content ---
+    // --- Clean up possible ```json fences around the content ---
+    let cleaned = message.trim();
+    if (cleaned.startsWith("```")) {
+      const firstNewline = cleaned.indexOf("\n");
+      if (firstNewline !== -1) {
+        cleaned = cleaned.slice(firstNewline + 1);
+      }
+      if (cleaned.endsWith("```")) {
+        cleaned = cleaned.slice(0, -3);
+      }
+      cleaned = cleaned.trim();
+    }
+
     let parsed;
     try {
-      parsed = JSON.parse(content);
+      parsed = JSON.parse(cleaned);
     } catch (e) {
-      return new Response(
-        JSON.stringify({
-          error: "OpenAI content was not valid JSON",
-          rawContent: content,
-          details: String(e)
-        }),
-        {
-          status: 502,
-          headers: { "Content-Type": "application/json" }
-        }
+      console.error("Failed to parse OpenAI JSON content:", e, cleaned);
+      return jsonResponse(
+        { error: "Failed to parse AI response as JSON." },
+        502
       );
     }
 
@@ -145,74 +182,15 @@ export async function onRequest({ request, env }) {
       : [];
 
     if (!suggestions.length) {
-      return new Response(
-        JSON.stringify({
-          error: "OpenAI returned no suggestions",
-          raw: parsed
-        }),
-        {
-          status: 502,
-          headers: { "Content-Type": "application/json" }
-        }
-      );
+      console.warn("AI returned zero suggestions.", parsed);
     }
 
-    // --- Normalize into a clean array for the frontend ---
-    const normalized = suggestions.map(function (s, index) {
-      const id =
-        s && typeof s.id === "string" && s.id.trim()
-          ? s.id
-          : "ai-suggestion-" + (index + 1);
-
-      let tod = "flex";
-      if (s && typeof s.timeOfDay === "string") {
-        const val = s.timeOfDay.toLowerCase();
-        if (
-          val === "morning" ||
-          val === "afternoon" ||
-          val === "evening" ||
-          val === "flex"
-        ) {
-          tod = val;
-        }
-      }
-
-      let dayHint = null;
-      if (s && typeof s.dayHint === "number" && isFinite(s.dayHint)) {
-        dayHint = s.dayHint;
-      }
-
-      return {
-        id: id,
-        title: s && s.title ? String(s.title) : "Activity",
-        timeOfDay: tod,
-        dayHint: dayHint,
-        description: s && s.description ? String(s.description) : "",
-        notes: s && s.notes ? String(s.notes) : ""
-      };
-    });
-
-    return new Response(
-      JSON.stringify({ suggestions: normalized }),
-      {
-        status: 200,
-        headers: {
-          "Content-Type": "application/json",
-          "Cache-Control": "no-store"
-        }
-      }
-    );
+    return jsonResponse({ suggestions });
   } catch (err) {
-    // Catch any unexpected runtime error
-    return new Response(
-      JSON.stringify({
-        error: "Unexpected server error",
-        details: String(err)
-      }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" }
-      }
+    console.error("Unexpected error in /api/generate-itinerary:", err);
+    return jsonResponse(
+      { error: "Unexpected server error." },
+      500
     );
   }
 }
