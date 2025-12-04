@@ -339,6 +339,35 @@
       box-shadow: none;
     }
 
+    /* Secondary / utility buttons */
+    button.secondary {
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      padding: 7px 12px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      background: #ffffff;
+      color: var(--text-soft);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    button.secondary:hover:not(:disabled) {
+      background: #f9fafb;
+    }
+
+    button.secondary:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+
+    button.secondary.subtle {
+      background: #f9fafb;
+      border-style: dashed;
+    }
+
     .spinner-dot {
       width: 11px;
       height: 11px;
@@ -365,51 +394,6 @@
 
     .status-error {
       color: var(--danger);
-    }
-
-    /* Checkbox inline */
-    .checkbox-inline {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 12px;
-      color: var(--text-soft);
-      cursor: pointer;
-      user-select: none;
-    }
-
-    .checkbox-inline input[type="checkbox"] {
-      width: 14px;
-      height: 14px;
-      cursor: pointer;
-    }
-
-    /* Checklist pills */
-    .checklist-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px 10px;
-      margin-top: 4px;
-    }
-
-    .check-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 12px;
-      color: var(--text-soft);
-      padding: 4px 8px;
-      border-radius: 999px;
-      border: 1px solid var(--border-subtle);
-      background: #f9fafb;
-      cursor: pointer;
-      user-select: none;
-    }
-
-    .check-pill input[type="checkbox"] {
-      width: 14px;
-      height: 14px;
-      cursor: pointer;
     }
 
     /* Suggestions */
@@ -622,8 +606,8 @@
         </div>
         <h1 class="planner-title" id="planner-title">Turn a destination into structured trip ideas.</h1>
         <p class="planner-subtitle">
-          Start simple: tell the AI where you’re going, who you’re with, the vibe, and your budget. You can choose
-          between a loose list of ideas or a full day-by-day itinerary.
+          Start simple: tell the AI where you’re going, who you’re with, the vibe, and your budget. You’ll get a list
+          of activity ideas grouped into days and times, which you can turn into a full itinerary later.
         </p>
       </header>
 
@@ -657,9 +641,12 @@
                   name="days"
                   type="number"
                   min="1"
-                  max="30"
+                  max="21"
                   placeholder="4"
                 />
+                <p class="helper">
+                  For best results, keep trips between 1 and 21 days.
+                </p>
               </div>
             </div>
 
@@ -709,29 +696,8 @@
               </div>
             </div>
 
-            <!-- Trip type selector -->
-            <div class="field-row">
-              <div class="field-col">
-                <label for="tripType">Trip type</label>
-                <select id="tripType" name="tripType">
-                  <option value="">General trip / not sure</option>
-                  <option value="romantic getaway">Romantic getaway</option>
-                  <option value="golf trip with friends">Golf trip</option>
-                  <option value="bachelor or bachelorette party">Bachelor / bachelorette party</option>
-                  <option value="family vacation with kids">Family vacation</option>
-                  <option value="relaxing recharge trip">Relaxing / recharge</option>
-                  <option value="food and wine focused trip">Food &amp; wine</option>
-                  <option value="adventure and outdoors focused trip">Adventure &amp; outdoors</option>
-                  <option value="city break focused on sightseeing and museums">City break / first-time visitor</option>
-                </select>
-                <p class="helper">
-                  Gives the AI a quick sense of what kind of trip you’re planning.
-                </p>
-              </div>
-            </div>
-
             <div>
-              <label for="vibe">What kind of trip is this? (optional)</label>
+              <label for="vibe">What kind of trip is this?</label>
               <input
                 id="vibe"
                 name="vibe"
@@ -752,72 +718,20 @@
               </p>
             </div>
 
-            <!-- Must include checklist -->
-            <div>
-              <label>Must include (quick checklist)</label>
-              <div class="checklist-grid">
-                <label class="check-pill">
-                  <input type="checkbox" name="mustInclude" value="best restaurants" />
-                  <span>Best restaurants</span>
-                </label>
-                <label class="check-pill">
-                  <input type="checkbox" name="mustInclude" value="beaches" />
-                  <span>Beaches</span>
-                </label>
-                <label class="check-pill">
-                  <input type="checkbox" name="mustInclude" value="museums" />
-                  <span>Museums</span>
-                </label>
-                <label class="check-pill">
-                  <input type="checkbox" name="mustInclude" value="hidden gems and local spots" />
-                  <span>Hidden gems</span>
-                </label>
-                <label class="check-pill">
-                  <input type="checkbox" name="mustInclude" value="budget friendly food options" />
-                  <span>Budget food</span>
-                </label>
-                <label class="check-pill">
-                  <input type="checkbox" name="mustInclude" value="nightlife and bars" />
-                  <span>Nightlife</span>
-                </label>
-                <label class="check-pill">
-                  <input type="checkbox" name="mustInclude" value="walkable areas and neighborhoods" />
-                  <span>Walkability</span>
-                </label>
-                <label class="check-pill">
-                  <input type="checkbox" name="mustInclude" value="kid friendly activities" />
-                  <span>Kid-friendly</span>
-                </label>
-                <label class="check-pill">
-                  <input type="checkbox" name="mustInclude" value="nature and outdoor activities" />
-                  <span>Nature/outdoors</span>
-                </label>
-                <label class="check-pill">
-                  <input type="checkbox" name="mustInclude" value="shopping areas and markets" />
-                  <span>Shopping</span>
-                </label>
-              </div>
-              <p class="helper">
-                The AI will try to weave these into the plan wherever they fit naturally.
-              </p>
-            </div>
-
-            <!-- Full itinerary toggle -->
-            <div>
-              <label class="checkbox-inline">
-                <input type="checkbox" id="fullItinerary" name="fullItinerary" />
-                <span>Full itinerary mode (3 suggestions per day)</span>
-              </label>
-              <p class="helper">
-                Turn this on for a structured morning/afternoon/evening plan for each day. Leave it off for a looser list of ideas.
-              </p>
-            </div>
-
             <div class="actions">
               <button type="submit" class="primary" id="generateBtn">
                 <span class="spinner-dot" id="spinner" style="display:none;"></span>
                 <span id="btnText">Generate trip ideas</span>
               </button>
+
+              <button type="button" class="secondary" id="copyBtn" disabled>
+                Copy itinerary
+              </button>
+
+              <button type="button" class="secondary subtle" id="clearBtn">
+                Clear
+              </button>
+
               <span class="status-text" id="statusText">
                 Powered by AI. Usually just a few seconds.
               </span>
@@ -851,7 +765,8 @@
           </div>
 
           <p class="helper" style="margin-top: 10px;">
-            Next step (coming soon): drag-and-drop these into day buckets and export to PDF or Notes.
+            Tip: After you like the quality of the ideas, you can copy this plan into Notes, Docs,
+            or a shared message thread.
           </p>
         </section>
       </div>
@@ -878,10 +793,16 @@
     const suggestionsContainer = document.getElementById("suggestionsContainer");
     const emptyState = document.getElementById("emptyState");
     const metaSummary = document.getElementById("metaSummary");
+    const copyBtn = document.getElementById("copyBtn");
+    const clearBtn = document.getElementById("clearBtn");
+
+    // Keep last suggestions for copy-to-clipboard
+    let lastSuggestions = [];
 
     function setLoading(isLoading, msg) {
       if (isLoading) {
         generateBtn.disabled = true;
+        copyBtn.disabled = true;
         spinner.style.display = "inline-block";
         btnText.textContent = "Generating...";
         statusText.innerHTML =
@@ -890,6 +811,7 @@
         generateBtn.disabled = false;
         spinner.style.display = "none";
         btnText.textContent = "Generate trip ideas";
+        copyBtn.disabled = !lastSuggestions.length;
         if (!msg) {
           statusText.textContent = "Powered by AI. Usually just a few seconds.";
         } else {
@@ -901,6 +823,8 @@
     // Group suggestions into day buckets, sort by time-of-day, add "Any day" group
     function renderSuggestions(suggestions) {
       suggestionsContainer.innerHTML = "";
+      lastSuggestions = Array.isArray(suggestions) ? suggestions.slice() : [];
+      copyBtn.disabled = !lastSuggestions.length;
 
       if (!Array.isArray(suggestions) || suggestions.length === 0) {
         emptyState.style.display = "block";
@@ -1079,23 +1003,158 @@
       }
     }
 
+    // Build a plain-text itinerary for copy-to-clipboard
+    function buildItineraryText(suggestions) {
+      if (!Array.isArray(suggestions) || !suggestions.length) {
+        return "No itinerary generated yet.";
+      }
+
+      const dayBuckets = new Map();
+      const flexible = [];
+
+      suggestions.forEach((s) => {
+        const day =
+          typeof s.dayHint === "number" && isFinite(s.dayHint)
+            ? s.dayHint
+            : null;
+
+        if (day === null) {
+          flexible.push(s);
+        } else {
+          if (!dayBuckets.has(day)) dayBuckets.set(day, []);
+          dayBuckets.get(day).push(s);
+        }
+      });
+
+      const sortedDays = Array.from(dayBuckets.keys()).sort((a, b) => a - b);
+      const timeOrder = { morning: 0, afternoon: 1, evening: 2, flex: 3 };
+
+      function labelForTime(todRaw) {
+        const tod = (todRaw || "flex").toString().toLowerCase();
+        if (tod === "morning") return "Morning";
+        if (tod === "afternoon") return "Afternoon";
+        if (tod === "evening") return "Evening";
+        return "Flexible";
+      }
+
+      function sortByTime(list) {
+        return list.sort((a, b) => {
+          const ta = (a.timeOfDay || "flex").toString().toLowerCase();
+          const tb = (b.timeOfDay || "flex").toString().toLowerCase();
+          const wa = Object.prototype.hasOwnProperty.call(timeOrder, ta)
+            ? timeOrder[ta]
+            : 4;
+          const wb = Object.prototype.hasOwnProperty.call(timeOrder, tb)
+            ? timeOrder[tb]
+            : 4;
+          if (wa !== wb) return wa - wb;
+          return (a.title || "").localeCompare(b.title || "");
+        });
+      }
+
+      let out = "Trip itinerary (draft from AITripPlan)\n\n";
+
+      // Day-by-day
+      sortedDays.forEach((day) => {
+        out += "Day " + day + "\n";
+        const items = sortByTime(dayBuckets.get(day) || []);
+        items.forEach((s) => {
+          out +=
+            "  - [" +
+            labelForTime(s.timeOfDay) +
+            "] " +
+            (s.title || "Activity") +
+            "\n";
+
+          if (s.description) {
+            out += "      " + s.description + "\n";
+          }
+          if (s.notes) {
+            out += "      Notes: " + s.notes + "\n";
+          }
+        });
+        out += "\n";
+      });
+
+      // Flexible ideas
+      if (flexible.length) {
+        out += "Any day ideas\n";
+        const items = sortByTime(flexible);
+        items.forEach((s) => {
+          out +=
+            "  - [" +
+            labelForTime(s.timeOfDay) +
+            "] " +
+            (s.title || "Activity") +
+            "\n";
+          if (s.description) {
+            out += "      " + s.description + "\n";
+          }
+          if (s.notes) {
+            out += "      Notes: " + s.notes + "\n";
+          }
+        });
+        out += "\n";
+      }
+
+      out +=
+        "Generated with AITripPlan.com. Always double-check opening hours, locations, and safety guidance before you go.";
+
+      return out;
+    }
+
+    // Copy itinerary button behavior
+    copyBtn.addEventListener("click", async () => {
+      if (!lastSuggestions.length) {
+        statusText.innerHTML =
+          "<span class='status-error'>No itinerary to copy yet.</span>";
+        return;
+      }
+
+      const text = buildItineraryText(lastSuggestions);
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        try {
+          await navigator.clipboard.writeText(text);
+          statusText.innerHTML = "<strong>Copied!</strong> Itinerary is on your clipboard.";
+        } catch (err) {
+          console.error("Clipboard error:", err);
+          statusText.innerHTML =
+            "<span class='status-error'>Couldn't copy automatically. Try selecting the text manually.</span>";
+        }
+      } else {
+        // Simple fallback: show prompt
+        window.prompt("Copy this itinerary:", text);
+        statusText.innerHTML =
+          "<strong>Note:</strong> Some browsers don't allow automatic copying. A manual copy prompt was shown.";
+      }
+    });
+
+    // Clear/reset button behavior
+    clearBtn.addEventListener("click", () => {
+      form.reset();
+      lastSuggestions = [];
+      copyBtn.disabled = true;
+
+      suggestionsContainer.innerHTML = "";
+      emptyState.style.display = "block";
+      suggestionsContainer.appendChild(emptyState);
+
+      metaSummary.textContent = "No results yet.";
+      statusText.textContent =
+        "Cleared. Enter new trip details to generate a fresh plan.";
+    });
+
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
       const destination = document.getElementById("destination").value.trim();
-      const days = document.getElementById("days").value.trim();
+      const daysValue = document.getElementById("days").value.trim();
       const dates = document.getElementById("dates").value.trim();
       const travelers = document.getElementById("travelers").value.trim();
       const budget = document.getElementById("budget").value.trim();
-      const tripType = document.getElementById("tripType").value.trim();
       const vibe = document.getElementById("vibe").value.trim();
       const prefs = document.getElementById("prefs").value.trim();
-      const fullItinerary = document.getElementById("fullItinerary").checked;
-
-      const mustIncludeEls = document.querySelectorAll(
-        'input[name="mustInclude"]:checked'
-      );
-      const mustInclude = Array.from(mustIncludeEls).map((el) => el.value);
 
       if (!destination) {
         statusText.innerHTML =
@@ -1103,45 +1162,30 @@
         return;
       }
 
+      // Basic guardrails for trip length
+      let daysNum = null;
+      if (daysValue) {
+        daysNum = parseInt(daysValue, 10);
+        if (isNaN(daysNum) || daysNum < 1 || daysNum > 21) {
+          statusText.innerHTML =
+            "<span class='status-error'>Trip length should be between 1 and 21 days.</span>";
+          return;
+        }
+      }
+
       const parts = [];
       parts.push("Destination: " + destination + ".");
-      if (days) parts.push("Trip length: " + days + " days.");
+      if (daysNum) parts.push("Trip length: " + daysNum + " days.");
       if (dates) parts.push("Rough dates: " + dates + ".");
       if (travelers) parts.push("Who is going: " + travelers + ".");
       if (budget) parts.push("Budget level: " + budget + ".");
-      if (tripType) parts.push("Trip type: " + tripType + ".");
       if (vibe) parts.push("Trip vibe: " + vibe + ".");
       if (prefs) parts.push("Preferences: " + prefs + ".");
-      if (mustInclude.length) {
-        parts.push(
-          "Must include elements: " + mustInclude.join(", ") + "."
-        );
-      }
-
-      if (fullItinerary) {
-        if (days) {
-          parts.push(
-            "The user wants a full day-by-day itinerary with morning, afternoon, and evening suggestions for each of the " +
-              days +
-              " days."
-          );
-        } else {
-          parts.push(
-            "The user wants a full day-by-day itinerary with morning, afternoon, and evening suggestions for each day."
-          );
-        }
-      } else {
-        parts.push(
-          "The user wants a looser list of activity ideas they can mix and match across the trip."
-        );
-      }
 
       const finalPrompt =
         "Generate activity suggestions for this trip. " +
         parts.join(" ") +
         " Respond only with JSON object: { \"suggestions\": [ ... ] }.";
-
-      const mode = fullItinerary ? "full-itinerary" : "ideas";
 
       setLoading(true);
 
@@ -1151,7 +1195,7 @@
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ prompt: finalPrompt, mode }),
+          body: JSON.stringify({ prompt: finalPrompt }),
         });
 
         const text = await res.text();
@@ -1162,19 +1206,23 @@
           console.error("Failed to parse JSON from server:", err, text);
           setLoading(
             false,
-            "<span class='status-error'>Server returned invalid JSON. Check console logs.</span>"
+            "<span class='status-error'>Our server returned something unexpected. Please try again in a moment.</span>"
           );
           return;
         }
 
         if (!res.ok) {
           console.error("Server error:", data);
-          setLoading(
-            false,
-            "<span class='status-error'>Server error: " +
-              (data.error || res.status) +
-              "</span>"
-          );
+          let friendly =
+            "Server error: " + (data.error || ("HTTP " + res.status));
+          if (res.status === 429) {
+            friendly =
+              "We’re getting a lot of requests at once. Please wait a few seconds and try again.";
+          } else if (res.status >= 500) {
+            friendly =
+              "Our trip planner or the AI is having trouble right now. Try again in a minute.";
+          }
+          setLoading(false, "<span class='status-error'>" + friendly + "</span>");
           return;
         }
 
@@ -1183,12 +1231,12 @@
           : [];
 
         renderSuggestions(suggestions);
-        setLoading(false, "<strong>Done.</strong> Scroll through your ideas.");
+        setLoading(false, "<strong>Done.</strong> Scroll through your ideas or copy the itinerary.");
       } catch (err) {
         console.error("Network error calling /api/generate-itinerary:", err);
         setLoading(
           false,
-          "<span class='status-error'>Network error. Check console logs.</span>"
+          "<span class='status-error'>Network error. Check your connection and try again.</span>"
         );
       }
     });
