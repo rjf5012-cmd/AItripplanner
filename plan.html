@@ -462,7 +462,34 @@
       padding-right: 2px;
     }
 
-    /* Day group styling (bucketed view) */
+    /* Desktop: turn days into columns with horizontal scroll */
+    @media (min-width: 900px) {
+      .suggestions-list {
+        flex-direction: row;
+        align-items: flex-start;
+        max-height: 60vh;
+        overflow-y: hidden;
+        overflow-x: auto;
+        padding-bottom: 4px;
+      }
+
+      .day-group {
+        border-bottom: none;
+        border-right: 1px solid var(--border-subtle);
+        padding-right: 10px;
+        margin-right: 10px;
+        margin-bottom: 0;
+        flex: 0 0 260px;
+      }
+
+      .day-group:last-of-type {
+        border-right: none;
+        margin-right: 0;
+        padding-right: 0;
+      }
+    }
+
+    /* Day group styling (stacked on mobile) */
     .day-group {
       margin-bottom: 18px;
       padding-bottom: 10px;
@@ -1437,9 +1464,8 @@
           defaultLabel
         ) || defaultLabel;
 
-      const guessTods = ["morning", "afternoon", "evening"];
-      let timeOfDay = "flex";
       const lower = label.toLowerCase();
+      let timeOfDay = "flex";
       if (lower.includes("breakfast") || lower.includes("brunch")) {
         timeOfDay = "morning";
       } else if (lower.includes("lunch")) {
