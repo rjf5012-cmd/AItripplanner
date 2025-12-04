@@ -2,34 +2,25 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Plan a Trip | AITripPlan — AI Itinerary Builder</title>
+  <title>Build Your AI Trip Plan | AITripPlan.com</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta
-    name="description"
-    content="Use AITripPlan to generate personalized trip ideas and simple itineraries. Enter your destination and preferences to get structured activity suggestions in seconds."
-  />
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-  <link rel="canonical" href="https://aitripplan.com/plan.html" />
+  <meta name="description" content="Generate smart trip ideas with AI and quickly turn them into a simple itinerary." />
 
-  <!-- Font (Inter) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="/favicon.png" />
 
   <style>
     :root {
-      --bg-page: #f3f4f6;
-      --bg-card: #ffffff;
-      --text-main: #0f172a;
-      --text-soft: #4b5563;
-      --text-muted: #6b7280;
-      --accent: #2563eb;
-      --accent-green: #22c55e;
-      --accent-pink: #ec4899;
-      --border-subtle: rgba(209, 213, 219, 1);
-      --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.10);
-      --radius-lg: 18px;
-      --danger: #dc2626;
+      --bg: #020617;
+      --bg-soft: #020617;
+      --card-bg: #020617;
+      --card-border: rgba(148,163,184,0.4);
+      --accent: #22c55e;
+      --accent-soft: rgba(34,197,94,0.18);
+      --accent-strong: #4ade80;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --danger: #f97373;
+      --radius-lg: 16px;
     }
 
     * {
@@ -38,12 +29,13 @@
 
     body {
       margin: 0;
-      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background:
-        radial-gradient(circle at 0% 0%, rgba(37, 99, 235, 0.06), transparent 60%),
-        radial-gradient(circle at 100% 0%, rgba(236, 72, 153, 0.06), transparent 60%),
-        var(--bg-page);
-      color: var(--text-main);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #0b1120 0, #020617 40%, #020617 100%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
     a {
@@ -51,225 +43,209 @@
       text-decoration: none;
     }
 
-    /* Header / Nav – same style as index.html */
-    header.site-header {
-      position: fixed;
-      inset-inline: 0;
+    header {
+      border-bottom: 1px solid rgba(148,163,184,0.25);
+      backdrop-filter: blur(18px);
+      background: linear-gradient(
+        to bottom,
+        rgba(15,23,42,0.95),
+        rgba(15,23,42,0.85),
+        transparent
+      );
+      position: sticky;
       top: 0;
       z-index: 40;
-      background: rgba(255, 255, 255, 0.9);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(209, 213, 219, 0.8);
     }
 
     .nav-inner {
       max-width: 1120px;
       margin: 0 auto;
-      padding: 14px 18px;
+      padding: 14px 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 18px;
+      gap: 16px;
     }
 
-    .nav-left {
+    .brand {
       display: flex;
       align-items: center;
       gap: 10px;
     }
 
-    .logo-mark {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 34px;
-      height: 34px;
+    .brand-mark {
+      width: 32px;
+      height: 32px;
       border-radius: 999px;
-      box-shadow: 0 5px 14px rgba(15, 23, 42, 0.20);
+      background: radial-gradient(circle at 30% 20%, #facc15, #22c55e 45%, #0ea5e9 90%);
+      box-shadow:
+        0 0 0 2px rgba(15,23,42,0.7),
+        0 12px 25px rgba(15,23,42,0.8);
+      position: relative;
       overflow: hidden;
     }
 
-    .logo-word {
-      font-weight: 700;
+    .brand-mark::after {
+      content: "";
+      position: absolute;
+      inset: 18%;
+      border-radius: 999px;
+      border: 2px solid rgba(15,23,42,0.85);
+      border-top-color: transparent;
+      border-right-color: transparent;
+      transform: rotate(-25deg);
+      opacity: 0.9;
+    }
+
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.1;
+    }
+
+    .brand-title {
+      font-weight: 650;
+      letter-spacing: 0.03em;
       font-size: 18px;
-      letter-spacing: -0.03em;
     }
 
-    .logo-word span.accent {
-      background: linear-gradient(135deg, #2563eb, #22c55e, #ec4899);
-      -webkit-background-clip: text;
-      color: transparent;
+    .brand-subtitle {
+      font-size: 11px;
+      color: var(--muted);
     }
 
-    nav.primary-nav {
+    .nav-links {
       display: flex;
       align-items: center;
       gap: 18px;
       font-size: 14px;
-      color: var(--text-muted);
-      flex-wrap: wrap;
+      color: var(--muted);
     }
 
-    nav.primary-nav a {
+    .nav-links a {
+      padding: 4px 0;
       position: relative;
-      padding-bottom: 2px;
     }
 
-    nav.primary-nav a::after {
+    .nav-links a.active::after,
+    .nav-links a:hover::after {
       content: "";
       position: absolute;
       left: 0;
       right: 0;
-      bottom: 0;
+      bottom: -4px;
       height: 2px;
       border-radius: 999px;
-      background: linear-gradient(90deg, #2563eb, #22c55e);
-      transform: scaleX(0);
-      transform-origin: center;
-      transition: transform 140ms ease-out;
-    }
-
-    nav.primary-nav a:hover::after {
-      transform: scaleX(1);
-    }
-
-    /* Visually mark "Plan a Trip" as active */
-    nav.primary-nav a[href="/plan.html"]::after {
-      transform: scaleX(1);
+      background: linear-gradient(90deg, #22c55e, #0ea5e9);
     }
 
     .nav-cta {
-      padding: 7px 14px;
+      padding: 8px 14px;
       border-radius: 999px;
-      border: none;
-      background: linear-gradient(135deg, #2563eb, #22c55e, #ec4899);
-      color: #f9fafb;
+      border: 1px solid rgba(148,163,184,0.35);
+      background: radial-gradient(circle at top left, rgba(34,197,94,0.14), transparent 60%);
       font-size: 13px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      cursor: pointer;
-      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .nav-cta span.icon {
-      font-size: 15px;
-    }
-
-    .nav-cta:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 12px 28px rgba(37, 99, 235, 0.40);
-    }
-
-    main {
-      padding-top: 82px;
-      padding-bottom: 40px;
-    }
-
-    /* Planner layout */
-    .planner-shell {
-      max-width: 1120px;
-      margin: 0 auto;
-      padding: 0 18px;
-    }
-
-    .planner-header {
-      margin-bottom: 20px;
-    }
-
-    .planner-eyebrow {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: var(--text-muted);
       display: inline-flex;
       align-items: center;
       gap: 6px;
     }
 
-    .planner-eyebrow-dot {
-      width: 7px;
-      height: 7px;
+    .nav-cta span.badge {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 2px 6px;
       border-radius: 999px;
-      background: linear-gradient(135deg, #2563eb, #22c55e, #ec4899);
+      background: rgba(15,23,42,0.85);
+      border: 1px solid rgba(148,163,184,0.4);
     }
 
-    .planner-title {
-      margin: 8px 0 4px;
-      font-size: 26px;
-      font-weight: 700;
-      letter-spacing: -0.03em;
+    main {
+      flex: 1;
+      padding: 32px 16px 40px;
     }
 
-    .planner-subtitle {
-      font-size: 14px;
-      color: var(--text-soft);
-      max-width: 620px;
-    }
-
-    .planner-grid {
+    .page-inner {
+      max-width: 1120px;
+      margin: 0 auto;
       display: grid;
-      gap: 18px;
-      align-items: flex-start;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.4fr);
+      gap: 28px;
     }
 
-    @media (min-width: 900px) {
-      .planner-grid {
-        grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.2fr);
+    @media (max-width: 880px) {
+      .page-inner {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      header {
+        position: static;
       }
     }
 
-    .planner-card {
-      background: var(--bg-card);
+    .panel {
+      background: radial-gradient(circle at top left, #020617, #020617);
       border-radius: var(--radius-lg);
-      border: 1px solid var(--border-subtle);
-      box-shadow: var(--shadow-soft);
-      padding: 18px 18px 16px;
+      border: 1px solid rgba(148,163,184,0.35);
+      padding: 20px 20px 18px;
+      box-shadow:
+        0 18px 45px rgba(15,23,42,0.9),
+        0 0 0 1px rgba(15,23,42,0.9);
     }
 
-    .planner-card-header {
-      margin-bottom: 10px;
+    .panel-header {
+      margin-bottom: 14px;
     }
 
-    .planner-card-title {
-      font-size: 16px;
-      font-weight: 600;
-      margin-bottom: 4px;
+    .eyebrow {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--accent-strong);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
     }
 
-    .planner-card-sub {
+    .eyebrow-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent-strong);
+      box-shadow: 0 0 0 4px rgba(34,197,94,0.2);
+    }
+
+    .panel-title {
+      margin: 6px 0 2px;
+      font-size: 22px;
+      letter-spacing: 0.01em;
+    }
+
+    .panel-subtitle {
       font-size: 13px;
-      color: var(--text-muted);
+      color: var(--muted);
     }
 
-    /* Form */
-    form#tripForm {
+    form {
       display: flex;
       flex-direction: column;
       gap: 12px;
-      margin-top: 6px;
+      margin-top: 8px;
+    }
+
+    label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 3px;
+      display: inline-block;
     }
 
     .field-row {
       display: flex;
-      flex-wrap: wrap;
       gap: 10px;
     }
 
     .field-col {
-      flex: 1 1 140px;
-      min-width: 0;
-    }
-
-    label {
-      display: block;
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--text-soft);
-      margin-bottom: 3px;
+      flex: 1;
     }
 
     input,
@@ -277,40 +253,40 @@
     select {
       width: 100%;
       border-radius: 10px;
-      border: 1px solid var(--border-subtle);
-      padding: 8px 9px;
+      border: 1px solid rgba(148,163,184,0.45);
+      background: rgba(15,23,42,0.9);
+      color: var(--text);
       font-size: 13px;
-      font-family: inherit;
-      color: var(--text-main);
-      background-color: #ffffff;
+      padding: 8px 9px;
       outline: none;
-      transition: border-color 0.12s ease, box-shadow 0.12s ease;
+      transition: border-color 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
     }
 
     input:focus,
     textarea:focus,
     select:focus {
-      border-color: #2563eb;
-      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.25);
+      border-color: var(--accent-strong);
+      box-shadow: 0 0 0 1px rgba(34,197,94,0.55);
+      background: rgba(15,23,42,1);
     }
 
     textarea {
-      min-height: 80px;
+      min-height: 70px;
       resize: vertical;
     }
 
     .helper {
       font-size: 11px;
-      color: var(--text-muted);
-      margin-top: 3px;
+      color: var(--muted);
+      margin-top: 2px;
     }
 
     .actions {
+      margin-top: 6px;
       display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
       align-items: center;
-      margin-top: 4px;
+      justify-content: flex-start;
+      gap: 10px;
     }
 
     button.primary {
@@ -318,19 +294,32 @@
       border: none;
       padding: 9px 16px;
       font-size: 13px;
-      font-weight: 600;
+      font-weight: 500;
       cursor: pointer;
-      color: #f9fafb;
-      background: linear-gradient(135deg, #2563eb, #22c55e, #ec4899);
-      box-shadow: 0 10px 24px rgba(37, 99, 235, 0.30);
+      color: #020617;
+      background: linear-gradient(135deg, #22c55e, #0ea5e9);
+      box-shadow:
+        0 12px 30px rgba(34,197,94,0.4),
+        0 0 0 1px rgba(15,23,42,0.9);
       display: inline-flex;
       align-items: center;
       gap: 8px;
+      transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.08s ease;
     }
 
     button.primary:hover:not(:disabled) {
       transform: translateY(-1px);
-      box-shadow: 0 14px 30px rgba(37, 99, 235, 0.36);
+      filter: brightness(1.03);
+      box-shadow:
+        0 16px 40px rgba(34,197,94,0.5),
+        0 0 0 1px rgba(15,23,42,0.9);
+    }
+
+    button.primary:active:not(:disabled) {
+      transform: translateY(0);
+      box-shadow:
+        0 10px 24px rgba(15,23,42,0.95),
+        0 0 0 1px rgba(15,23,42,0.9);
     }
 
     button.primary:disabled {
@@ -339,40 +328,11 @@
       box-shadow: none;
     }
 
-    /* Secondary / utility buttons */
-    button.secondary {
-      border-radius: 999px;
-      border: 1px solid var(--border-subtle);
-      padding: 7px 12px;
-      font-size: 12px;
-      font-weight: 500;
-      cursor: pointer;
-      background: #ffffff;
-      color: var(--text-soft);
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    button.secondary:hover:not(:disabled) {
-      background: #f9fafb;
-    }
-
-    button.secondary:disabled {
-      opacity: 0.5;
-      cursor: default;
-    }
-
-    button.secondary.subtle {
-      background: #f9fafb;
-      border-style: dashed;
-    }
-
     .spinner-dot {
-      width: 11px;
-      height: 11px;
-      border-radius: 999px;
-      border: 2px solid rgba(15, 23, 42, 0.15);
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: 2px solid #0f172a;
       border-top-color: #f9fafb;
       animation: spin 0.7s linear infinite;
     }
@@ -385,82 +345,52 @@
 
     .status-text {
       font-size: 11px;
-      color: var(--text-muted);
+      color: var(--muted);
     }
 
     .status-text strong {
-      color: var(--accent);
+      color: var(--accent-strong);
     }
 
     .status-error {
       color: var(--danger);
     }
 
-    /* Suggestions */
-    .suggestions-header-row {
+    .suggestions-header {
       display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: space-between;
       align-items: baseline;
+      justify-content: space-between;
+      gap: 10px;
       margin-bottom: 10px;
     }
 
     .suggestions-title {
-      font-size: 15px;
-      font-weight: 600;
+      font-size: 16px;
+      font-weight: 500;
     }
 
     .suggestions-meta {
       font-size: 11px;
-      color: var(--text-muted);
+      color: var(--muted);
     }
 
     .suggestions-list {
       display: flex;
       flex-direction: column;
       gap: 10px;
-      max-height: 430px;
+      max-height: 520px;
       overflow-y: auto;
-      padding-right: 2px;
-    }
-
-    /* Day group styling (bucketed view) */
-    .day-group {
-      margin-bottom: 18px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid var(--border-subtle);
-    }
-
-    .day-group:last-of-type {
-      border-bottom: none;
-      margin-bottom: 0;
-      padding-bottom: 0;
-    }
-
-    .day-heading {
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 2px;
-    }
-
-    .day-sub {
-      font-size: 12px;
-      color: var(--text-muted);
-      margin-bottom: 6px;
-    }
-
-    .day-suggestions {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
+      padding-right: 4px;
     }
 
     .suggestion-card {
       border-radius: 12px;
-      border: 1px solid rgba(209, 213, 219, 1);
+      border: 1px solid rgba(148,163,184,0.45);
+      background: radial-gradient(circle at top left, rgba(15,23,42,0.9), #020617);
       padding: 10px 11px;
-      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
     }
 
     .suggestion-top-row {
@@ -468,17 +398,15 @@
       align-items: center;
       justify-content: space-between;
       gap: 8px;
-      margin-bottom: 4px;
     }
 
     .suggestion-title {
       font-size: 14px;
-      font-weight: 600;
+      font-weight: 500;
     }
 
     .chip-row {
       display: flex;
-      flex-wrap: wrap;
       gap: 6px;
       font-size: 10px;
     }
@@ -486,305 +414,232 @@
     .chip {
       border-radius: 999px;
       padding: 2px 7px;
-      border: 1px solid rgba(209, 213, 219, 1);
-      background: #f9fafb;
-      color: var(--text-muted);
+      border: 1px solid rgba(148,163,184,0.45);
+      background: rgba(15,23,42,0.9);
+      color: var(--muted);
       text-transform: uppercase;
       letter-spacing: 0.12em;
     }
 
     .chip.accent {
-      border-color: rgba(37, 99, 235, 0.85);
-      color: #1d4ed8;
-      background: #eff6ff;
+      border-color: rgba(34,197,94,0.75);
+      color: var(--accent-strong);
+      background: rgba(34,197,94,0.1);
     }
 
     .suggestion-desc {
       font-size: 12px;
-      color: var(--text-soft);
-      margin-bottom: 2px;
+      color: #e5e7eb;
     }
 
     .suggestion-notes {
       font-size: 11px;
-      color: var(--text-muted);
+      color: var(--muted);
     }
 
     .empty-state {
       border-radius: 12px;
-      border: 1px dashed rgba(209, 213, 219, 1);
+      border: 1px dashed rgba(148,163,184,0.4);
       padding: 12px;
       font-size: 12px;
-      color: var(--text-muted);
-      background: #f9fafb;
+      color: var(--muted);
+      background: radial-gradient(circle at top left, rgba(15,23,42,0.8), #020617);
     }
 
-    footer.site-footer {
-      border-top: 1px solid rgba(209, 213, 219, 1);
-      padding: 18px 18px 26px;
-      font-size: 12px;
-      color: var(--text-muted);
+    footer {
+      border-top: 1px solid rgba(148,163,184,0.3);
+      padding: 12px 16px 16px;
+      font-size: 11px;
+      color: var(--muted);
     }
 
     .footer-inner {
       max-width: 1120px;
       margin: 0 auto;
       display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      align-items: center;
       justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
     }
 
     .footer-links {
       display: flex;
-      flex-wrap: wrap;
       gap: 12px;
+      flex-wrap: wrap;
     }
 
     .footer-links a {
-      color: var(--text-muted);
+      text-decoration: none;
+      color: var(--muted);
     }
 
     .footer-links a:hover {
-      text-decoration: underline;
-    }
-
-    @media (max-width: 640px) {
-      header.site-header {
-        padding-inline: 0;
-      }
-      .nav-inner {
-        padding-inline: 14px;
-      }
+      color: var(--accent-strong);
     }
   </style>
 </head>
 <body>
-  <!-- Header (same as index) -->
-  <header class="site-header">
+  <header>
     <div class="nav-inner">
-      <div class="nav-left">
-        <div class="logo-mark" aria-hidden="true">
-          <svg width="34" height="34" viewBox="0 0 34 34" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="logoGrad" x1="4" y1="4" x2="30" y2="30">
-                <stop offset="0%" stop-color="#2563EB"/>
-                <stop offset="50%" stop-color="#22C55E"/>
-                <stop offset="100%" stop-color="#EC4899"/>
-              </linearGradient>
-            </defs>
-            <circle cx="17" cy="17" r="17" fill="white"/>
-            <circle cx="17" cy="17" r="14" fill="url(#logoGrad)"/>
-            <path d="M17 8 L20.5 17 L17 26 L13.5 17 Z" fill="white" opacity="0.95"/>
-            <circle cx="17" cy="17" r="3" fill="white"/>
-          </svg>
+      <a href="/" class="brand">
+        <div class="brand-mark"></div>
+        <div class="brand-text">
+          <span class="brand-title">AITripPlan</span>
+          <span class="brand-subtitle">Trip ideas in seconds</span>
         </div>
-        <div class="logo-word">
-          AITrip<span class="accent">Plan</span>
-        </div>
-      </div>
-
-      <nav class="primary-nav" aria-label="Primary navigation">
-        <a href="/plan.html">Plan a Trip</a>
+      </a>
+      <nav class="nav-links">
+        <a href="/">Home</a>
+        <a href="/plan.html" class="active">Trip planner</a>
         <a href="/about.html">About</a>
         <a href="/faq.html">FAQ</a>
-        <button class="nav-cta" type="button" onclick="window.location.href='/plan.html'">
-          <span class="icon">🧭</span>
-          <span>Launch Planner</span>
-        </button>
+        <a href="/privacy.html">Privacy</a>
+        <span class="nav-cta">
+          <span class="badge">Beta</span>
+          <span>AI-powered itinerary ideas</span>
+        </span>
       </nav>
     </div>
   </header>
 
   <main>
-    <section class="planner-shell" aria-labelledby="planner-title">
-      <header class="planner-header">
-        <div class="planner-eyebrow">
-          <span class="planner-eyebrow-dot"></span>
-          AI Trip Planner
-        </div>
-        <h1 class="planner-title" id="planner-title">Turn a destination into structured trip ideas.</h1>
-        <p class="planner-subtitle">
-          Start simple: tell the AI where you’re going, who you’re with, the vibe, and your budget. You’ll get a list
-          of activity ideas grouped into days and times, which you can turn into a full itinerary later.
-        </p>
-      </header>
-
-      <div class="planner-grid">
-        <!-- Left card: Input form -->
-        <section class="planner-card" aria-label="Trip details form">
-          <div class="planner-card-header">
-            <div class="planner-card-title">Trip details</div>
-            <div class="planner-card-sub">
-              High-level info is enough. You can always regenerate with more specifics.
-            </div>
+    <div class="page-inner">
+      <!-- Left: simple form -->
+      <section class="panel">
+        <div class="panel-header">
+          <div class="eyebrow">
+            <span class="eyebrow-dot"></span>
+            Trip input
           </div>
+          <h1 class="panel-title">Tell the AI where you’re going</h1>
+          <p class="panel-subtitle">
+            Keep it high-level & fast. The AI will return a list of ideas you can skim through.
+          </p>
+        </div>
 
-          <form id="tripForm">
-            <div class="field-row">
-              <div class="field-col">
-                <label for="destination">Destination *</label>
-                <input
-                  id="destination"
-                  name="destination"
-                  type="text"
-                  placeholder="Lisbon, Portugal"
-                  autocomplete="off"
-                  required
-                />
-              </div>
-              <div class="field-col">
-                <label for="days">Trip length (days)</label>
-                <input
-                  id="days"
-                  name="days"
-                  type="number"
-                  min="1"
-                  max="21"
-                  placeholder="4"
-                />
-                <p class="helper">
-                  For best results, keep trips between 1 and 21 days.
-                </p>
-              </div>
-            </div>
-
-            <div class="field-row">
-              <div class="field-col">
-                <label for="dates">Rough dates (optional)</label>
-                <input
-                  id="dates"
-                  name="dates"
-                  type="text"
-                  placeholder="April 12–16, 2025"
-                />
-              </div>
-              <div class="field-col">
-                <label for="travelers">Who’s going?</label>
-                <input
-                  id="travelers"
-                  name="travelers"
-                  type="text"
-                  placeholder="Couple, family with kids, solo, friends..."
-                />
-              </div>
-            </div>
-
-            <!-- Budget selector -->
-            <div class="field-row">
-              <div class="field-col">
-                <label for="budget">Rough budget</label>
-                <select id="budget" name="budget">
-                  <option value="">No preference / mixed</option>
-                  <option value="budget / backpacker level">
-                    Budget / backpacker
-                  </option>
-                  <option value="mid-range, a mix of value and comfort">
-                    Mid-range — value & comfort
-                  </option>
-                  <option value="comfortable with some splurges">
-                    Comfortable with some splurges
-                  </option>
-                  <option value="mostly luxury experiences">
-                    Mostly luxury
-                  </option>
-                </select>
-                <p class="helper">
-                  Helps the AI choose neighborhoods, activities, and restaurant styles that fit your spend.
-                </p>
-              </div>
-            </div>
-
-            <div>
-              <label for="vibe">What kind of trip is this?</label>
+        <form id="tripForm">
+          <div class="field-row">
+            <div class="field-col">
+              <label for="destination">Destination</label>
               <input
-                id="vibe"
-                name="vibe"
+                id="destination"
+                name="destination"
                 type="text"
-                placeholder="Relaxed, food-focused, museums, nightlife, outdoors..."
+                placeholder="e.g. Lisbon, Portugal"
+                autocomplete="off"
+                required
               />
             </div>
-
-            <div>
-              <label for="prefs">Anything specific to include or avoid?</label>
-              <textarea
-                id="prefs"
-                name="prefs"
-                placeholder="Example: No rental car. Prefer walkable areas and casual restaurants. One nice dinner with a view."
-              ></textarea>
-              <p class="helper">
-                The AI uses this to tune recommendations. Bullet points or short sentences are fine.
-              </p>
+            <div class="field-col">
+              <label for="days">Trip length (days)</label>
+              <input
+                id="days"
+                name="days"
+                type="number"
+                min="1"
+                max="30"
+                placeholder="4"
+              />
             </div>
+          </div>
 
-            <div class="actions">
-              <button type="submit" class="primary" id="generateBtn">
-                <span class="spinner-dot" id="spinner" style="display:none;"></span>
-                <span id="btnText">Generate trip ideas</span>
-              </button>
-
-              <button type="button" class="secondary" id="copyBtn" disabled>
-                Copy itinerary
-              </button>
-
-              <button type="button" class="secondary subtle" id="clearBtn">
-                Clear
-              </button>
-
-              <span class="status-text" id="statusText">
-                Powered by AI. Usually just a few seconds.
-              </span>
+          <div class="field-row">
+            <div class="field-col">
+              <label for="start">Start date (optional)</label>
+              <input id="start" name="start" type="date" />
             </div>
+            <div class="field-col">
+              <label for="travelers">Who’s going?</label>
+              <input
+                id="travelers"
+                name="travelers"
+                type="text"
+                placeholder="Couple, family with kids, solo, friends..."
+              />
+            </div>
+          </div>
 
+          <div>
+            <label for="vibe">What kind of trip is this?</label>
+            <input
+              id="vibe"
+              name="vibe"
+              type="text"
+              placeholder="Relaxed, food-focused, museums, nightlife, outdoors..."
+            />
+          </div>
+
+          <div>
+            <label for="prefs">Anything specific to include or avoid?</label>
+            <textarea
+              id="prefs"
+              name="prefs"
+              placeholder="Example: No rental car. Prefer walkable areas and casual restaurants. One nice dinner."
+            ></textarea>
             <p class="helper">
-              Your inputs are used to generate ideas on the fly and are not stored as a saved itinerary yet.
+              The AI will use this to personalize activity ideas. You don’t need to be super detailed.
             </p>
-          </form>
-        </section>
-
-        <!-- Right card: Suggestions -->
-        <section class="planner-card" aria-label="Suggested activities">
-          <div class="suggestions-header-row">
-            <div>
-              <div class="planner-card-title suggestions-title">Suggested activities</div>
-              <div class="planner-card-sub">
-                Ideas are grouped by day hint so you can quickly sketch your itinerary.
-              </div>
-            </div>
-            <div class="suggestions-meta" id="metaSummary">
-              No results yet.
-            </div>
           </div>
 
-          <div id="suggestionsContainer" class="suggestions-list">
-            <div class="empty-state" id="emptyState">
-              <strong>Nothing here yet.</strong> Enter a destination and click
-              <em>Generate trip ideas</em> to see AI suggestions you can turn into an itinerary.
-            </div>
+          <div class="actions">
+            <button type="submit" class="primary" id="generateBtn">
+              <span class="spinner-dot" id="spinner" style="display: none;"></span>
+              <span id="btnText">Generate trip ideas</span>
+            </button>
+            <span class="status-text" id="statusText">
+              Powered by AI. Usually just a few seconds.
+            </span>
           </div>
 
-          <p class="helper" style="margin-top: 10px;">
-            Tip: After you like the quality of the ideas, you can copy this plan into Notes, Docs,
-            or a shared message thread.
+          <p class="helper" style="margin-top: 4px;">
+            We don’t save your itinerary inputs right now; everything is generated on the fly.
           </p>
-        </section>
-      </div>
-    </section>
+        </form>
+      </section>
+
+      <!-- Right: results -->
+      <section class="panel">
+        <div class="suggestions-header">
+          <div>
+            <h2 class="suggestions-title">Suggested activities</h2>
+            <p class="panel-subtitle">
+              Once generated, your ideas will show up here in a simple list.
+            </p>
+          </div>
+          <div class="suggestions-meta" id="metaSummary">
+            No results yet.
+          </div>
+        </div>
+
+        <div id="suggestionsContainer" class="suggestions-list">
+          <div class="empty-state" id="emptyState">
+            <strong>Nothing here yet.</strong> Enter a destination and click
+            <em>Generate trip ideas</em> to see AI suggestions for your itinerary.
+          </div>
+        </div>
+
+        <p class="helper" style="margin-top: 10px;">
+          Tip: After you like the quality of ideas, we can add drag-and-drop days and export tools.
+        </p>
+      </section>
+    </div>
   </main>
 
-  <footer class="site-footer">
+  <footer>
     <div class="footer-inner">
-      <span>© 2025 AITripPlan.com · Not official travel advice. Always verify important details before you travel.</span>
+      <span>© <span id="yearSpan"></span> AITripPlan.com</span>
       <div class="footer-links">
-        <a href="/privacy.html">Privacy</a>
         <a href="/about.html">About</a>
         <a href="/faq.html">FAQ</a>
+        <a href="/privacy.html">Privacy</a>
       </div>
     </div>
   </footer>
 
   <script>
+    // Year in footer
+    document.getElementById("yearSpan").textContent = new Date().getFullYear();
+
     const form = document.getElementById("tripForm");
     const generateBtn = document.getElementById("generateBtn");
     const spinner = document.getElementById("spinner");
@@ -793,25 +648,17 @@
     const suggestionsContainer = document.getElementById("suggestionsContainer");
     const emptyState = document.getElementById("emptyState");
     const metaSummary = document.getElementById("metaSummary");
-    const copyBtn = document.getElementById("copyBtn");
-    const clearBtn = document.getElementById("clearBtn");
-
-    // Keep last suggestions for copy-to-clipboard
-    let lastSuggestions = [];
 
     function setLoading(isLoading, msg) {
       if (isLoading) {
         generateBtn.disabled = true;
-        copyBtn.disabled = true;
         spinner.style.display = "inline-block";
         btnText.textContent = "Generating...";
-        statusText.innerHTML =
-          msg || "<strong>Thinking...</strong> Asking AI for trip ideas.";
+        statusText.innerHTML = msg || "<strong>Thinking...</strong> Asking AI for ideas.";
       } else {
         generateBtn.disabled = false;
         spinner.style.display = "none";
         btnText.textContent = "Generate trip ideas";
-        copyBtn.disabled = !lastSuggestions.length;
         if (!msg) {
           statusText.textContent = "Powered by AI. Usually just a few seconds.";
         } else {
@@ -820,61 +667,18 @@
       }
     }
 
-    // Group suggestions into day buckets, sort by time-of-day, add "Any day" group
-    function renderSuggestions(suggestions) {
+    function renderSuggestions(suggestions, meta) {
       suggestionsContainer.innerHTML = "";
-      lastSuggestions = Array.isArray(suggestions) ? suggestions.slice() : [];
-      copyBtn.disabled = !lastSuggestions.length;
-
       if (!Array.isArray(suggestions) || suggestions.length === 0) {
-        emptyState.style.display = "block";
         suggestionsContainer.appendChild(emptyState);
+        emptyState.style.display = "block";
         metaSummary.textContent = "No results. Try tweaking your input.";
         return;
       }
 
       emptyState.style.display = "none";
 
-      // Group by dayHint, collect flexible
-      const dayBuckets = new Map(); // number -> array
-      const flexible = [];
-
-      suggestions.forEach((s) => {
-        const day =
-          typeof s.dayHint === "number" && isFinite(s.dayHint)
-            ? s.dayHint
-            : null;
-
-        if (day === null) {
-          flexible.push(s);
-        } else {
-          if (!dayBuckets.has(day)) dayBuckets.set(day, []);
-          dayBuckets.get(day).push(s);
-        }
-      });
-
-      // Sort days
-      const sortedDays = Array.from(dayBuckets.keys()).sort((a, b) => a - b);
-
-      // Sort by time-of-day within a day
-      const timeOrder = { morning: 0, afternoon: 1, evening: 2, flex: 3 };
-      function sortByTimeOfDay(list) {
-        return list.sort((a, b) => {
-          const ta = (a.timeOfDay || "flex").toString().toLowerCase();
-          const tb = (b.timeOfDay || "flex").toString().toLowerCase();
-          const wa = Object.prototype.hasOwnProperty.call(timeOrder, ta)
-            ? timeOrder[ta]
-            : 4;
-          const wb = Object.prototype.hasOwnProperty.call(timeOrder, tb)
-            ? timeOrder[tb]
-            : 4;
-          if (wa !== wb) return wa - wb;
-          return (a.title || "").localeCompare(b.title || "");
-        });
-      }
-
-      // Helper to build a card
-      function buildCard(s, idx) {
+      suggestions.forEach((s, idx) => {
         const card = document.createElement("article");
         card.className = "suggestion-card";
 
@@ -890,11 +694,12 @@
 
         const todChip = document.createElement("span");
         todChip.className = "chip accent";
-        const tod = (s.timeOfDay || "flex").toString().toLowerCase();
-        if (tod === "morning") todChip.textContent = "Morning";
+        let tod = (s.timeOfDay || "flex").toString().toLowerCase();
+        if (tod === "flex") todChip.textContent = "Flexible";
+        else if (tod === "morning") todChip.textContent = "Morning";
         else if (tod === "afternoon") todChip.textContent = "Afternoon";
         else if (tod === "evening") todChip.textContent = "Evening";
-        else todChip.textContent = "Flexible";
+        else todChip.textContent = "Any time";
 
         chips.appendChild(todChip);
 
@@ -923,236 +728,24 @@
         card.appendChild(desc);
         card.appendChild(notes);
 
-        return card;
-      }
-
-      // Render day buckets
-      sortedDays.forEach((day) => {
-        const items = sortByTimeOfDay(dayBuckets.get(day) || []);
-
-        const groupEl = document.createElement("section");
-        groupEl.className = "day-group";
-
-        const heading = document.createElement("div");
-        heading.className = "day-heading";
-        heading.textContent = "Day " + day;
-
-        const sub = document.createElement("div");
-        sub.className = "day-sub";
-        sub.textContent = "Ideas for morning, afternoon, and evening.";
-
-        const listEl = document.createElement("div");
-        listEl.className = "day-suggestions";
-
-        items.forEach((s, idx) => {
-          listEl.appendChild(buildCard(s, idx));
-        });
-
-        groupEl.appendChild(heading);
-        groupEl.appendChild(sub);
-        groupEl.appendChild(listEl);
-
-        suggestionsContainer.appendChild(groupEl);
+        suggestionsContainer.appendChild(card);
       });
 
-      // Render flexible suggestions (any day) last
-      if (flexible.length > 0) {
-        const items = sortByTimeOfDay(flexible);
-
-        const groupEl = document.createElement("section");
-        groupEl.className = "day-group";
-
-        const heading = document.createElement("div");
-        heading.className = "day-heading";
-        heading.textContent = "Any day ideas";
-
-        const sub = document.createElement("div");
-        sub.className = "day-sub";
-        sub.textContent = "Flexible suggestions you can plug into any day.";
-
-        const listEl = document.createElement("div");
-        listEl.className = "day-suggestions";
-
-        items.forEach((s, idx) => {
-          listEl.appendChild(buildCard(s, idx));
-        });
-
-        groupEl.appendChild(heading);
-        groupEl.appendChild(sub);
-        groupEl.appendChild(listEl);
-
-        suggestionsContainer.appendChild(groupEl);
-      }
-
-      const total = suggestions.length;
-      const dayCount = sortedDays.length;
-      if (dayCount > 0) {
+      if (meta && meta.error) {
         metaSummary.textContent =
-          total +
-          " ideas across " +
-          dayCount +
-          " day" +
-          (dayCount === 1 ? "" : "s") +
-          (flexible.length ? " (+ flexible ideas)" : "");
+          suggestions.length + " ideas (with fallback: " + meta.error + ")";
       } else {
-        metaSummary.textContent =
-          total +
-          " flexible idea" +
-          (total === 1 ? "" : "s") +
-          " with no specific day.";
+        metaSummary.textContent = suggestions.length + " ideas generated.";
       }
     }
-
-    // Build a plain-text itinerary for copy-to-clipboard
-    function buildItineraryText(suggestions) {
-      if (!Array.isArray(suggestions) || !suggestions.length) {
-        return "No itinerary generated yet.";
-      }
-
-      const dayBuckets = new Map();
-      const flexible = [];
-
-      suggestions.forEach((s) => {
-        const day =
-          typeof s.dayHint === "number" && isFinite(s.dayHint)
-            ? s.dayHint
-            : null;
-
-        if (day === null) {
-          flexible.push(s);
-        } else {
-          if (!dayBuckets.has(day)) dayBuckets.set(day, []);
-          dayBuckets.get(day).push(s);
-        }
-      });
-
-      const sortedDays = Array.from(dayBuckets.keys()).sort((a, b) => a - b);
-      const timeOrder = { morning: 0, afternoon: 1, evening: 2, flex: 3 };
-
-      function labelForTime(todRaw) {
-        const tod = (todRaw || "flex").toString().toLowerCase();
-        if (tod === "morning") return "Morning";
-        if (tod === "afternoon") return "Afternoon";
-        if (tod === "evening") return "Evening";
-        return "Flexible";
-      }
-
-      function sortByTime(list) {
-        return list.sort((a, b) => {
-          const ta = (a.timeOfDay || "flex").toString().toLowerCase();
-          const tb = (b.timeOfDay || "flex").toString().toLowerCase();
-          const wa = Object.prototype.hasOwnProperty.call(timeOrder, ta)
-            ? timeOrder[ta]
-            : 4;
-          const wb = Object.prototype.hasOwnProperty.call(timeOrder, tb)
-            ? timeOrder[tb]
-            : 4;
-          if (wa !== wb) return wa - wb;
-          return (a.title || "").localeCompare(b.title || "");
-        });
-      }
-
-      let out = "Trip itinerary (draft from AITripPlan)\n\n";
-
-      // Day-by-day
-      sortedDays.forEach((day) => {
-        out += "Day " + day + "\n";
-        const items = sortByTime(dayBuckets.get(day) || []);
-        items.forEach((s) => {
-          out +=
-            "  - [" +
-            labelForTime(s.timeOfDay) +
-            "] " +
-            (s.title || "Activity") +
-            "\n";
-
-          if (s.description) {
-            out += "      " + s.description + "\n";
-          }
-          if (s.notes) {
-            out += "      Notes: " + s.notes + "\n";
-          }
-        });
-        out += "\n";
-      });
-
-      // Flexible ideas
-      if (flexible.length) {
-        out += "Any day ideas\n";
-        const items = sortByTime(flexible);
-        items.forEach((s) => {
-          out +=
-            "  - [" +
-            labelForTime(s.timeOfDay) +
-            "] " +
-            (s.title || "Activity") +
-            "\n";
-          if (s.description) {
-            out += "      " + s.description + "\n";
-          }
-          if (s.notes) {
-            out += "      Notes: " + s.notes + "\n";
-          }
-        });
-        out += "\n";
-      }
-
-      out +=
-        "Generated with AITripPlan.com. Always double-check opening hours, locations, and safety guidance before you go.";
-
-      return out;
-    }
-
-    // Copy itinerary button behavior
-    copyBtn.addEventListener("click", async () => {
-      if (!lastSuggestions.length) {
-        statusText.innerHTML =
-          "<span class='status-error'>No itinerary to copy yet.</span>";
-        return;
-      }
-
-      const text = buildItineraryText(lastSuggestions);
-
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        try {
-          await navigator.clipboard.writeText(text);
-          statusText.innerHTML = "<strong>Copied!</strong> Itinerary is on your clipboard.";
-        } catch (err) {
-          console.error("Clipboard error:", err);
-          statusText.innerHTML =
-            "<span class='status-error'>Couldn't copy automatically. Try selecting the text manually.</span>";
-        }
-      } else {
-        // Simple fallback: show prompt
-        window.prompt("Copy this itinerary:", text);
-        statusText.innerHTML =
-          "<strong>Note:</strong> Some browsers don't allow automatic copying. A manual copy prompt was shown.";
-      }
-    });
-
-    // Clear/reset button behavior
-    clearBtn.addEventListener("click", () => {
-      form.reset();
-      lastSuggestions = [];
-      copyBtn.disabled = true;
-
-      suggestionsContainer.innerHTML = "";
-      emptyState.style.display = "block";
-      suggestionsContainer.appendChild(emptyState);
-
-      metaSummary.textContent = "No results yet.";
-      statusText.textContent =
-        "Cleared. Enter new trip details to generate a fresh plan.";
-    });
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
       const destination = document.getElementById("destination").value.trim();
-      const daysValue = document.getElementById("days").value.trim();
-      const dates = document.getElementById("dates").value.trim();
+      const days = document.getElementById("days").value.trim();
+      const start = document.getElementById("start").value.trim();
       const travelers = document.getElementById("travelers").value.trim();
-      const budget = document.getElementById("budget").value.trim();
       const vibe = document.getElementById("vibe").value.trim();
       const prefs = document.getElementById("prefs").value.trim();
 
@@ -1162,29 +755,17 @@
         return;
       }
 
-      // Basic guardrails for trip length
-      let daysNum = null;
-      if (daysValue) {
-        daysNum = parseInt(daysValue, 10);
-        if (isNaN(daysNum) || daysNum < 1 || daysNum > 21) {
-          statusText.innerHTML =
-            "<span class='status-error'>Trip length should be between 1 and 21 days.</span>";
-          return;
-        }
-      }
-
-      const parts = [];
-      parts.push("Destination: " + destination + ".");
-      if (daysNum) parts.push("Trip length: " + daysNum + " days.");
-      if (dates) parts.push("Rough dates: " + dates + ".");
-      if (travelers) parts.push("Who is going: " + travelers + ".");
-      if (budget) parts.push("Budget level: " + budget + ".");
-      if (vibe) parts.push("Trip vibe: " + vibe + ".");
-      if (prefs) parts.push("Preferences: " + prefs + ".");
+      const promptParts = [];
+      promptParts.push("Destination: " + destination + ".");
+      if (days) promptParts.push("Trip length: " + days + " days.");
+      if (start) promptParts.push("Start date: " + start + ".");
+      if (travelers) promptParts.push("Who is going: " + travelers + ".");
+      if (vibe) promptParts.push("Trip vibe: " + vibe + ".");
+      if (prefs) promptParts.push("Preferences: " + prefs + ".");
 
       const finalPrompt =
         "Generate activity suggestions for this trip. " +
-        parts.join(" ") +
+        promptParts.join(" ") +
         " Respond only with JSON object: { \"suggestions\": [ ... ] }.";
 
       setLoading(true);
@@ -1193,36 +774,20 @@
         const res = await fetch("/api/generate-itinerary", {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "application/json"
           },
-          body: JSON.stringify({ prompt: finalPrompt }),
+          body: JSON.stringify({ prompt: finalPrompt })
         });
 
-        const text = await res.text();
+        const dataText = await res.text();
+        console.log("Raw /api/generate-itinerary response:", dataText);
+
         let data;
         try {
-          data = JSON.parse(text);
+          data = JSON.parse(dataText);
         } catch (err) {
-          console.error("Failed to parse JSON from server:", err, text);
-          setLoading(
-            false,
-            "<span class='status-error'>Our server returned something unexpected. Please try again in a moment.</span>"
-          );
-          return;
-        }
-
-        if (!res.ok) {
-          console.error("Server error:", data);
-          let friendly =
-            "Server error: " + (data.error || ("HTTP " + res.status));
-          if (res.status === 429) {
-            friendly =
-              "We’re getting a lot of requests at once. Please wait a few seconds and try again.";
-          } else if (res.status >= 500) {
-            friendly =
-              "Our trip planner or the AI is having trouble right now. Try again in a minute.";
-          }
-          setLoading(false, "<span class='status-error'>" + friendly + "</span>");
+          console.error("Failed to parse JSON:", err);
+          setLoading(false, "<span class='status-error'>Server returned invalid JSON. Check console logs.</span>");
           return;
         }
 
@@ -1230,15 +795,22 @@
           ? data.suggestions
           : [];
 
-        renderSuggestions(suggestions);
-        setLoading(false, "<strong>Done.</strong> Scroll through your ideas or copy the itinerary.");
+        renderSuggestions(suggestions, { error: data.error });
+        if (data.error) {
+          statusText.innerHTML =
+            "<span class='status-error'>Using fallback ideas: " +
+            data.error +
+            "</span>";
+        } else {
+          statusText.innerHTML = "<strong>Done.</strong> Scroll through your ideas.";
+        }
       } catch (err) {
-        console.error("Network error calling /api/generate-itinerary:", err);
-        setLoading(
-          false,
-          "<span class='status-error'>Network error. Check your connection and try again.</span>"
-        );
+        console.error("Error calling /api/generate-itinerary:", err);
+        setLoading(false, "<span class='status-error'>Network error. Check console logs.</span>");
+        return;
       }
+
+      setLoading(false);
     });
   </script>
 </body>
