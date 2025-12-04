@@ -515,6 +515,13 @@
       background: #eff6ff;
     }
 
+    /* NEW: meta line inside suggestion card (neighborhood + travel time) */
+    .suggestion-meta-line {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin: 0 0 4px;
+    }
+
     .suggestion-desc {
       font-size: 12px;
       color: var(--text-soft);
@@ -984,6 +991,21 @@
         topRow.appendChild(title);
         topRow.appendChild(chips);
 
+        card.appendChild(topRow);
+
+        // NEW: neighborhood + travelTime meta line
+        const neighborhood = s.neighborhood && String(s.neighborhood).trim();
+        const travelTime = s.travelTime && String(s.travelTime).trim();
+        if (neighborhood || travelTime) {
+          const meta = document.createElement("p");
+          meta.className = "suggestion-meta-line";
+          const pieces = [];
+          if (neighborhood) pieces.push(neighborhood);
+          if (travelTime) pieces.push(travelTime);
+          meta.textContent = pieces.join(" · ");
+          card.appendChild(meta);
+        }
+
         const desc = document.createElement("p");
         desc.className = "suggestion-desc";
         desc.textContent =
@@ -992,10 +1014,23 @@
 
         const notes = document.createElement("p");
         notes.className = "suggestion-notes";
-        notes.textContent =
+
+        const baseNotes =
           s.notes || "No extra notes from the AI for this one.";
 
-        card.appendChild(topRow);
+        const mapsSearch =
+          s.mapsSearch && String(s.mapsSearch).trim
+            ? String(s.mapsSearch).trim()
+            : s.mapsSearch;
+
+        // If mapsSearch exists, append a short hint
+        if (mapsSearch) {
+          notes.textContent =
+            baseNotes + " Maps search: \"" + mapsSearch + "\".";
+        } else {
+          notes.textContent = baseNotes;
+        }
+
         card.appendChild(desc);
         card.appendChild(notes);
 
