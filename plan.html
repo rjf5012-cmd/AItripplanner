@@ -367,6 +367,23 @@
       color: var(--danger);
     }
 
+    /* Checkbox inline */
+    .checkbox-inline {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--text-soft);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .checkbox-inline input[type="checkbox"] {
+      width: 14px;
+      height: 14px;
+      cursor: pointer;
+    }
+
     /* Suggestions */
     .suggestions-header-row {
       display: flex;
@@ -577,8 +594,8 @@
         </div>
         <h1 class="planner-title" id="planner-title">Turn a destination into structured trip ideas.</h1>
         <p class="planner-subtitle">
-          Start simple: tell the AI where you’re going, who you’re with, the vibe, and your budget. You’ll get a list
-          of activity ideas grouped by time of day, which you can turn into a full itinerary later.
+          Start simple: tell the AI where you’re going, who you’re with, the vibe, and your budget. You can choose
+          between a loose list of ideas or a full day-by-day itinerary.
         </p>
       </header>
 
@@ -683,6 +700,17 @@
               ></textarea>
               <p class="helper">
                 The AI uses this to tune recommendations. Bullet points or short sentences are fine.
+              </p>
+            </div>
+
+            <!-- Full itinerary toggle -->
+            <div>
+              <label class="checkbox-inline">
+                <input type="checkbox" id="fullItinerary" name="fullItinerary" />
+                <span>Full itinerary mode (3 suggestions per day)</span>
+              </label>
+              <p class="helper">
+                Turn this on for a structured morning/afternoon/evening plan for each day. Leave it off for a looser list of ideas.
               </p>
             </div>
 
@@ -962,6 +990,7 @@
       const budget = document.getElementById("budget").value.trim();
       const vibe = document.getElementById("vibe").value.trim();
       const prefs = document.getElementById("prefs").value.trim();
+      const fullItinerary = document.getElementById("fullItinerary").checked;
 
       if (!destination) {
         statusText.innerHTML =
@@ -978,38 +1007,30 @@
       if (vibe) parts.push("Trip vibe: " + vibe + ".");
       if (prefs) parts.push("Preferences: " + prefs + ".");
 
-      // 🔴 New, stronger prompt for day-by-day coverage
-      let finalPrompt =
-        "You are planning a day-by-day trip itinerary. " +
-        parts.join(" ") +
-        " ";
-
-      if (days) {
-        const numDays = parseInt(days, 10);
-        if (!isNaN(numDays) && numDays > 0) {
-          finalPrompt +=
-            "Create at least " +
-            (numDays * 3) +
-            " distinct activity suggestions in total. " +
-            "Distribute them across " +
-            numDays +
-            " days using the 'dayHint' field (integer days 1 through " +
-            numDays +
-            "). " +
-            "For each day, try to include one morning, one afternoon, and one evening activity. ";
+      if (fullItinerary) {
+        if (days) {
+          parts.push(
+            "The user wants a full day-by-day itinerary with morning, afternoon, and evening suggestions for each of the " +
+              days +
+              " days."
+          );
+        } else {
+          parts.push(
+            "The user wants a full day-by-day itinerary with morning, afternoon, and evening suggestions for each day."
+          );
         }
+      } else {
+        parts.push(
+          "The user wants a looser list of activity ideas they can mix and match across the trip."
+        );
       }
 
-      finalPrompt +=
-        "Return ONLY valid JSON in this exact shape: " +
-        "{ \"suggestions\": [ " +
-        "{ \"id\": string, \"title\": string, " +
-        "\"timeOfDay\": \"morning\" | \"afternoon\" | \"evening\" | \"flex\", " +
-        "\"dayHint\": number | null, " +
-        "\"description\": string, " +
-        "\"notes\": string } " +
-        "] }. " +
-        "Do not include any explanation or text before or after the JSON.";
+      const finalPrompt =
+        "Generate activity suggestions for this trip. " +
+        parts.join(" ") +
+        " Respond only with JSON object: { \"suggestions\": [ ... ] }.";
+
+      const mode = fullItinerary ? "full-itinerary" : "ideas";
 
       setLoading(true);
 
@@ -1019,7 +1040,7 @@
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ prompt: finalPrompt }),
+          body: JSON.stringify({ prompt: finalPrompt, mode }),
         });
 
         const text = await res.text();
