@@ -384,6 +384,34 @@
       cursor: pointer;
     }
 
+    /* Checklist pills */
+    .checklist-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 10px;
+      margin-top: 4px;
+    }
+
+    .check-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--text-soft);
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      background: #f9fafb;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .check-pill input[type="checkbox"] {
+      width: 14px;
+      height: 14px;
+      cursor: pointer;
+    }
+
     /* Suggestions */
     .suggestions-header-row {
       display: flex;
@@ -724,6 +752,56 @@
               </p>
             </div>
 
+            <!-- Must include checklist -->
+            <div>
+              <label>Must include (quick checklist)</label>
+              <div class="checklist-grid">
+                <label class="check-pill">
+                  <input type="checkbox" name="mustInclude" value="best restaurants" />
+                  <span>Best restaurants</span>
+                </label>
+                <label class="check-pill">
+                  <input type="checkbox" name="mustInclude" value="beaches" />
+                  <span>Beaches</span>
+                </label>
+                <label class="check-pill">
+                  <input type="checkbox" name="mustInclude" value="museums" />
+                  <span>Museums</span>
+                </label>
+                <label class="check-pill">
+                  <input type="checkbox" name="mustInclude" value="hidden gems and local spots" />
+                  <span>Hidden gems</span>
+                </label>
+                <label class="check-pill">
+                  <input type="checkbox" name="mustInclude" value="budget friendly food options" />
+                  <span>Budget food</span>
+                </label>
+                <label class="check-pill">
+                  <input type="checkbox" name="mustInclude" value="nightlife and bars" />
+                  <span>Nightlife</span>
+                </label>
+                <label class="check-pill">
+                  <input type="checkbox" name="mustInclude" value="walkable areas and neighborhoods" />
+                  <span>Walkability</span>
+                </label>
+                <label class="check-pill">
+                  <input type="checkbox" name="mustInclude" value="kid friendly activities" />
+                  <span>Kid-friendly</span>
+                </label>
+                <label class="check-pill">
+                  <input type="checkbox" name="mustInclude" value="nature and outdoor activities" />
+                  <span>Nature/outdoors</span>
+                </label>
+                <label class="check-pill">
+                  <input type="checkbox" name="mustInclude" value="shopping areas and markets" />
+                  <span>Shopping</span>
+                </label>
+              </div>
+              <p class="helper">
+                The AI will try to weave these into the plan wherever they fit naturally.
+              </p>
+            </div>
+
             <!-- Full itinerary toggle -->
             <div>
               <label class="checkbox-inline">
@@ -1014,6 +1092,11 @@
       const prefs = document.getElementById("prefs").value.trim();
       const fullItinerary = document.getElementById("fullItinerary").checked;
 
+      const mustIncludeEls = document.querySelectorAll(
+        'input[name="mustInclude"]:checked'
+      );
+      const mustInclude = Array.from(mustIncludeEls).map((el) => el.value);
+
       if (!destination) {
         statusText.innerHTML =
           "<span class='status-error'>Please enter a destination first.</span>";
@@ -1029,6 +1112,11 @@
       if (tripType) parts.push("Trip type: " + tripType + ".");
       if (vibe) parts.push("Trip vibe: " + vibe + ".");
       if (prefs) parts.push("Preferences: " + prefs + ".");
+      if (mustInclude.length) {
+        parts.push(
+          "Must include elements: " + mustInclude.join(", ") + "."
+        );
+      }
 
       if (fullItinerary) {
         if (days) {
