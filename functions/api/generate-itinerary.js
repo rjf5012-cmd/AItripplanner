@@ -33,8 +33,7 @@ export async function onRequestPost({ request, env }) {
 
     const body = await request.json().catch(() => ({}));
     const userPrompt = body?.prompt;
-    const mode =
-      body?.mode === "full-itinerary" ? "full-itinerary" : "ideas";
+    const mode = body?.mode === "full-itinerary" ? "full-itinerary" : "ideas";
 
     if (!userPrompt || typeof userPrompt !== "string") {
       return jsonResponse(
@@ -70,7 +69,7 @@ export async function onRequestPost({ request, env }) {
         `- 1 suggestion with "timeOfDay": "afternoon"`,
         `- 1 suggestion with "timeOfDay": "evening"`,
         `Set "dayHint" to the correct day number (1–${days}) for each suggestion.`,
-        `Keep titles short and scannable; keep description and notes concise (1–2 sentences each).`,
+        `Keep titles short and scannable; keep description and notes concise.`,
       ].join("\n");
 
       combinedPrompt =
@@ -108,9 +107,16 @@ export async function onRequestPost({ request, env }) {
               "You are an expert travel planner for a simple itinerary builder. " +
               "You ALWAYS respond with valid JSON only, no extra text. " +
               "Return a single JSON object with a 'suggestions' array. " +
-              "Each suggestion must have: " +
+              "Each suggestion MUST have: " +
               "id (string), title (string), timeOfDay ('morning'|'afternoon'|'evening'|'flex'), " +
-              "dayHint (number or null), description (string), and notes (string).",
+              "dayHint (number or null), description (string), and notes (string). " +
+              "Use 'description' as a 3–5 sentence itinerary-style explanation in context of the day. " +
+              "Use 'notes' as a 1–2 sentence practical/logistical tip (e.g., ticket timing, reservations, dress code). " +
+              "Whenever possible you SHOULD ALSO include these extra fields in each suggestion: " +
+              "neighborhood (short neighborhood or area name, e.g. 'Alfama'), " +
+              "mapsSearch (a concise Google Maps search query a traveler could paste, e.g. 'Se de Lisboa Lisbon'), " +
+              "travelTime (a short human-readable estimate like '10–15 min walk from Baixa' or '15 min by metro from city center'). " +
+              "Keep neighborhood, mapsSearch, and travelTime short and map-friendly.",
           },
           {
             role: "user",
@@ -188,9 +194,6 @@ export async function onRequestPost({ request, env }) {
     return jsonResponse({ suggestions });
   } catch (err) {
     console.error("Unexpected error in /api/generate-itinerary:", err);
-    return jsonResponse(
-      { error: "Unexpected server error." },
-      500
-    );
+    return jsonResponse({ error: "Unexpected server error." }, 500);
   }
 }
