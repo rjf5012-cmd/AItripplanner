@@ -33,63 +33,12 @@ export async function onRequestPost({ request, env }) {
 
     const body = await request.json().catch(() => ({}));
     const userPrompt = body?.prompt;
-    const mode =
-      body?.mode === "full-itinerary" ? "full-itinerary" : "ideas";
 
     if (!userPrompt || typeof userPrompt !== "string") {
       return jsonResponse(
         { error: "Missing or invalid 'prompt' in request body." },
         400
       );
-    }
-
-    // --- Derive number of days from the prompt (Trip length: X days.) ---
-    let inferredDays = 3; // sensible default
-    const match = userPrompt.match(/Trip length:\s*(\d+)\s*days/i);
-    if (match && match[1]) {
-      const parsed = parseInt(match[1], 10);
-      if (Number.isFinite(parsed) && parsed > 0) {
-        inferredDays = parsed;
-      }
-    }
-
-    // Hard cap so we don't ask for 30 * 3 = 90 suggestions
-    const days = Math.min(Math.max(inferredDays, 1), 7);
-    const totalSuggestions = days * 3;
-
-    // --- Build the actual prompt sent to the model ---
-    let combinedPrompt = userPrompt;
-
-    if (mode === "full-itinerary") {
-      const itineraryInstructions = [
-        `The trip should last exactly ${days} day(s).`,
-        `You MUST return exactly ${totalSuggestions} suggestions in the "suggestions" array.`,
-        `Distribute suggestions evenly across the days so there are exactly 3 suggestions per day.`,
-        `For each day d (1 to ${days}) you MUST include exactly:`,
-        `- 1 suggestion with "timeOfDay": "morning"`,
-        `- 1 suggestion with "timeOfDay": "afternoon"`,
-        `- 1 suggestion with "timeOfDay": "evening"`,
-        `Set "dayHint" to the correct day number (1–${days}) for each suggestion.`,
-        `Keep titles short and scannable; keep description and notes concise (1–2 sentences each).`,
-      ].join("\n");
-
-      combinedPrompt =
-        userPrompt +
-        "\n\nTrip structure constraints (full itinerary mode):\n" +
-        itineraryInstructions;
-    } else {
-      // "Ideas" mode – more relaxed, just gentle structure hints
-      const ideasInstructions = [
-        `The trip is approximately ${days} day(s) long.`,
-        `You do NOT need to fill every day. Focus on high-quality ideas.`,
-        `Use "timeOfDay" as "morning", "afternoon", "evening", or "flex" where it makes sense.`,
-        `Use "dayHint" between 1 and ${days} when the idea fits a specific day, or null when it's flexible.`,
-      ].join("\n");
-
-      combinedPrompt =
-        userPrompt +
-        "\n\nTrip structure notes (loose ideas mode):\n" +
-        ideasInstructions;
     }
 
     // Call OpenAI Chat Completions API – same pattern as your working /api/gifts
@@ -100,7 +49,7 @@ export async function onRequestPost({ request, env }) {
         Authorization: `Bearer ${env.OPENAI_API_KEY}`,
       },
       body: JSON.stringify({
-        model: "gpt-4.1-mini",
+        model: "gpt-4.1-mini", // same model family you're already using successfully
         messages: [
           {
             role: "system",
@@ -110,11 +59,18 @@ export async function onRequestPost({ request, env }) {
               "Return a single JSON object with a 'suggestions' array. " +
               "Each suggestion must have: " +
               "id (string), title (string), timeOfDay ('morning'|'afternoon'|'evening'|'flex'), " +
-              "dayHint (number or null), description (string), and notes (string).",
+              "dayHint (number or null), description (string), and notes (string). " +
+              "If the user prompt includes a phrase like 'Trip length: X days.', " +
+              "treat X as the number of days in the trip. Aim to create roughly 2–3 suggestions " +
+              "per day (for example, morning, afternoon, and evening), and set dayHint values " +
+              "from 1 through X to indicate which day each suggestion fits best. " +
+              "You may also include a few extra flexible ideas that work on any day by using " +
+              "dayHint: null. Keep the total number of suggestions reasonable so the itinerary " +
+              "feels usable (not an overwhelming wall of text)."
           },
           {
             role: "user",
-            content: combinedPrompt,
+            content: userPrompt,
           },
         ],
         temperature: 0.7,
@@ -145,7 +101,7 @@ export async function onRequestPost({ request, env }) {
       );
     }
 
-    let message = openaiJson?.choices?.[0]?.message?.content;
+    const message = openaiJson?.choices?.[0]?.message?.content;
     if (!message || typeof message !== "string") {
       return jsonResponse(
         { error: "No content returned from OpenAI." },
@@ -153,24 +109,11 @@ export async function onRequestPost({ request, env }) {
       );
     }
 
-    // --- Clean up possible ```json fences around the content ---
-    let cleaned = message.trim();
-    if (cleaned.startsWith("```")) {
-      const firstNewline = cleaned.indexOf("\n");
-      if (firstNewline !== -1) {
-        cleaned = cleaned.slice(firstNewline + 1);
-      }
-      if (cleaned.endsWith("```")) {
-        cleaned = cleaned.slice(0, -3);
-      }
-      cleaned = cleaned.trim();
-    }
-
     let parsed;
     try {
-      parsed = JSON.parse(cleaned);
+      parsed = JSON.parse(message);
     } catch (e) {
-      console.error("Failed to parse OpenAI JSON content:", e, cleaned);
+      console.error("Failed to parse OpenAI JSON content:", e, message);
       return jsonResponse(
         { error: "Failed to parse AI response as JSON." },
         502
@@ -180,10 +123,6 @@ export async function onRequestPost({ request, env }) {
     const suggestions = Array.isArray(parsed.suggestions)
       ? parsed.suggestions
       : [];
-
-    if (!suggestions.length) {
-      console.warn("AI returned zero suggestions.", parsed);
-    }
 
     return jsonResponse({ suggestions });
   } catch (err) {
