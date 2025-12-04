@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Build Your AI Trip Plan | AITripPlan.com</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Generate smart trip ideas with AI and quickly turn them into a simple itinerary." />
+
+  <link rel="icon" type="image/png" href="/favicon.png" />
+
+  <style>
+    :root {
+      --bg: #020617;
+      --bg-soft: #020617;
+      --card-bg: #020617;
+      --card-border: rgba(148,163,184,0.4);
+      --accent: #22c55e;
+      --accent-soft: rgba(34,197,94,0.18);
+      --accent-strong: #4ade80;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --danger: #f97373;
+      --radius-lg: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #0b1120 0, #020617 40%, #020617 100%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    header {
+      border-bottom: 1px solid rgba(148,163,184,0.25);
+      backdrop-filter: blur(18px);
+      background: linear-gradient(
+        to bottom,
+        rgba(15,23,42,0.95),
+        rgba(15,23,42,0.85),
+        transparent
+      );
+      position: sticky;
+      top: 0;
+      z-index: 40;
+    }
+
+    .nav-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-mark {
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 20%, #facc15, #22c55e 45%, #0ea5e9 90%);
+      box-shadow:
+        0 0 0 2px rgba(15,23,42,0.7),
+        0 12px 25px rgba(15,23,42,0.8);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .brand-mark::after {
+      content: "";
+      position: absolute;
+      inset: 18%;
+      border-radius: 999px;
+      border: 2px solid rgba(15,23,42,0.85);
+      border-top-color: transparent;
+      border-right-color: transparent;
+      transform: rotate(-25deg);
+      opacity: 0.9;
+    }
+
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.1;
+    }
+
+    .brand-title {
+      font-weight: 650;
+      letter-spacing: 0.03em;
+      font-size: 18px;
+    }
+
+    .brand-subtitle {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .nav-links a {
+      padding: 4px 0;
+      position: relative;
+    }
+
+    .nav-links a.active::after,
+    .nav-links a:hover::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -4px;
+      height: 2px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #22c55e, #0ea5e9);
+    }
+
+    .nav-cta {
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.35);
+      background: radial-gradient(circle at top left, rgba(34,197,94,0.14), transparent 60%);
+      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .nav-cta span.badge {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: rgba(15,23,42,0.85);
+      border: 1px solid rgba(148,163,184,0.4);
+    }
+
+    main {
+      flex: 1;
+      padding: 32px 16px 40px;
+    }
+
+    .page-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.4fr);
+      gap: 28px;
+    }
+
+    @media (max-width: 880px) {
+      .page-inner {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      header {
+        position: static;
+      }
+    }
+
+    .panel {
+      background: radial-gradient(circle at top left, #020617, #020617);
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(148,163,184,0.35);
+      padding: 20px 20px 18px;
+      box-shadow:
+        0 18px 45px rgba(15,23,42,0.9),
+        0 0 0 1px rgba(15,23,42,0.9);
+    }
+
+    .panel-header {
+      margin-bottom: 14px;
+    }
+
+    .eyebrow {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--accent-strong);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .eyebrow-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent-strong);
+      box-shadow: 0 0 0 4px rgba(34,197,94,0.2);
+    }
+
+    .panel-title {
+      margin: 6px 0 2px;
+      font-size: 22px;
+      letter-spacing: 0.01em;
+    }
+
+    .panel-subtitle {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 3px;
+      display: inline-block;
+    }
+
+    .field-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .field-col {
+      flex: 1;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid rgba(148,163,184,0.45);
+      background: rgba(15,23,42,0.9);
+      color: var(--text);
+      font-size: 13px;
+      padding: 8px 9px;
+      outline: none;
+      transition: border-color 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      border-color: var(--accent-strong);
+      box-shadow: 0 0 0 1px rgba(34,197,94,0.55);
+      background: rgba(15,23,42,1);
+    }
+
+    textarea {
+      min-height: 70px;
+      resize: vertical;
+    }
+
+    .helper {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .actions {
+      margin-top: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 10px;
+    }
+
+    button.primary {
+      border-radius: 999px;
+      border: none;
+      padding: 9px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      color: #020617;
+      background: linear-gradient(135deg, #22c55e, #0ea5e9);
+      box-shadow:
+        0 12px 30px rgba(34,197,94,0.4),
+        0 0 0 1px rgba(15,23,42,0.9);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.08s ease;
+    }
+
+    button.primary:hover:not(:disabled) {
+      transform: translateY(-1px);
+      filter: brightness(1.03);
+      box-shadow:
+        0 16px 40px rgba(34,197,94,0.5),
+        0 0 0 1px rgba(15,23,42,0.9);
+    }
+
+    button.primary:active:not(:disabled) {
+      transform: translateY(0);
+      box-shadow:
+        0 10px 24px rgba(15,23,42,0.95),
+        0 0 0 1px rgba(15,23,42,0.9);
+    }
+
+    button.primary:disabled {
+      opacity: 0.6;
+      cursor: default;
+      box-shadow: none;
+    }
+
+    .spinner-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: 2px solid #0f172a;
+      border-top-color: #f9fafb;
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .status-text {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .status-text strong {
+      color: var(--accent-strong);
+    }
+
+    .status-error {
+      color: var(--danger);
+    }
+
+    .suggestions-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .suggestions-title {
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    .suggestions-meta {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .suggestions-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 520px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .suggestion-card {
+      border-radius: 12px;
+      border: 1px solid rgba(148,163,184,0.45);
+      background: radial-gradient(circle at top left, rgba(15,23,42,0.9), #020617);
+      padding: 10px 11px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .suggestion-top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .suggestion-title {
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .chip-row {
+      display: flex;
+      gap: 6px;
+      font-size: 10px;
+    }
+
+    .chip {
+      border-radius: 999px;
+      padding: 2px 7px;
+      border: 1px solid rgba(148,163,184,0.45);
+      background: rgba(15,23,42,0.9);
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .chip.accent {
+      border-color: rgba(34,197,94,0.75);
+      color: var(--accent-strong);
+      background: rgba(34,197,94,0.1);
+    }
+
+    .suggestion-desc {
+      font-size: 12px;
+      color: #e5e7eb;
+    }
+
+    .suggestion-notes {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .empty-state {
+      border-radius: 12px;
+      border: 1px dashed rgba(148,163,184,0.4);
+      padding: 12px;
+      font-size: 12px;
+      color: var(--muted);
+      background: radial-gradient(circle at top left, rgba(15,23,42,0.8), #020617);
+    }
+
+    footer {
+      border-top: 1px solid rgba(148,163,184,0.3);
+      padding: 12px 16px 16px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .footer-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      text-decoration: none;
+      color: var(--muted);
+    }
+
+    .footer-links a:hover {
+      color: var(--accent-strong);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="nav-inner">
+      <a href="/" class="brand">
+        <div class="brand-mark"></div>
+        <div class="brand-text">
+          <span class="brand-title">AITripPlan</span>
+          <span class="brand-subtitle">Trip ideas in seconds</span>
+        </div>
+      </a>
+      <nav class="nav-links">
+        <a href="/">Home</a>
+        <a href="/plan.html" class="active">Trip planner</a>
+        <a href="/about.html">About</a>
+        <a href="/faq.html">FAQ</a>
+        <a href="/privacy.html">Privacy</a>
+        <span class="nav-cta">
+          <span class="badge">Beta</span>
+          <span>AI-powered itinerary ideas</span>
+        </span>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="page-inner">
+      <!-- Left: simple form -->
+      <section class="panel">
+        <div class="panel-header">
+          <div class="eyebrow">
+            <span class="eyebrow-dot"></span>
+            Trip input
+          </div>
+          <h1 class="panel-title">Tell the AI where you’re going</h1>
+          <p class="panel-subtitle">
+            Keep it high-level & fast. The AI will return a list of ideas you can skim through.
+          </p>
+        </div>
+
+        <form id="tripForm">
+          <div class="field-row">
+            <div class="field-col">
+              <label for="destination">Destination</label>
+              <input
+                id="destination"
+                name="destination"
+                type="text"
+                placeholder="e.g. Lisbon, Portugal"
+                autocomplete="off"
+                required
+              />
+            </div>
+            <div class="field-col">
+              <label for="days">Trip length (days)</label>
+              <input
+                id="days"
+                name="days"
+                type="number"
+                min="1"
+                max="30"
+                placeholder="4"
+              />
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field-col">
+              <label for="start">Start date (optional)</label>
+              <input id="start" name="start" type="date" />
+            </div>
+            <div class="field-col">
+              <label for="travelers">Who’s going?</label>
+              <input
+                id="travelers"
+                name="travelers"
+                type="text"
+                placeholder="Couple, family with kids, solo, friends..."
+              />
+            </div>
+          </div>
+
+          <div>
+            <label for="vibe">What kind of trip is this?</label>
+            <input
+              id="vibe"
+              name="vibe"
+              type="text"
+              placeholder="Relaxed, food-focused, museums, nightlife, outdoors..."
+            />
+          </div>
+
+          <div>
+            <label for="prefs">Anything specific to include or avoid?</label>
+            <textarea
+              id="prefs"
+              name="prefs"
+              placeholder="Example: No rental car. Prefer walkable areas and casual restaurants. One nice dinner."
+            ></textarea>
+            <p class="helper">
+              The AI will use this to personalize activity ideas. You don’t need to be super detailed.
+            </p>
+          </div>
+
+          <div class="actions">
+            <button type="submit" class="primary" id="generateBtn">
+              <span class="spinner-dot" id="spinner" style="display: none;"></span>
+              <span id="btnText">Generate trip ideas</span>
+            </button>
+            <span class="status-text" id="statusText">
+              Powered by AI. Usually just a few seconds.
+            </span>
+          </div>
+
+          <p class="helper" style="margin-top: 4px;">
+            We don’t save your itinerary inputs right now; everything is generated on the fly.
+          </p>
+        </form>
+      </section>
+
+      <!-- Right: results -->
+      <section class="panel">
+        <div class="suggestions-header">
+          <div>
+            <h2 class="suggestions-title">Suggested activities</h2>
+            <p class="panel-subtitle">
+              Once generated, your ideas will show up here in a simple list.
+            </p>
+          </div>
+          <div class="suggestions-meta" id="metaSummary">
+            No results yet.
+          </div>
+        </div>
+
+        <div id="suggestionsContainer" class="suggestions-list">
+          <div class="empty-state" id="emptyState">
+            <strong>Nothing here yet.</strong> Enter a destination and click
+            <em>Generate trip ideas</em> to see AI suggestions for your itinerary.
+          </div>
+        </div>
+
+        <p class="helper" style="margin-top: 10px;">
+          Tip: After you like the quality of ideas, we can add drag-and-drop days and export tools.
+        </p>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <span>© <span id="yearSpan"></span> AITripPlan.com</span>
+      <div class="footer-links">
+        <a href="/about.html">About</a>
+        <a href="/faq.html">FAQ</a>
+        <a href="/privacy.html">Privacy</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Year in footer
+    document.getElementById("yearSpan").textContent = new Date().getFullYear();
+
+    const form = document.getElementById("tripForm");
+    const generateBtn = document.getElementById("generateBtn");
+    const spinner = document.getElementById("spinner");
+    const btnText = document.getElementById("btnText");
+    const statusText = document.getElementById("statusText");
+    const suggestionsContainer = document.getElementById("suggestionsContainer");
+    const emptyState = document.getElementById("emptyState");
+    const metaSummary = document.getElementById("metaSummary");
+
+    function setLoading(isLoading, msg) {
+      if (isLoading) {
+        generateBtn.disabled = true;
+        spinner.style.display = "inline-block";
+        btnText.textContent = "Generating...";
+        statusText.innerHTML = msg || "<strong>Thinking...</strong> Asking AI for ideas.";
+      } else {
+        generateBtn.disabled = false;
+        spinner.style.display = "none";
+        btnText.textContent = "Generate trip ideas";
+        if (!msg) {
+          statusText.textContent = "Powered by AI. Usually just a few seconds.";
+        } else {
+          statusText.innerHTML = msg;
+        }
+      }
+    }
+
+    function renderSuggestions(suggestions, meta) {
+      suggestionsContainer.innerHTML = "";
+      if (!Array.isArray(suggestions) || suggestions.length === 0) {
+        suggestionsContainer.appendChild(emptyState);
+        emptyState.style.display = "block";
+        metaSummary.textContent = "No results. Try tweaking your input.";
+        return;
+      }
+
+      emptyState.style.display = "none";
+
+      suggestions.forEach((s, idx) => {
+        const card = document.createElement("article");
+        card.className = "suggestion-card";
+
+        const topRow = document.createElement("div");
+        topRow.className = "suggestion-top-row";
+
+        const title = document.createElement("div");
+        title.className = "suggestion-title";
+        title.textContent = s.title || "Activity " + (idx + 1);
+
+        const chips = document.createElement("div");
+        chips.className = "chip-row";
+
+        const todChip = document.createElement("span");
+        todChip.className = "chip accent";
+        let tod = (s.timeOfDay || "flex").toString().toLowerCase();
+        if (tod === "flex") todChip.textContent = "Flexible";
+        else if (tod === "morning") todChip.textContent = "Morning";
+        else if (tod === "afternoon") todChip.textContent = "Afternoon";
+        else if (tod === "evening") todChip.textContent = "Evening";
+        else todChip.textContent = "Any time";
+
+        chips.appendChild(todChip);
+
+        if (typeof s.dayHint === "number" && isFinite(s.dayHint)) {
+          const dayChip = document.createElement("span");
+          dayChip.className = "chip";
+          dayChip.textContent = "Day " + s.dayHint;
+          chips.appendChild(dayChip);
+        }
+
+        topRow.appendChild(title);
+        topRow.appendChild(chips);
+
+        const desc = document.createElement("p");
+        desc.className = "suggestion-desc";
+        desc.textContent =
+          s.description ||
+          "No description provided, but this activity sounded interesting.";
+
+        const notes = document.createElement("p");
+        notes.className = "suggestion-notes";
+        notes.textContent =
+          s.notes || "No extra notes from the AI for this one.";
+
+        card.appendChild(topRow);
+        card.appendChild(desc);
+        card.appendChild(notes);
+
+        suggestionsContainer.appendChild(card);
+      });
+
+      if (meta && meta.error) {
+        metaSummary.textContent =
+          suggestions.length + " ideas (with fallback: " + meta.error + ")";
+      } else {
+        metaSummary.textContent = suggestions.length + " ideas generated.";
+      }
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const destination = document.getElementById("destination").value.trim();
+      const days = document.getElementById("days").value.trim();
+      const start = document.getElementById("start").value.trim();
+      const travelers = document.getElementById("travelers").value.trim();
+      const vibe = document.getElementById("vibe").value.trim();
+      const prefs = document.getElementById("prefs").value.trim();
+
+      if (!destination) {
+        statusText.innerHTML =
+          "<span class='status-error'>Please enter a destination first.</span>";
+        return;
+      }
+
+      const promptParts = [];
+      promptParts.push("Destination: " + destination + ".");
+      if (days) promptParts.push("Trip length: " + days + " days.");
+      if (start) promptParts.push("Start date: " + start + ".");
+      if (travelers) promptParts.push("Who is going: " + travelers + ".");
+      if (vibe) promptParts.push("Trip vibe: " + vibe + ".");
+      if (prefs) promptParts.push("Preferences: " + prefs + ".");
+
+      const finalPrompt =
+        "Generate activity suggestions for this trip. " +
+        promptParts.join(" ") +
+        " Respond only with JSON object: { \"suggestions\": [ ... ] }.";
+
+      setLoading(true);
+
+      try {
+        const res = await fetch("/api/generate-itinerary", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ prompt: finalPrompt })
+        });
+
+        const dataText = await res.text();
+        console.log("Raw /api/generate-itinerary response:", dataText);
+
+        let data;
+        try {
+          data = JSON.parse(dataText);
+        } catch (err) {
+          console.error("Failed to parse JSON:", err);
+          setLoading(false, "<span class='status-error'>Server returned invalid JSON. Check console logs.</span>");
+          return;
+        }
+
+        const suggestions = Array.isArray(data.suggestions)
+          ? data.suggestions
+          : [];
+
+        renderSuggestions(suggestions, { error: data.error });
+        if (data.error) {
+          statusText.innerHTML =
+            "<span class='status-error'>Using fallback ideas: " +
+            data.error +
+            "</span>";
+        } else {
+          statusText.innerHTML = "<strong>Done.</strong> Scroll through your ideas.";
+        }
+      } catch (err) {
+        console.error("Error calling /api/generate-itinerary:", err);
+        setLoading(false, "<span class='status-error'>Network error. Check console logs.</span>");
+        return;
+      }
+
+      setLoading(false);
+    });
+  </script>
+</body>
+</html>
