@@ -681,8 +681,29 @@
               </div>
             </div>
 
+            <!-- Trip type selector -->
+            <div class="field-row">
+              <div class="field-col">
+                <label for="tripType">Trip type</label>
+                <select id="tripType" name="tripType">
+                  <option value="">General trip / not sure</option>
+                  <option value="romantic getaway">Romantic getaway</option>
+                  <option value="golf trip with friends">Golf trip</option>
+                  <option value="bachelor or bachelorette party">Bachelor / bachelorette party</option>
+                  <option value="family vacation with kids">Family vacation</option>
+                  <option value="relaxing recharge trip">Relaxing / recharge</option>
+                  <option value="food and wine focused trip">Food &amp; wine</option>
+                  <option value="adventure and outdoors focused trip">Adventure &amp; outdoors</option>
+                  <option value="city break focused on sightseeing and museums">City break / first-time visitor</option>
+                </select>
+                <p class="helper">
+                  Gives the AI a quick sense of what kind of trip you’re planning.
+                </p>
+              </div>
+            </div>
+
             <div>
-              <label for="vibe">What kind of trip is this?</label>
+              <label for="vibe">What kind of trip is this? (optional)</label>
               <input
                 id="vibe"
                 name="vibe"
@@ -988,6 +1009,7 @@
       const dates = document.getElementById("dates").value.trim();
       const travelers = document.getElementById("travelers").value.trim();
       const budget = document.getElementById("budget").value.trim();
+      const tripType = document.getElementById("tripType").value.trim();
       const vibe = document.getElementById("vibe").value.trim();
       const prefs = document.getElementById("prefs").value.trim();
       const fullItinerary = document.getElementById("fullItinerary").checked;
@@ -1004,6 +1026,7 @@
       if (dates) parts.push("Rough dates: " + dates + ".");
       if (travelers) parts.push("Who is going: " + travelers + ".");
       if (budget) parts.push("Budget level: " + budget + ".");
+      if (tripType) parts.push("Trip type: " + tripType + ".");
       if (vibe) parts.push("Trip vibe: " + vibe + ".");
       if (prefs) parts.push("Preferences: " + prefs + ".");
 
