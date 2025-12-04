@@ -33,6 +33,8 @@ export async function onRequestPost({ request, env }) {
 
     const body = await request.json().catch(() => ({}));
     const userPrompt = body?.prompt;
+    const mode =
+      body?.mode === "full-itinerary" ? "full-itinerary" : "ideas";
 
     if (!userPrompt || typeof userPrompt !== "string") {
       return jsonResponse(
@@ -55,24 +57,40 @@ export async function onRequestPost({ request, env }) {
     const days = Math.min(Math.max(inferredDays, 1), 7);
     const totalSuggestions = days * 3;
 
-    // --- Build an augmented prompt that the model can follow easily ---
-    const itineraryInstructions = [
-      `The trip should last exactly ${days} day(s).`,
-      `You MUST return exactly ${totalSuggestions} suggestions in the "suggestions" array.`,
-      `Distribute suggestions evenly across the days so there are exactly 3 suggestions per day.`,
-      `For each day d (1 to ${days}) you MUST include exactly:`,
-      `- 1 suggestion with "timeOfDay": "morning"`,
-      `- 1 suggestion with "timeOfDay": "afternoon"`,
-      `- 1 suggestion with "timeOfDay": "evening"`,
-      `Set "dayHint" to the correct day number (1–${days}) for each suggestion.`,
-      `Keep titles short and scannable; keep description and notes concise (1–2 sentences each).`,
-    ].join("\n");
+    // --- Build the actual prompt sent to the model ---
+    let combinedPrompt = userPrompt;
 
-    const combinedPrompt =
-      userPrompt +
-      "\n\n" +
-      "Trip structure constraints:\n" +
-      itineraryInstructions;
+    if (mode === "full-itinerary") {
+      const itineraryInstructions = [
+        `The trip should last exactly ${days} day(s).`,
+        `You MUST return exactly ${totalSuggestions} suggestions in the "suggestions" array.`,
+        `Distribute suggestions evenly across the days so there are exactly 3 suggestions per day.`,
+        `For each day d (1 to ${days}) you MUST include exactly:`,
+        `- 1 suggestion with "timeOfDay": "morning"`,
+        `- 1 suggestion with "timeOfDay": "afternoon"`,
+        `- 1 suggestion with "timeOfDay": "evening"`,
+        `Set "dayHint" to the correct day number (1–${days}) for each suggestion.`,
+        `Keep titles short and scannable; keep description and notes concise (1–2 sentences each).`,
+      ].join("\n");
+
+      combinedPrompt =
+        userPrompt +
+        "\n\nTrip structure constraints (full itinerary mode):\n" +
+        itineraryInstructions;
+    } else {
+      // "Ideas" mode – more relaxed, just gentle structure hints
+      const ideasInstructions = [
+        `The trip is approximately ${days} day(s) long.`,
+        `You do NOT need to fill every day. Focus on high-quality ideas.`,
+        `Use "timeOfDay" as "morning", "afternoon", "evening", or "flex" where it makes sense.`,
+        `Use "dayHint" between 1 and ${days} when the idea fits a specific day, or null when it's flexible.`,
+      ].join("\n");
+
+      combinedPrompt =
+        userPrompt +
+        "\n\nTrip structure notes (loose ideas mode):\n" +
+        ideasInstructions;
+    }
 
     // Call OpenAI Chat Completions API – same pattern as your working /api/gifts
     const openaiRes = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -138,12 +156,10 @@ export async function onRequestPost({ request, env }) {
     // --- Clean up possible ```json fences around the content ---
     let cleaned = message.trim();
     if (cleaned.startsWith("```")) {
-      // Remove leading ```json or ``` fence
       const firstNewline = cleaned.indexOf("\n");
       if (firstNewline !== -1) {
         cleaned = cleaned.slice(firstNewline + 1);
       }
-      // Remove trailing ```
       if (cleaned.endsWith("```")) {
         cleaned = cleaned.slice(0, -3);
       }
@@ -165,8 +181,6 @@ export async function onRequestPost({ request, env }) {
       ? parsed.suggestions
       : [];
 
-    // Optional: light sanity check on count; don't fail, just return what we have
-    // (you can enforce stricter behavior later if you want)
     if (!suggestions.length) {
       console.warn("AI returned zero suggestions.", parsed);
     }
