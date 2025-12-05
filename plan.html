@@ -20,6 +20,7 @@
     :root {
       --bg-page: #f3f4f6;
       --bg-card: #ffffff;
+      --bg-soft: #f9fafb;
       --text-main: #0f172a;
       --text-soft: #4b5563;
       --text-muted: #6b7280;
@@ -27,7 +28,7 @@
       --accent-green: #22c55e;
       --accent-pink: #ec4899;
       --border-subtle: rgba(209, 213, 219, 1);
-      --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.10);
+      --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.08);
       --radius-lg: 18px;
       --danger: #dc2626;
     }
@@ -40,8 +41,8 @@
       margin: 0;
       font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background:
-        radial-gradient(circle at 0% 0%, rgba(37, 99, 235, 0.06), transparent 60%),
-        radial-gradient(circle at 100% 0%, rgba(236, 72, 153, 0.06), transparent 60%),
+        radial-gradient(circle at 0% 0%, rgba(37, 99, 235, 0.04), transparent 60%),
+        radial-gradient(circle at 100% 0%, rgba(236, 72, 153, 0.04), transparent 60%),
         var(--bg-page);
       color: var(--text-main);
     }
@@ -51,7 +52,7 @@
       text-decoration: none;
     }
 
-    /* Header / Nav – same style as index.html */
+    /* Header / Nav */
     header.site-header {
       position: fixed;
       inset-inline: 0;
@@ -133,7 +134,7 @@
       transform: scaleX(1);
     }
 
-    /* Visually mark "Plan a Trip" as active */
+    /* Active nav item */
     nav.primary-nav a[href="/plan.html"]::after {
       transform: scaleX(1);
     }
@@ -218,7 +219,7 @@
 
     @media (min-width: 900px) {
       .planner-grid {
-        grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.2fr);
+        grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.25fr);
       }
     }
 
@@ -305,6 +306,31 @@
       margin-top: 3px;
     }
 
+    .sample-strip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      color: var(--text-muted);
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: var(--bg-soft);
+      border: 1px solid rgba(209, 213, 219, 0.8);
+      margin: 4px 0 4px;
+    }
+
+    .sample-strip button {
+      border: none;
+      background: transparent;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent);
+      cursor: pointer;
+      padding: 0;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
     .actions {
       display: flex;
       flex-wrap: wrap;
@@ -339,22 +365,6 @@
       box-shadow: none;
     }
 
-    /* Ghost / secondary button (Sample Trip) */
-    button.ghost {
-      border-radius: 999px;
-      border: 1px solid var(--border-subtle);
-      background: #ffffff;
-      color: var(--text-soft);
-      font-size: 12px;
-      padding: 8px 14px;
-      cursor: pointer;
-    }
-
-    button.ghost:hover {
-      background: #f9fafb;
-    }
-
-    /* Secondary toolbar buttons */
     button.secondary {
       border-radius: 999px;
       border: 1px solid var(--border-subtle);
@@ -363,10 +373,18 @@
       font-size: 11px;
       padding: 6px 10px;
       cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
     }
 
-    button.secondary:hover {
+    button.secondary:hover:not(:disabled) {
       background: #eef2ff;
+    }
+
+    button.secondary:disabled {
+      opacity: 0.5;
+      cursor: default;
     }
 
     .spinner-dot {
@@ -448,7 +466,7 @@
       flex-wrap: wrap;
       gap: 10px;
       justify-content: space-between;
-      align-items: baseline;
+      align-items: flex-start;
       margin-bottom: 10px;
     }
 
@@ -460,13 +478,29 @@
     .suggestions-meta {
       font-size: 11px;
       color: var(--text-muted);
+      text-align: right;
+      max-width: 220px;
     }
 
     .suggestions-toolbar {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .chip-tip {
+      font-size: 11px;
+      color: var(--text-muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .chip-tip span.icon {
+      font-size: 12px;
     }
 
     .suggestions-list {
@@ -478,7 +512,6 @@
       padding-right: 2px;
     }
 
-    /* Day group styling (bucketed view) */
     .day-group {
       margin-bottom: 18px;
       padding-bottom: 10px;
@@ -491,16 +524,23 @@
       padding-bottom: 0;
     }
 
+    .day-heading-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
     .day-heading {
       font-size: 14px;
       font-weight: 600;
-      margin-bottom: 2px;
     }
 
     .day-sub {
-      font-size: 12px;
+      font-size: 11px;
       color: var(--text-muted);
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
 
     .day-suggestions {
@@ -545,10 +585,10 @@
       color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.12em;
-      cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 4px;
+      cursor: pointer;
     }
 
     .chip.accent {
@@ -557,8 +597,8 @@
       background: #eff6ff;
     }
 
-    .chip-caret {
-      font-size: 10px;
+    .chip .caret {
+      font-size: 9px;
       opacity: 0.8;
     }
 
@@ -579,19 +619,6 @@
       color: var(--text-muted);
     }
 
-    .card-delete-btn {
-      border: none;
-      background: transparent;
-      font-size: 12px;
-      color: var(--text-muted);
-      cursor: pointer;
-      padding: 0;
-    }
-
-    .card-delete-btn:hover {
-      color: var(--danger);
-    }
-
     .empty-state {
       border-radius: 12px;
       border: 1px dashed rgba(209, 213, 219, 1);
@@ -601,28 +628,15 @@
       background: #f9fafb;
     }
 
-    /* Tip toast */
-    .chip-tip-toast {
-      margin-top: 8px;
-      padding: 8px 10px;
+    .toast-tip {
+      margin-top: 6px;
+      font-size: 11px;
+      color: var(--text-muted);
+      padding: 6px 8px;
       border-radius: 10px;
       background: #eff6ff;
-      border: 1px solid rgba(37, 99, 235, 0.3);
-      font-size: 11px;
-      color: #1d4ed8;
+      border: 1px solid rgba(191, 219, 254, 1);
       display: none;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .chip-tip-toast button {
-      border: none;
-      background: transparent;
-      font-size: 12px;
-      cursor: pointer;
-      color: #1d4ed8;
-      padding: 0;
     }
 
     footer.site-footer {
@@ -667,7 +681,7 @@
   </style>
 </head>
 <body>
-  <!-- Header (same as index) -->
+  <!-- Header -->
   <header class="site-header">
     <div class="nav-inner">
       <div class="nav-left">
@@ -725,6 +739,13 @@
             <div class="planner-card-sub">
               High-level info is enough. You can always regenerate with more specifics.
             </div>
+          </div>
+
+          <div class="sample-strip">
+            <span>Not sure where to start?</span>
+            <button type="button" id="sampleTripBtn">
+              Load a sample Lisbon city break
+            </button>
           </div>
 
           <form id="tripForm">
@@ -821,12 +842,12 @@
             </div>
 
             <div>
-              <label for="vibe">Trip focus &amp; pace (optional)</label>
+              <label for="vibe">What kind of experience are you hoping for? (optional)</label>
               <input
                 id="vibe"
                 name="vibe"
                 type="text"
-                placeholder="Slow mornings, museums and cafés, rooftop drinks, some free time..."
+                placeholder="Slow mornings, lots of food, 1–2 big sights, some nightlife..."
               />
             </div>
 
@@ -904,15 +925,10 @@
             </div>
 
             <div class="actions">
-              <button type="button" class="ghost" id="sampleTripBtn">
-                Load sample Paris trip
-              </button>
-
               <button type="submit" class="primary" id="generateBtn">
                 <span class="spinner-dot" id="spinner" style="display:none;"></span>
                 <span id="btnText">Generate trip ideas</span>
               </button>
-
               <span class="status-text" id="statusText">
                 Powered by AI. Usually just a few seconds.
               </span>
@@ -930,7 +946,7 @@
             <div>
               <div class="planner-card-title suggestions-title">Suggested activities</div>
               <div class="planner-card-sub">
-                Ideas are grouped by day. Click the day and time labels on each card to tweak your itinerary.
+                Ideas are grouped by day hint so you can quickly sketch your itinerary.
               </div>
             </div>
             <div class="suggestions-meta" id="metaSummary">
@@ -938,27 +954,31 @@
             </div>
           </div>
 
-          <!-- Toolbar: add custom items / placeholders -->
           <div class="suggestions-toolbar">
-            <button type="button" class="secondary" id="addCustomActivityBtn">+ Custom activity</button>
-            <button type="button" class="secondary" id="addMealPlaceholderBtn">+ Meal placeholder</button>
-            <button type="button" class="secondary" id="addTransferPlaceholderBtn">+ Travel block</button>
+            <button type="button" class="secondary" id="exportBtn" disabled>
+              <span>🖨️</span>
+              <span>Export to print / notes</span>
+            </button>
+            <div class="chip-tip">
+              <span class="icon">💡</span>
+              <span>Click the Day or time chips on a card to adjust where it falls.</span>
+            </div>
           </div>
 
           <div id="suggestionsContainer" class="suggestions-list">
             <div class="empty-state" id="emptyState">
-              <strong>Nothing here yet.</strong> Enter a destination (or load the Paris sample),
-              then click <em>Generate trip ideas</em> to see AI suggestions you can turn into an itinerary.
+              <strong>Nothing here yet.</strong> Enter a destination and click
+              <em>Generate trip ideas</em> to see AI suggestions you can turn into an itinerary.
             </div>
           </div>
 
-          <div class="chip-tip-toast" id="chipTipToast">
-            <span>💡 Tip: Click the <strong>Day</strong> and <strong>Morning/Afternoon/Evening</strong> labels on any card to adjust where it lives in your itinerary.</span>
-            <button type="button" id="chipTipClose" aria-label="Dismiss tip">✕</button>
+          <div class="toast-tip" id="firstTimeTip">
+            Tip: tap the <strong>Day</strong> or <strong>Morning/Afternoon/Evening</strong> chips on a card
+            to cycle where it sits in your plan.
           </div>
 
           <p class="helper" style="margin-top: 10px;">
-            Export tools (PDF / Notes / Google Docs) are coming soon.
+            Next step (coming soon): richer export options and calendar/Docs integration.
           </p>
         </section>
       </div>
@@ -985,21 +1005,13 @@
     const suggestionsContainer = document.getElementById("suggestionsContainer");
     const emptyState = document.getElementById("emptyState");
     const metaSummary = document.getElementById("metaSummary");
+    const exportBtn = document.getElementById("exportBtn");
+    const firstTimeTip = document.getElementById("firstTimeTip");
     const sampleTripBtn = document.getElementById("sampleTripBtn");
 
-    const addCustomActivityBtn = document.getElementById("addCustomActivityBtn");
-    const addMealPlaceholderBtn = document.getElementById("addMealPlaceholderBtn");
-    const addTransferPlaceholderBtn = document.getElementById("addTransferPlaceholderBtn");
-
-    const chipTipToast = document.getElementById("chipTipToast");
-    const chipTipClose = document.getElementById("chipTipClose");
-
-    let hasShownChipTip = false;
-
-    // currentSuggestions is the in-memory editable list
     let currentSuggestions = [];
-    let currentMinDay = 1;
-    let currentMaxDay = 1;
+    let currentMeta = null;
+    let tipShown = false;
 
     function setLoading(isLoading, msg) {
       if (isLoading) {
@@ -1020,150 +1032,120 @@
       }
     }
 
-    function hideChipTip() {
-      if (chipTipToast) {
-        chipTipToast.style.display = "none";
+    function normalizeSuggestions(rawSuggestions) {
+      const nowBase = Date.now();
+      return rawSuggestions.map((s, idx) => {
+        const id =
+          typeof s.id === "string" && s.id.trim()
+            ? s.id.trim()
+            : "s-" + nowBase + "-" + idx + "-" + Math.random().toString(16).slice(2);
+        return {
+          id,
+          title: s.title || "Activity " + (idx + 1),
+          description: s.description || "",
+          notes: s.notes || "",
+          dayHint:
+            typeof s.dayHint === "number" && isFinite(s.dayHint)
+              ? s.dayHint
+              : null,
+          timeOfDay: (s.timeOfDay || "flex").toString().toLowerCase(),
+          neighborhood: s.neighborhood || "",
+          travelTime: s.travelTime || "",
+          mapsSearch: s.mapsSearch || ""
+        };
+      });
+    }
+
+    function getDayBuckets(suggestions) {
+      const buckets = new Map();
+      const flex = [];
+      suggestions.forEach((s) => {
+        if (typeof s.dayHint === "number" && isFinite(s.dayHint)) {
+          const d = s.dayHint;
+          if (!buckets.has(d)) buckets.set(d, []);
+          buckets.get(d).push(s);
+        } else {
+          flex.push(s);
+        }
+      });
+      const sortedDays = Array.from(buckets.keys()).sort((a, b) => a - b);
+      return { buckets, dayOrder: sortedDays, flex };
+    }
+
+    function sortByTimeOfDay(list) {
+      const order = { morning: 0, afternoon: 1, evening: 2, flex: 3 };
+      return list.slice().sort((a, b) => {
+        const ta = (a.timeOfDay || "flex").toString().toLowerCase();
+        const tb = (b.timeOfDay || "flex").toString().toLowerCase();
+        const wa = Object.prototype.hasOwnProperty.call(order, ta)
+          ? order[ta]
+          : 4;
+        const wb = Object.prototype.hasOwnProperty.call(order, tb)
+          ? order[tb]
+          : 4;
+        if (wa !== wb) return wa - wb;
+        return (a.title || "").localeCompare(b.title || "");
+      });
+    }
+
+    function formatTimeOfDayLabel(tod) {
+      const v = (tod || "flex").toString().toLowerCase();
+      if (v === "morning") return "Morning";
+      if (v === "afternoon") return "Afternoon";
+      if (v === "evening") return "Evening";
+      return "Flexible";
+    }
+
+    function formatDayChipLabel(dayHint) {
+      if (typeof dayHint === "number" && isFinite(dayHint)) {
+        return "Day " + dayHint;
       }
-      hasShownChipTip = true;
+      return "Any day";
     }
 
-    function maybeShowChipTip() {
-      if (!hasShownChipTip && chipTipToast) {
-        chipTipToast.style.display = "flex";
-      }
+    function cycleTimeOfDay(current) {
+      const order = ["morning", "afternoon", "evening", "flex"];
+      const idx = order.indexOf((current || "flex").toString().toLowerCase());
+      const nextIdx = idx === -1 ? 0 : (idx + 1) % order.length;
+      return order[nextIdx];
     }
 
-    if (chipTipClose) {
-      chipTipClose.addEventListener("click", hideChipTip);
+    function cycleDayHint(current, availableDays) {
+      const pool = [null].concat(availableDays);
+      const idx = pool.indexOf(
+        typeof current === "number" && isFinite(current) ? current : null
+      );
+      const nextIdx = idx === -1 ? 0 : (idx + 1) % pool.length;
+      return pool[nextIdx];
     }
 
-    // --- Rendering ---
-
-    function renderSuggestions(suggestionsInput) {
+    function renderSuggestions(suggestions) {
+      currentSuggestions = normalizeSuggestions(suggestions || []);
       suggestionsContainer.innerHTML = "";
 
-      if (!Array.isArray(suggestionsInput) || suggestionsInput.length === 0) {
-        currentSuggestions = [];
+      if (!currentSuggestions.length) {
         emptyState.style.display = "block";
         suggestionsContainer.appendChild(emptyState);
         metaSummary.textContent = "No results. Try tweaking your input.";
+        exportBtn.disabled = true;
         return;
       }
 
       emptyState.style.display = "none";
+      exportBtn.disabled = false;
 
-      // Ensure each suggestion has a stable __index
-      const hasIndex = suggestionsInput.every(
-        (s) => typeof s.__index === "number"
-      );
-      if (!hasIndex) {
-        currentSuggestions = suggestionsInput.map((s, idx) => ({
-          ...s,
-          __index: idx,
-        }));
-      } else {
-        currentSuggestions = suggestionsInput;
-      }
+      const { buckets, dayOrder, flex } = getDayBuckets(currentSuggestions);
+      const availableDays =
+        dayOrder.length > 0
+          ? dayOrder
+          : [1, 2, 3]; // fallback if nothing tagged with a day
 
-      const suggestions = currentSuggestions;
+      const timeLabel = (tod) => formatTimeOfDayLabel(tod);
 
-      // Determine day range for cycling
-      const numericDays = suggestions
-        .map((s) =>
-          typeof s.dayHint === "number" && isFinite(s.dayHint)
-            ? s.dayHint
-            : null
-        )
-        .filter((n) => n !== null);
-
-      if (numericDays.length) {
-        currentMinDay = Math.min(...numericDays);
-        currentMaxDay = Math.max(...numericDays);
-      } else {
-        const daysField = document.getElementById("days").value.trim();
-        let fallbackDays = parseInt(daysField, 10);
-        if (!Number.isFinite(fallbackDays) || fallbackDays <= 0) {
-          fallbackDays = 3;
-        }
-        currentMinDay = 1;
-        currentMaxDay = fallbackDays;
-      }
-
-      // Group by dayHint, collect flexible
-      const dayBuckets = new Map(); // day -> [items]
-      const flexible = [];
-
-      suggestions.forEach((s) => {
-        const day =
-          typeof s.dayHint === "number" && isFinite(s.dayHint)
-            ? s.dayHint
-            : null;
-        if (day === null) {
-          flexible.push(s);
-        } else {
-          if (!dayBuckets.has(day)) dayBuckets.set(day, []);
-          dayBuckets.get(day).push(s);
-        }
-      });
-
-      const sortedDays = Array.from(dayBuckets.keys()).sort((a, b) => a - b);
-
-      const timeOrder = { morning: 0, afternoon: 1, evening: 2, flex: 3 };
-      function sortByTimeOfDay(list) {
-        return list.slice().sort((a, b) => {
-          const ta = (a.timeOfDay || "flex").toString().toLowerCase();
-          const tb = (b.timeOfDay || "flex").toString().toLowerCase();
-          const wa = Object.prototype.hasOwnProperty.call(timeOrder, ta)
-            ? timeOrder[ta]
-            : 4;
-          const wb = Object.prototype.hasOwnProperty.call(timeOrder, tb)
-            ? timeOrder[tb]
-            : 4;
-          if (wa !== wb) return wa - wb;
-          return (a.title || "").localeCompare(b.title || "");
-        });
-      }
-
-      function cycleTimeOfDay(suggestionIndex) {
-        const s = currentSuggestions[suggestionIndex];
-        const options = ["morning", "afternoon", "evening", "flex"];
-        const current = (s.timeOfDay || "flex").toString().toLowerCase();
-        const idx = options.indexOf(current);
-        const next = options[(idx + 1) % options.length];
-        s.timeOfDay = next;
-        hideChipTip();
-        renderSuggestions(currentSuggestions);
-      }
-
-      function cycleDayHint(suggestionIndex) {
-        const s = currentSuggestions[suggestionIndex];
-        if (
-          typeof s.dayHint !== "number" ||
-          !isFinite(s.dayHint)
-        ) {
-          s.dayHint = currentMinDay;
-        } else {
-          const next = s.dayHint + 1;
-          if (next > currentMaxDay) {
-            s.dayHint = null; // back to "Any day"
-          } else {
-            s.dayHint = next;
-          }
-        }
-        hideChipTip();
-        renderSuggestions(currentSuggestions);
-      }
-
-      function removeSuggestion(suggestionIndex) {
-        currentSuggestions = currentSuggestions.filter(
-          (s) => s.__index !== suggestionIndex
-        );
-        renderSuggestions(currentSuggestions);
-      }
-
-      function buildCard(s) {
+      const buildCard = (s) => {
         const card = document.createElement("article");
         card.className = "suggestion-card";
+        card.dataset.id = s.id;
 
         const topRow = document.createElement("div");
         topRow.className = "suggestion-top-row";
@@ -1175,67 +1157,39 @@
         const chips = document.createElement("div");
         chips.className = "chip-row";
 
-        // Time of day chip (click to cycle)
+        // time-of-day chip
         const todChip = document.createElement("button");
         todChip.type = "button";
         todChip.className = "chip accent";
-        const tod = (s.timeOfDay || "flex").toString().toLowerCase();
-        let todLabel = "Flexible";
-        if (tod === "morning") todLabel = "Morning";
-        else if (tod === "afternoon") todLabel = "Afternoon";
-        else if (tod === "evening") todLabel = "Evening";
+        todChip.dataset.role = "timeOfDayChip";
+        todChip.dataset.id = s.id;
+        todChip.textContent = timeLabel(s.timeOfDay);
+        const caret1 = document.createElement("span");
+        caret1.className = "caret";
+        caret1.textContent = "▾";
+        todChip.appendChild(caret1);
 
-        todChip.innerHTML =
-          '<span>' + todLabel + '</span><span class="chip-caret">▾</span>';
-        todChip.addEventListener("click", () => {
-          cycleTimeOfDay(s.__index);
-        });
-        chips.appendChild(todChip);
-
-        // Day chip (click to cycle days + Any day)
+        // day chip
         const dayChip = document.createElement("button");
         dayChip.type = "button";
         dayChip.className = "chip";
-        let dayLabel;
-        if (typeof s.dayHint === "number" && isFinite(s.dayHint)) {
-          dayLabel = "Day " + s.dayHint;
-        } else {
-          dayLabel = "Any day";
-        }
-        dayChip.innerHTML =
-          '<span>' + dayLabel + '</span><span class="chip-caret">▾</span>';
-        dayChip.addEventListener("click", () => {
-          cycleDayHint(s.__index);
-        });
+        dayChip.dataset.role = "dayChip";
+        dayChip.dataset.id = s.id;
+        dayChip.textContent = formatDayChipLabel(s.dayHint);
+        const caret2 = document.createElement("span");
+        caret2.className = "caret";
+        caret2.textContent = "▾";
+        dayChip.appendChild(caret2);
+
+        chips.appendChild(todChip);
         chips.appendChild(dayChip);
 
-        // Delete button
-        const deleteBtn = document.createElement("button");
-        deleteBtn.type = "button";
-        deleteBtn.className = "card-delete-btn";
-        deleteBtn.title = "Remove from itinerary";
-        deleteBtn.textContent = "✕";
-        deleteBtn.addEventListener("click", (e) => {
-          e.stopPropagation();
-          removeSuggestion(s.__index);
-        });
-
-        const rightSide = document.createElement("div");
-        rightSide.style.display = "flex";
-        rightSide.style.alignItems = "center";
-        rightSide.style.gap = "4px";
-        rightSide.appendChild(chips);
-        rightSide.appendChild(deleteBtn);
-
         topRow.appendChild(title);
-        topRow.appendChild(rightSide);
+        topRow.appendChild(chips);
         card.appendChild(topRow);
 
-        // Map-friendly meta line
-        const neighborhood =
-          s.neighborhood && String(s.neighborhood).trim();
-        const travelTime =
-          s.travelTime && String(s.travelTime).trim();
+        const neighborhood = s.neighborhood && String(s.neighborhood).trim();
+        const travelTime = s.travelTime && String(s.travelTime).trim();
         if (neighborhood || travelTime) {
           const meta = document.createElement("p");
           meta.className = "suggestion-meta-line";
@@ -1246,94 +1200,95 @@
           card.appendChild(meta);
         }
 
-        const desc = document.createElement("p");
-        desc.className = "suggestion-desc";
-        desc.textContent =
-          s.description ||
-          "No description provided, but this activity sounded interesting.";
-        card.appendChild(desc);
+        if (s.description) {
+          const desc = document.createElement("p");
+          desc.className = "suggestion-desc";
+          desc.textContent = s.description;
+          card.appendChild(desc);
+        }
 
         const notes = document.createElement("p");
         notes.className = "suggestion-notes";
         const baseNotes =
-          s.notes || "No extra notes from the AI for this one.";
-
-        const mapsSearch =
-          s.mapsSearch && typeof s.mapsSearch === "string"
-            ? s.mapsSearch.trim()
-            : null;
-
-        if (mapsSearch) {
+          s.notes ||
+          "No extra notes from the AI for this one.";
+        if (s.mapsSearch && typeof s.mapsSearch === "string") {
           notes.textContent =
-            baseNotes + ' Maps search: "' + mapsSearch + '".';
+            baseNotes + ' Maps search: "' + s.mapsSearch.trim() + '".';
         } else {
           notes.textContent = baseNotes;
         }
         card.appendChild(notes);
 
         return card;
-      }
+      };
 
-      // Render day buckets
-      sortedDays.forEach((day) => {
-        const items = sortByTimeOfDay(dayBuckets.get(day) || []);
-
+      // Render per-day groups
+      dayOrder.forEach((day) => {
         const groupEl = document.createElement("section");
         groupEl.className = "day-group";
+
+        const headingRow = document.createElement("div");
+        headingRow.className = "day-heading-row";
 
         const heading = document.createElement("div");
         heading.className = "day-heading";
         heading.textContent = "Day " + day;
 
+        headingRow.appendChild(heading);
+        groupEl.appendChild(headingRow);
+
         const sub = document.createElement("div");
         sub.className = "day-sub";
-        sub.textContent = "Ideas for morning, afternoon, and evening.";
+        sub.textContent = "Morning, afternoon, and evening ideas.";
+        groupEl.appendChild(sub);
 
         const listEl = document.createElement("div");
         listEl.className = "day-suggestions";
 
+        const items = sortByTimeOfDay(buckets.get(day) || []);
         items.forEach((s) => {
           listEl.appendChild(buildCard(s));
         });
 
-        groupEl.appendChild(heading);
-        groupEl.appendChild(sub);
         groupEl.appendChild(listEl);
-
         suggestionsContainer.appendChild(groupEl);
       });
 
-      // Render flexible suggestions (any day) last
-      if (flexible.length > 0) {
-        const items = sortByTimeOfDay(flexible);
-
+      // Flexible group
+      if (flex.length > 0) {
         const groupEl = document.createElement("section");
         groupEl.className = "day-group";
+
+        const headingRow = document.createElement("div");
+        headingRow.className = "day-heading-row";
 
         const heading = document.createElement("div");
         heading.className = "day-heading";
         heading.textContent = "Any day ideas";
 
+        headingRow.appendChild(heading);
+        groupEl.appendChild(headingRow);
+
         const sub = document.createElement("div");
         sub.className = "day-sub";
         sub.textContent = "Flexible suggestions you can plug into any day.";
+        groupEl.appendChild(sub);
 
         const listEl = document.createElement("div");
         listEl.className = "day-suggestions";
 
+        const items = sortByTimeOfDay(flex);
         items.forEach((s) => {
           listEl.appendChild(buildCard(s));
         });
 
-        groupEl.appendChild(heading);
-        groupEl.appendChild(sub);
         groupEl.appendChild(listEl);
-
         suggestionsContainer.appendChild(groupEl);
       }
 
-      const total = suggestions.length;
-      const dayCount = sortedDays.length;
+      const total = currentSuggestions.length;
+      const dayCount = dayOrder.length;
       if (dayCount > 0) {
         metaSummary.textContent =
           total +
@@ -1341,7 +1296,7 @@
           dayCount +
           " day" +
           (dayCount === 1 ? "" : "s") +
-          (flexible.length ? " (+ flexible ideas)" : "");
+          (flex.length ? " (+ flexible ideas)" : "");
       } else {
         metaSummary.textContent =
           total +
@@ -1350,199 +1305,91 @@
           " with no specific day.";
       }
 
-      maybeShowChipTip();
-    }
+      // Attach click handlers for chips (day / timeOfDay)
+      const allChips = suggestionsContainer.querySelectorAll(".chip");
+      allChips.forEach((chip) => {
+        const role = chip.dataset.role;
+        const id = chip.dataset.id;
+        if (!role || !id) return;
 
-    // Called after we get suggestions from the server
-    function handleNewSuggestions(suggestions) {
-      renderSuggestions(Array.isArray(suggestions) ? suggestions : []);
-    }
+        chip.addEventListener("click", () => {
+          const idx = currentSuggestions.findIndex((s) => s.id === id);
+          if (idx === -1) return;
+          const s = currentSuggestions[idx];
 
-    // --- Add / placeholders ---
+          if (role === "timeOfDayChip") {
+            const next = cycleTimeOfDay(s.timeOfDay);
+            s.timeOfDay = next;
+          } else if (role === "dayChip") {
+            const nextDay = cycleDayHint(s.dayHint, availableDays);
+            s.dayHint = nextDay;
+          }
 
-    function promptForDayNumber() {
-      const defaultDay =
-        typeof currentMinDay === "number" && isFinite(currentMinDay)
-          ? String(currentMinDay)
-          : "";
-      const input = window.prompt(
-        "Which day should this belong to? Enter a day number, or leave blank for 'Any day'.",
-        defaultDay
-      );
-      if (input === null) return null; // cancelled
-      const trimmed = input.trim();
-      if (!trimmed) return null; // Any day
-      const n = parseInt(trimmed, 10);
-      if (!Number.isFinite(n) || n <= 0) return null;
-      return n;
-    }
+          // Re-render with updated state
+          renderSuggestions(currentSuggestions);
 
-    function addCustomActivity() {
-      const dayNum = promptForDayNumber();
-      if (dayNum === null && dayNum !== 0) {
-        // null => Any day; allowed
-      }
-
-      const title = window.prompt(
-        "Custom activity title:",
-        "Free time / explore on your own"
-      );
-      if (!title || !title.trim()) return;
-
-      const todInput = window.prompt(
-        "Time of day? (morning, afternoon, evening, flex)",
-        "flex"
-      );
-      const todRaw = (todInput || "flex").toString().toLowerCase();
-      const allowedTods = ["morning", "afternoon", "evening", "flex"];
-      const timeOfDay = allowedTods.includes(todRaw) ? todRaw : "flex";
-
-      const desc =
-        window.prompt("Short description (optional):", "") || "";
-      const notes =
-        window.prompt("Notes / logistics (optional):", "") || "";
-
-      const item = {
-        id: "custom-" + Date.now() + "-" + Math.random().toString(16).slice(2),
-        title: title.trim(),
-        timeOfDay,
-        dayHint:
-          typeof dayNum === "number" && isFinite(dayNum) ? dayNum : null,
-        description:
-          desc.trim() || "Custom activity added by the user.",
-        notes: notes.trim() || "User-added activity.",
-      };
-
-      currentSuggestions.push(item);
-      hideChipTip();
-      renderSuggestions(currentSuggestions);
-    }
-
-    function addMealPlaceholder() {
-      const dayNum = promptForDayNumber();
-
-      const defaultLabel = "Dinner reservation";
-      const label =
-        window.prompt(
-          "Meal placeholder (e.g., Breakfast near hotel, Lunch by the beach):",
-          defaultLabel
-        ) || defaultLabel;
-
-      const lower = label.toLowerCase();
-      let timeOfDay = "flex";
-      if (lower.includes("breakfast") || lower.includes("brunch")) {
-        timeOfDay = "morning";
-      } else if (lower.includes("lunch")) {
-        timeOfDay = "afternoon";
-      } else if (lower.includes("dinner")) {
-        timeOfDay = "evening";
-      }
-
-      const item = {
-        id: "meal-" + Date.now() + "-" + Math.random().toString(16).slice(2),
-        title: label.trim(),
-        timeOfDay,
-        dayHint:
-          typeof dayNum === "number" && isFinite(dayNum) ? dayNum : null,
-        description:
-          "Placeholder for choosing a restaurant. Use this slot to pick a spot that fits your vibe and budget.",
-        notes:
-          "Use Google Maps or a reservation app (Resy, OpenTable, etc.) to lock something in.",
-      };
-
-      currentSuggestions.push(item);
-      hideChipTip();
-      renderSuggestions(currentSuggestions);
-    }
-
-    function addTransferPlaceholder() {
-      const dayNum = promptForDayNumber();
-
-      const defaultLabel = "Travel / transit block";
-      const label =
-        window.prompt(
-          "Travel time placeholder (e.g., Train to Porto, Flight home):",
-          defaultLabel
-        ) || defaultLabel;
-
-      const item = {
-        id:
-          "transfer-" +
-          Date.now() +
-          "-" +
-          Math.random().toString(16).slice(2),
-        title: label.trim(),
-        timeOfDay: "flex",
-        dayHint:
-          typeof dayNum === "number" && isFinite(dayNum) ? dayNum : null,
-        description:
-          "Time reserved for getting from A to B. Use this block for transfers, check-ins, or airport time.",
-        notes:
-          "Adjust timing based on your actual tickets and leave buffer for delays.",
-      };
-
-      currentSuggestions.push(item);
-      hideChipTip();
-      renderSuggestions(currentSuggestions);
-    }
-
-    if (addCustomActivityBtn) {
-      addCustomActivityBtn.addEventListener("click", addCustomActivity);
-    }
-    if (addMealPlaceholderBtn) {
-      addMealPlaceholderBtn.addEventListener("click", addMealPlaceholder);
-    }
-    if (addTransferPlaceholderBtn) {
-      addTransferPlaceholderBtn.addEventListener("click", addTransferPlaceholder);
-    }
-
-    // Sample Paris trip loader (prefills only)
-    function loadSampleParisTrip() {
-      const destination = document.getElementById("destination");
-      const days = document.getElementById("days");
-      const dates = document.getElementById("dates");
-      const travelers = document.getElementById("travelers");
-      const budget = document.getElementById("budget");
-      const tripType = document.getElementById("tripType");
-      const vibe = document.getElementById("vibe");
-      const prefs = document.getElementById("prefs");
-      const fullItinerary = document.getElementById("fullItinerary");
-
-      destination.value = "Paris, France";
-      days.value = "3";
-      dates.value = "May 15–18, 2025";
-      travelers.value = "First-time visitors (couple)";
-      budget.value = "comfortable with some splurges";
-      tripType.value = "city break focused on sightseeing and museums";
-      vibe.value =
-        "Romantic, museums, iconic landmarks, cafés, and walkable neighborhoods.";
-      prefs.value =
-        "No rental car. Prioritize iconic sites (Eiffel Tower, Louvre, Notre-Dame area), museums, and neighborhood cafés in walkable areas. One nice dinner with a view of the Eiffel Tower.";
-
-      // Must include pills
-      const mustIncludeBoxes = document.querySelectorAll(
-        'input[name="mustInclude"]'
-      );
-      const wanted = new Set([
-        "best restaurants",
-        "museums",
-        "hidden gems and local spots",
-        "walkable areas and neighborhoods",
-        "shopping areas and markets",
-      ]);
-
-      mustIncludeBoxes.forEach((box) => {
-        box.checked = wanted.has(box.value);
+          if (!tipShown && firstTimeTip) {
+            firstTimeTip.style.display = "block";
+            tipShown = true;
+            setTimeout(() => {
+              firstTimeTip.style.display = "none";
+            }, 6000);
+          }
+        });
       });
-
-      fullItinerary.checked = true;
-
-      statusText.innerHTML =
-        "Sample Paris trip loaded. Review or tweak anything, then click <strong>Generate trip ideas</strong>.";
     }
 
+    // --- Sample trip prefill ---
     if (sampleTripBtn) {
-      sampleTripBtn.addEventListener("click", loadSampleParisTrip);
+      sampleTripBtn.addEventListener("click", () => {
+        document.getElementById("destination").value = "Lisbon, Portugal";
+        document.getElementById("days").value = "4";
+        document.getElementById("dates").value = "April 12–16, 2025";
+        document.getElementById("travelers").value = "Couple";
+        document.getElementById("budget").value = "comfortable with some splurges";
+        document.getElementById("tripType").value = "city break focused on sightseeing and museums";
+        document.getElementById("vibe").value = "Slow mornings, lots of views and neighborhoods, a couple of big sights, and great food.";
+        document.getElementById("prefs").value =
+          "Prefer walkable areas like Baixa, Chiado, and Alfama. One sunset viewpoint. One special dinner with a view. Avoid very late nights.";
+        // Reset checklist
+        document
+          .querySelectorAll('input[name="mustInclude"]')
+          .forEach((el) => (el.checked = false));
+        const defaults = ["best restaurants", "hidden gems and local spots", "walkable areas and neighborhoods", "nature and outdoor activities"];
+        defaults.forEach((val) => {
+          const el = document.querySelector('input[name="mustInclude"][value="' + val + '"]');
+          if (el) el.checked = true;
+        });
+        document.getElementById("fullItinerary").checked = true;
+
+        statusText.innerHTML =
+          "Sample trip loaded. Adjust anything you like, then click <strong>Generate trip ideas</strong>.";
+      });
+    }
+
+    // --- Export to print.html ---
+    if (exportBtn) {
+      exportBtn.addEventListener("click", () => {
+        if (!currentSuggestions.length) return;
+
+        const payload = {
+          version: "v1",
+          generatedAt: new Date().toISOString(),
+          meta: currentMeta || {},
+          suggestions: currentSuggestions
+        };
+
+        try {
+          window.localStorage.setItem(
+            "aitripplan_export_v1",
+            JSON.stringify(payload)
+          );
+        } catch (e) {
+          console.error("Failed to write export payload to localStorage:", e);
+        }
+
+        window.location.href = "/print.html";
+      });
     }
 
     // --- Form submit / fetch ---
@@ -1578,7 +1425,7 @@
       if (travelers) parts.push("Who is going: " + travelers + ".");
       if (budget) parts.push("Budget level: " + budget + ".");
       if (tripType) parts.push("Trip type: " + tripType + ".");
-      if (vibe) parts.push("Trip focus and pace: " + vibe + ".");
+      if (vibe) parts.push("Trip vibe / pacing: " + vibe + ".");
       if (prefs) parts.push("Preferences: " + prefs + ".");
       if (mustInclude.length) {
         parts.push(
@@ -1603,6 +1450,20 @@
           "The user wants a looser list of activity ideas they can mix and match across the trip."
         );
       }
+
+      // Save meta for export
+      currentMeta = {
+        destination,
+        days: days ? Number(days) : null,
+        dates,
+        travelers,
+        budget,
+        tripType,
+        vibe,
+        prefs,
+        mustInclude,
+        fullItinerary
+      };
 
       const finalPrompt =
         "Generate activity suggestions for this trip. " +
@@ -1650,11 +1511,8 @@
           ? data.suggestions
           : [];
 
-        handleNewSuggestions(suggestions);
-        setLoading(
-          false,
-          "<strong>Done.</strong> Scroll through your ideas, then click the day/time labels to tweak your plan."
-        );
+        renderSuggestions(suggestions);
+        setLoading(false, "<strong>Done.</strong> Tweak days and time slots, then export when ready.");
       } catch (err) {
         console.error("Network error calling /api/generate-itinerary:", err);
         setLoading(
