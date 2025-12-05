@@ -520,7 +520,6 @@
       gap: 6px;
       font-size: 10px;
       align-items: center;
-      justify-content: flex-end;
     }
 
     .chip {
@@ -556,6 +555,35 @@
       color: var(--text-muted);
     }
 
+    .card-controls-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-controls-left {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .inline-label {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .inline-select {
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      background: #f9fafb;
+      font-size: 11px;
+      padding: 3px 8px;
+    }
+
     .card-delete-btn {
       border: none;
       background: transparent;
@@ -567,42 +595,6 @@
 
     .card-delete-btn:hover {
       color: var(--danger);
-    }
-
-    /* New: card controls (day select + arrows) */
-    .card-controls {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      font-size: 10px;
-    }
-
-    .card-controls label {
-      margin: 0;
-      font-size: 10px;
-      color: var(--text-muted);
-    }
-
-    .card-controls select {
-      border-radius: 999px;
-      border: 1px solid rgba(209, 213, 219, 1);
-      background: #f9fafb;
-      font-size: 10px;
-      padding: 2px 6px;
-      outline: none;
-    }
-
-    .card-move-btn {
-      border: none;
-      background: transparent;
-      font-size: 11px;
-      cursor: pointer;
-      padding: 0 2px;
-      color: var(--text-muted);
-    }
-
-    .card-move-btn:hover {
-      color: var(--accent);
     }
 
     .empty-state {
@@ -810,13 +802,16 @@
             </div>
 
             <div>
-              <label for="vibe">What kind of trip is this? (optional)</label>
+              <label for="vibe">Extra context (optional)</label>
               <input
                 id="vibe"
                 name="vibe"
                 type="text"
-                placeholder="Relaxed, food-focused, museums, nightlife, outdoors..."
+                placeholder="Any special considerations or personal preferences..."
               />
+              <p class="helper">
+                Add anything that would make the plan more accurate: mobility needs, favorite neighborhoods, food types, photo spots, crowds to avoid, etc.
+              </p>
             </div>
 
             <div>
@@ -914,7 +909,7 @@
             <div>
               <div class="planner-card-title suggestions-title">Suggested activities</div>
               <div class="planner-card-sub">
-                Ideas are grouped by day hint so you can quickly sketch your itinerary, then tweak days and order.
+                Ideas are grouped by day hint so you can quickly sketch your itinerary, then tweak with the mini-editor.
               </div>
             </div>
             <div class="suggestions-meta" id="metaSummary">
@@ -922,7 +917,7 @@
             </div>
           </div>
 
-          <!-- Toolbar for custom / placeholders -->
+          <!-- Toolbar for manual additions -->
           <div class="suggestions-toolbar">
             <button type="button" class="secondary" id="addCustomActivityBtn">+ Custom activity</button>
             <button type="button" class="secondary" id="addMealPlaceholderBtn">+ Meal placeholder</button>
@@ -937,7 +932,7 @@
           </div>
 
           <p class="helper" style="margin-top: 10px;">
-            Use the day dropdown and arrows to move and reorder activities. Delete or add your own activities to make it your actual plan.
+            Use the controls on each card to change the day, adjust time of day, or remove activities. Add your own slots for meals and travel time.
           </p>
         </section>
       </div>
@@ -994,7 +989,7 @@
       }
     }
 
-    // --- Helpers for state management ---
+    // --- State helpers ---
 
     function buildStateFromSuggestions(suggestions) {
       const dayMap = new Map();
@@ -1036,71 +1031,43 @@
       return dayObj;
     }
 
-    function getBucketRef(dayKey) {
-      if (dayKey === "flex") {
-        return { type: "flex", bucket: itineraryState.flex };
+    function removeItemByRef(item) {
+      // Remove from day buckets
+      for (let i = itineraryState.days.length - 1; i >= 0; i--) {
+        const dayObj = itineraryState.days[i];
+        const idx = dayObj.items.indexOf(item);
+        if (idx !== -1) {
+          dayObj.items.splice(idx, 1);
+          if (dayObj.items.length === 0) {
+            itineraryState.days.splice(i, 1);
+          }
+          return;
+        }
       }
-      if (dayKey && dayKey.startsWith("day-")) {
-        const num = parseInt(dayKey.slice(4), 10);
-        if (!Number.isFinite(num)) return null;
-        const dayObj = itineraryState.days.find((d) => d.dayNumber === num);
-        if (!dayObj) return null;
-        return { type: "day", dayNumber: num, bucket: dayObj.items };
+
+      // Remove from flex
+      const fIdx = itineraryState.flex.indexOf(item);
+      if (fIdx !== -1) {
+        itineraryState.flex.splice(fIdx, 1);
       }
-      return null;
     }
 
-    function moveItem(fromKey, fromIndex, toKey, maybeIndex) {
-      const fromRef = getBucketRef(fromKey);
-      const toRef = getBucketRef(toKey);
-      if (!fromRef || !toRef) return;
+    function moveItemToDay(item, fromKey, toKey) {
+      if (!item || fromKey === toKey) return;
 
-      const fromArr = fromRef.bucket;
-      if (fromIndex < 0 || fromIndex >= fromArr.length) return;
+      removeItemByRef(item);
 
-      const [item] = fromArr.splice(fromIndex, 1);
-
-      let targetIndex =
-        typeof maybeIndex === "number" && maybeIndex >= 0
-          ? maybeIndex
-          : toRef.bucket.length;
-
-      if (targetIndex > toRef.bucket.length) {
-        targetIndex = toRef.bucket.length;
-      }
-
-      if (toRef.type === "flex") {
+      if (toKey === "flex") {
         item.dayHint = null;
-      } else if (toRef.type === "day") {
-        item.dayHint = toRef.dayNumber;
+        itineraryState.flex.push(item);
+      } else if (toKey && toKey.startsWith("day-")) {
+        const num = parseInt(toKey.slice(4), 10);
+        const dayNum = Number.isFinite(num) && num > 0 ? num : 1;
+        const dayObj = ensureDayBucket(dayNum);
+        item.dayHint = dayNum;
+        dayObj.items.push(item);
       }
 
-      toRef.bucket.splice(targetIndex, 0, item);
-      renderItinerary();
-    }
-
-    function changeDay(fromKey, fromIndex, toKey) {
-      if (!toKey || fromKey === toKey) return;
-      moveItem(fromKey, fromIndex, toKey);
-    }
-
-    function moveWithinBucket(dayKey, index, direction) {
-      const ref = getBucketRef(dayKey);
-      if (!ref) return;
-      const arr = ref.bucket;
-      const newIndex = index + direction;
-      if (newIndex < 0 || newIndex >= arr.length) return;
-
-      const [item] = arr.splice(index, 1);
-      arr.splice(newIndex, 0, item);
-      renderItinerary();
-    }
-
-    function removeItem(dayKey, index) {
-      const ref = getBucketRef(dayKey);
-      if (!ref) return;
-      if (index < 0 || index >= ref.bucket.length) return;
-      ref.bucket.splice(index, 1);
       renderItinerary();
     }
 
@@ -1121,7 +1088,58 @@
 
       emptyState.style.display = "none";
 
-      function buildCard(item, idx, dayKey) {
+      const timeOrder = { morning: 0, afternoon: 1, evening: 2, flex: 3 };
+      function sortByTimeOfDay(list) {
+        return list.slice().sort((a, b) => {
+          const ta = (a.timeOfDay || "flex").toString().toLowerCase();
+          const tb = (b.timeOfDay || "flex").toString().toLowerCase();
+          const wa = Object.prototype.hasOwnProperty.call(timeOrder, ta)
+            ? timeOrder[ta]
+            : 4;
+          const wb = Object.prototype.hasOwnProperty.call(timeOrder, tb)
+            ? timeOrder[tb]
+            : 4;
+          if (wa !== wb) return wa - wb;
+          return (a.title || "").localeCompare(b.title || "");
+        });
+      }
+
+      function computeMaxDayForSelect() {
+        const existing = days.map((d) => d.dayNumber);
+        let maxExisting = existing.length ? Math.max(...existing) : 0;
+
+        const daysInputEl = document.getElementById("days");
+        let maxFromInput = 0;
+        if (daysInputEl && daysInputEl.value) {
+          const v = parseInt(daysInputEl.value, 10);
+          if (Number.isFinite(v) && v > 0) maxFromInput = v;
+        }
+
+        const max = Math.max(maxExisting, maxFromInput, 1);
+        return max;
+      }
+
+      const maxDayForSelect = computeMaxDayForSelect();
+
+      function buildDaySelect(selectEl, currentDayKey) {
+        selectEl.innerHTML = "";
+
+        const anyOpt = document.createElement("option");
+        anyOpt.value = "flex";
+        anyOpt.textContent = "Any day";
+        if (currentDayKey === "flex") anyOpt.selected = true;
+        selectEl.appendChild(anyOpt);
+
+        for (let d = 1; d <= maxDayForSelect; d++) {
+          const opt = document.createElement("option");
+          opt.value = "day-" + d;
+          opt.textContent = "Day " + d;
+          if (currentDayKey === "day-" + d) opt.selected = true;
+          selectEl.appendChild(opt);
+        }
+      }
+
+      function buildCard(item, bucketKey) {
         const card = document.createElement("article");
         card.className = "suggestion-card";
 
@@ -1130,7 +1148,7 @@
 
         const title = document.createElement("div");
         title.className = "suggestion-title";
-        title.textContent = item.title || "Activity " + (idx + 1);
+        title.textContent = item.title || "Activity";
 
         const chips = document.createElement("div");
         chips.className = "chip-row";
@@ -1151,82 +1169,8 @@
           chips.appendChild(dayChip);
         }
 
-        const deleteBtn = document.createElement("button");
-        deleteBtn.type = "button";
-        deleteBtn.className = "card-delete-btn";
-        deleteBtn.title = "Remove from itinerary";
-        deleteBtn.textContent = "✕";
-        deleteBtn.addEventListener("click", (e) => {
-          e.stopPropagation();
-          removeItem(dayKey, idx);
-        });
-
-        const controls = document.createElement("div");
-        controls.className = "card-controls";
-
-        const dayLabel = document.createElement("label");
-        dayLabel.textContent = "Day:";
-
-        const daySelect = document.createElement("select");
-        daySelect.setAttribute("aria-label", "Change day for this activity");
-
-        const optionAny = document.createElement("option");
-        optionAny.value = "flex";
-        optionAny.textContent = "Any";
-        daySelect.appendChild(optionAny);
-
-        const allDays = (itineraryState.days || [])
-          .map((d) => d.dayNumber)
-          .sort((a, b) => a - b);
-        allDays.forEach((num) => {
-          const opt = document.createElement("option");
-          opt.value = "day-" + num;
-          opt.textContent = String(num);
-          daySelect.appendChild(opt);
-        });
-
-        daySelect.value = dayKey;
-        daySelect.addEventListener("change", (e) => {
-          const newKey = e.target.value;
-          changeDay(dayKey, idx, newKey);
-        });
-
-        const upBtn = document.createElement("button");
-        upBtn.type = "button";
-        upBtn.className = "card-move-btn";
-        upBtn.textContent = "↑";
-        upBtn.title = "Move up";
-        upBtn.addEventListener("click", (e) => {
-          e.stopPropagation();
-          moveWithinBucket(dayKey, idx, -1);
-        });
-
-        const downBtn = document.createElement("button");
-        downBtn.type = "button";
-        downBtn.className = "card-move-btn";
-        downBtn.textContent = "↓";
-        downBtn.title = "Move down";
-        downBtn.addEventListener("click", (e) => {
-          e.stopPropagation();
-          moveWithinBucket(dayKey, idx, 1);
-        });
-
-        controls.appendChild(dayLabel);
-        controls.appendChild(daySelect);
-        controls.appendChild(upBtn);
-        controls.appendChild(downBtn);
-        controls.appendChild(deleteBtn);
-
-        const rightSide = document.createElement("div");
-        rightSide.style.display = "flex";
-        rightSide.style.flexDirection = "column";
-        rightSide.style.alignItems = "flex-end";
-        rightSide.style.gap = "4px";
-        rightSide.appendChild(chips);
-        rightSide.appendChild(controls);
-
         topRow.appendChild(title);
-        topRow.appendChild(rightSide);
+        topRow.appendChild(chips);
         card.appendChild(topRow);
 
         const neighborhood =
@@ -1269,12 +1213,83 @@
 
         card.appendChild(notes);
 
+        // Controls row: time-of-day select, move-to-day select, delete button
+        const controlsRow = document.createElement("div");
+        controlsRow.className = "card-controls-row";
+
+        const leftControls = document.createElement("div");
+        leftControls.className = "card-controls-left";
+
+        // Time-of-day select
+        const todLabel = document.createElement("span");
+        todLabel.className = "inline-label";
+        todLabel.textContent = "Time:";
+
+        const todSelect = document.createElement("select");
+        todSelect.className = "inline-select";
+        ["morning", "afternoon", "evening", "flex"].forEach((val) => {
+          const opt = document.createElement("option");
+          opt.value = val;
+          opt.textContent =
+            val === "flex"
+              ? "Flexible"
+              : val.charAt(0).toUpperCase() + val.slice(1);
+          if ((item.timeOfDay || "flex").toLowerCase() === val) {
+            opt.selected = true;
+          }
+          todSelect.appendChild(opt);
+        });
+
+        todSelect.addEventListener("change", () => {
+          item.timeOfDay = todSelect.value;
+          renderItinerary();
+        });
+
+        // Move-to-day select
+        const moveLabel = document.createElement("span");
+        moveLabel.className = "inline-label";
+        moveLabel.textContent = "Day:";
+
+        const moveSelect = document.createElement("select");
+        moveSelect.className = "inline-select";
+
+        buildDaySelect(
+          moveSelect,
+          bucketKey // "day-X" or "flex"
+        );
+
+        moveSelect.addEventListener("change", () => {
+          const newKey = moveSelect.value;
+          moveItemToDay(item, bucketKey, newKey);
+        });
+
+        leftControls.appendChild(todLabel);
+        leftControls.appendChild(todSelect);
+        leftControls.appendChild(moveLabel);
+        leftControls.appendChild(moveSelect);
+
+        const deleteBtn = document.createElement("button");
+        deleteBtn.type = "button";
+        deleteBtn.className = "card-delete-btn";
+        deleteBtn.title = "Remove from itinerary";
+        deleteBtn.textContent = "Remove";
+        deleteBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          removeItemByRef(item);
+          renderItinerary();
+        });
+
+        controlsRow.appendChild(leftControls);
+        controlsRow.appendChild(deleteBtn);
+
+        card.appendChild(controlsRow);
+
         return card;
       }
 
       // Render day buckets
       days.forEach((dayObj) => {
-        const items = dayObj.items || [];
+        const items = sortByTimeOfDay(dayObj.items || []);
 
         const groupEl = document.createElement("section");
         groupEl.className = "day-group";
@@ -1290,10 +1305,10 @@
         const listEl = document.createElement("div");
         listEl.className = "day-suggestions";
 
-        const dayKey = "day-" + dayObj.dayNumber;
+        const bucketKey = "day-" + dayObj.dayNumber;
 
-        items.forEach((s, idx) => {
-          listEl.appendChild(buildCard(s, idx, dayKey));
+        items.forEach((s) => {
+          listEl.appendChild(buildCard(s, bucketKey));
         });
 
         groupEl.appendChild(heading);
@@ -1305,7 +1320,7 @@
 
       // Render flexible suggestions (any day) last
       if (flex.length > 0) {
-        const items = flex;
+        const items = sortByTimeOfDay(flex);
 
         const groupEl = document.createElement("section");
         groupEl.className = "day-group";
@@ -1321,10 +1336,10 @@
         const listEl = document.createElement("div");
         listEl.className = "day-suggestions";
 
-        const dayKey = "flex";
+        const bucketKey = "flex";
 
-        items.forEach((s, idx) => {
-          listEl.appendChild(buildCard(s, idx, dayKey));
+        items.forEach((s) => {
+          listEl.appendChild(buildCard(s, bucketKey));
         });
 
         groupEl.appendChild(heading);
@@ -1379,7 +1394,6 @@
     }
 
     function addCustomActivity() {
-      if (!itineraryState) return;
       const dayKey = promptForDayKey();
       if (dayKey === null) return;
 
@@ -1437,7 +1451,6 @@
     }
 
     function addMealPlaceholder() {
-      if (!itineraryState) return;
       const dayKey = promptForDayKey();
       if (dayKey === null) return;
 
@@ -1483,7 +1496,6 @@
     }
 
     function addTransferPlaceholder() {
-      if (!itineraryState) return;
       const dayKey = promptForDayKey();
       if (dayKey === null) return;
 
@@ -1561,7 +1573,7 @@
       if (travelers) parts.push("Who is going: " + travelers + ".");
       if (budget) parts.push("Budget level: " + budget + ".");
       if (tripType) parts.push("Trip type: " + tripType + ".");
-      if (vibe) parts.push("Trip vibe: " + vibe + ".");
+      if (vibe) parts.push("Extra context: " + vibe + ".");
       if (prefs) parts.push("Preferences: " + prefs + ".");
       if (mustInclude.length) {
         parts.push(
@@ -1634,7 +1646,7 @@
           : [];
 
         renderSuggestions(suggestions);
-        setLoading(false, "<strong>Done.</strong> Adjust days and order to make it yours.");
+        setLoading(false, "<strong>Done.</strong> Tweak the itinerary to make it yours.");
       } catch (err) {
         console.error("Network error calling /api/generate-itinerary:", err);
         setLoading(
