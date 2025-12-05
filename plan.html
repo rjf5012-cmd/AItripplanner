@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta
     name="description"
-    content="Use AITripPlan to generate personalized, map-friendly trip itineraries. Enter your destination and preferences to get structured activity suggestions in seconds, then adjust timing with a click."
+    content="Use AITripPlan to generate personalized trip ideas and simple itineraries. Enter your destination and preferences to get structured activity suggestions in seconds."
   />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="canonical" href="https://aitripplan.com/plan.html" />
@@ -18,24 +18,18 @@
 
   <style>
     :root {
-      --bg-page: #0f172a;
-      --bg-page-soft: #020617;
-      --bg-shell: #020617;
-      --bg-card: #020617;
-      --bg-card-elevated: #020617;
-      --text-main: #e5e7eb;
-      --text-soft: #9ca3af;
+      --bg-page: #f3f4f6;
+      --bg-card: #ffffff;
+      --text-main: #0f172a;
+      --text-soft: #4b5563;
       --text-muted: #6b7280;
       --accent: #2563eb;
       --accent-green: #22c55e;
       --accent-pink: #ec4899;
-      --border-subtle: rgba(148, 163, 184, 0.45);
-      --border-strong: rgba(148, 163, 184, 0.75);
-      --shadow-soft: 0 22px 60px rgba(15, 23, 42, 0.75);
+      --border-subtle: rgba(209, 213, 219, 1);
+      --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.10);
       --radius-lg: 18px;
-      --radius-pill: 999px;
-      --danger: #f97373;
-      --chip-bg: rgba(15, 23, 42, 0.9);
+      --danger: #dc2626;
     }
 
     * {
@@ -46,11 +40,10 @@
       margin: 0;
       font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background:
-        radial-gradient(circle at 0% 0%, rgba(37, 99, 235, 0.16), transparent 60%),
-        radial-gradient(circle at 100% 0%, rgba(236, 72, 153, 0.14), transparent 50%),
-        linear-gradient(to bottom, #020617, #020617 40%, #020617 100%);
+        radial-gradient(circle at 0% 0%, rgba(37, 99, 235, 0.06), transparent 60%),
+        radial-gradient(circle at 100% 0%, rgba(236, 72, 153, 0.06), transparent 60%),
+        var(--bg-page);
       color: var(--text-main);
-      -webkit-font-smoothing: antialiased;
     }
 
     a {
@@ -58,22 +51,21 @@
       text-decoration: none;
     }
 
-    /* Header / Nav – SaaS shell style */
+    /* Header / Nav – same style as index.html */
     header.site-header {
       position: fixed;
       inset-inline: 0;
       top: 0;
       z-index: 40;
-      background: radial-gradient(circle at 0 0, rgba(37, 99, 235, 0.2), transparent 55%),
-                  rgba(15, 23, 42, 0.96);
-      backdrop-filter: blur(18px);
-      border-bottom: 1px solid rgba(51, 65, 85, 0.9);
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(209, 213, 219, 0.8);
     }
 
     .nav-inner {
       max-width: 1120px;
       margin: 0 auto;
-      padding: 12px 18px;
+      padding: 14px 18px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -93,16 +85,14 @@
       width: 34px;
       height: 34px;
       border-radius: 999px;
-      box-shadow: 0 5px 18px rgba(15, 23, 42, 0.8);
+      box-shadow: 0 5px 14px rgba(15, 23, 42, 0.20);
       overflow: hidden;
-      background: #0b1220;
     }
 
     .logo-word {
       font-weight: 700;
       font-size: 18px;
       letter-spacing: -0.03em;
-      color: #e5e7eb;
     }
 
     .logo-word span.accent {
@@ -114,9 +104,10 @@
     nav.primary-nav {
       display: flex;
       align-items: center;
-      gap: 20px;
-      font-size: 13px;
-      color: #9ca3af;
+      gap: 18px;
+      font-size: 14px;
+      color: var(--text-muted);
+      flex-wrap: wrap;
     }
 
     nav.primary-nav a {
@@ -149,17 +140,16 @@
 
     .nav-cta {
       padding: 7px 14px;
-      border-radius: var(--radius-pill);
-      border: 1px solid rgba(129, 140, 248, 0.9);
-      background: radial-gradient(circle at 0 0, rgba(96, 165, 250, 0.3), transparent 60%),
-                  linear-gradient(135deg, #2563eb, #22c55e, #ec4899);
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(135deg, #2563eb, #22c55e, #ec4899);
       color: #f9fafb;
       font-size: 13px;
       font-weight: 600;
       letter-spacing: 0.08em;
       text-transform: uppercase;
       cursor: pointer;
-      box-shadow: 0 10px 28px rgba(15, 23, 42, 0.9);
+      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
       display: inline-flex;
       align-items: center;
       gap: 8px;
@@ -171,38 +161,30 @@
 
     .nav-cta:hover {
       transform: translateY(-1px);
-      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.95);
+      box-shadow: 0 12px 28px rgba(37, 99, 235, 0.40);
     }
 
     main {
-      padding-top: 82px;
+      padding-top: 92px;
       padding-bottom: 40px;
     }
 
-    /* App shell layout */
+    /* Planner layout */
     .planner-shell {
       max-width: 1120px;
       margin: 0 auto;
-      padding: 16px 18px 32px;
+      padding: 0 18px;
     }
 
     .planner-header {
       margin-bottom: 20px;
     }
 
-    .planner-eyebrow-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 6px;
-    }
-
     .planner-eyebrow {
       font-size: 11px;
       text-transform: uppercase;
-      letter-spacing: 0.16em;
-      color: var(--text-soft);
+      letter-spacing: 0.14em;
+      color: var(--text-muted);
       display: inline-flex;
       align-items: center;
       gap: 6px;
@@ -212,108 +194,68 @@
       width: 7px;
       height: 7px;
       border-radius: 999px;
-      background: conic-gradient(from 160deg, #2563eb, #22c55e, #ec4899, #2563eb);
-      box-shadow: 0 0 12px rgba(129, 140, 248, 0.9);
-    }
-
-    .planner-beta-pill {
-      font-size: 10px;
-      padding: 4px 8px;
-      border-radius: var(--radius-pill);
-      border: 1px solid rgba(148, 163, 184, 0.8);
-      color: #e5e7eb;
-      background: rgba(15, 23, 42, 0.9);
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .planner-beta-pill span.dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 999px;
-      background: #22c55e;
-      box-shadow: 0 0 12px rgba(34, 197, 94, 0.9);
+      background: linear-gradient(135deg, #2563eb, #22c55e, #ec4899);
     }
 
     .planner-title {
-      margin: 2px 0 6px;
+      margin: 8px 0 4px;
       font-size: 26px;
       font-weight: 700;
       letter-spacing: -0.03em;
-      color: #e5e7eb;
     }
 
     .planner-subtitle {
       font-size: 14px;
       color: var(--text-soft);
-      max-width: 640px;
+      max-width: 620px;
     }
 
     .planner-subtitle span.highlight {
-      color: #bfdbfe;
+      background: linear-gradient(135deg, rgba(37,99,235,0.1), rgba(34,197,94,0.1));
+      border-radius: 999px;
+      padding: 2px 8px;
     }
 
     .planner-grid {
       display: grid;
       gap: 18px;
       align-items: flex-start;
-      margin-top: 18px;
+      margin-top: 16px;
     }
 
     @media (min-width: 900px) {
       .planner-grid {
-        grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.35fr);
+        grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.25fr);
       }
     }
 
     .planner-card {
-      background: radial-gradient(circle at 0 0, rgba(37, 99, 235, 0.22), transparent 55%),
-                  radial-gradient(circle at 100% 0, rgba(236, 72, 153, 0.16), transparent 50%),
-                  #020617;
-      border-radius: 22px;
-      border: 1px solid rgba(51, 65, 85, 0.95);
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-subtle);
       box-shadow: var(--shadow-soft);
       padding: 18px 18px 16px;
     }
 
-    .planner-card--right {
-      background:
-        radial-gradient(circle at 0 0, rgba(37, 99, 235, 0.12), transparent 60%),
-        radial-gradient(circle at 100% 0, rgba(236, 72, 153, 0.10), transparent 55%),
-        #020617;
-    }
-
     .planner-card-header {
       margin-bottom: 10px;
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      gap: 8px;
+      border-left: 3px solid transparent;
+      padding-left: 6px;
+    }
+
+    .planner-card-header.accent {
+      border-image: linear-gradient(180deg, #2563eb, #22c55e, #ec4899) 1;
     }
 
     .planner-card-title {
-      font-size: 15px;
+      font-size: 16px;
       font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .card-step-pill {
-      font-size: 10px;
-      padding: 3px 8px;
-      border-radius: var(--radius-pill);
-      border: 1px solid rgba(129, 140, 248, 0.7);
-      background: rgba(15, 23, 42, 0.9);
-      color: #c7d2fe;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
+      margin-bottom: 4px;
     }
 
     .planner-card-sub {
-      font-size: 12px;
-      color: var(--text-soft);
+      font-size: 13px;
+      color: var(--text-muted);
     }
 
     /* Form */
@@ -337,9 +279,9 @@
 
     label {
       display: block;
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 500;
-      color: #cbd5f5;
+      color: var(--text-soft);
       margin-bottom: 3px;
     }
 
@@ -347,28 +289,22 @@
     textarea,
     select {
       width: 100%;
-      border-radius: 11px;
-      border: 1px solid rgba(51, 65, 85, 0.95);
+      border-radius: 10px;
+      border: 1px solid var(--border-subtle);
       padding: 8px 9px;
       font-size: 13px;
       font-family: inherit;
       color: var(--text-main);
-      background-color: rgba(15, 23, 42, 0.95);
+      background-color: #ffffff;
       outline: none;
-      transition: border-color 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease;
-    }
-
-    input::placeholder,
-    textarea::placeholder {
-      color: #6b7280;
+      transition: border-color 0.12s ease, box-shadow 0.12s ease;
     }
 
     input:focus,
     textarea:focus,
     select:focus {
-      border-color: #60a5fa;
-      box-shadow: 0 0 0 1px rgba(96, 165, 250, 0.55);
-      background-color: #020617;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.25);
     }
 
     textarea {
@@ -378,13 +314,8 @@
 
     .helper {
       font-size: 11px;
-      color: var(--text-soft);
+      color: var(--text-muted);
       margin-top: 3px;
-    }
-
-    .helper strong {
-      color: #bfdbfe;
-      font-weight: 500;
     }
 
     .actions {
@@ -396,7 +327,7 @@
     }
 
     button.primary {
-      border-radius: var(--radius-pill);
+      border-radius: 999px;
       border: none;
       padding: 9px 16px;
       font-size: 13px;
@@ -404,7 +335,7 @@
       cursor: pointer;
       color: #f9fafb;
       background: linear-gradient(135deg, #2563eb, #22c55e, #ec4899);
-      box-shadow: 0 12px 34px rgba(15, 23, 42, 0.9);
+      box-shadow: 0 10px 24px rgba(37, 99, 235, 0.30);
       display: inline-flex;
       align-items: center;
       gap: 8px;
@@ -412,7 +343,7 @@
 
     button.primary:hover:not(:disabled) {
       transform: translateY(-1px);
-      box-shadow: 0 18px 40px rgba(15, 23, 42, 1);
+      box-shadow: 0 14px 30px rgba(37, 99, 235, 0.36);
     }
 
     button.primary:disabled {
@@ -421,11 +352,32 @@
       box-shadow: none;
     }
 
+    .btn-icon {
+      font-size: 14px;
+    }
+
+    button.secondary {
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      background: #f9fafb;
+      color: var(--text-soft);
+      font-size: 12px;
+      padding: 7px 12px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    button.secondary:hover:not(:disabled) {
+      background: #eff6ff;
+    }
+
     .spinner-dot {
       width: 11px;
       height: 11px;
       border-radius: 999px;
-      border: 2px solid rgba(15, 23, 42, 0.35);
+      border: 2px solid rgba(15, 23, 42, 0.15);
       border-top-color: #f9fafb;
       animation: spin 0.7s linear infinite;
     }
@@ -438,11 +390,11 @@
 
     .status-text {
       font-size: 11px;
-      color: var(--text-soft);
+      color: var(--text-muted);
     }
 
     .status-text strong {
-      color: #bfdbfe;
+      color: var(--accent);
     }
 
     .status-error {
@@ -478,12 +430,12 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      font-size: 11px;
-      color: #cbd5f5;
-      padding: 4px 9px;
-      border-radius: var(--radius-pill);
-      border: 1px solid rgba(51, 65, 85, 0.95);
-      background: rgba(15, 23, 42, 0.9);
+      font-size: 12px;
+      color: var(--text-soft);
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      background: #f9fafb;
       cursor: pointer;
       user-select: none;
     }
@@ -494,7 +446,7 @@
       cursor: pointer;
     }
 
-    /* Suggestions / workspace */
+    /* Suggestions */
     .suggestions-header-row {
       display: flex;
       flex-wrap: wrap;
@@ -507,84 +459,27 @@
     .suggestions-title {
       font-size: 15px;
       font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .workspace-badge {
-      font-size: 10px;
-      padding: 3px 8px;
-      border-radius: var(--radius-pill);
-      background: rgba(15, 23, 42, 0.9);
-      border: 1px solid rgba(148, 163, 184, 0.8);
-      color: #e5e7eb;
     }
 
     .suggestions-meta {
       font-size: 11px;
-      color: var(--text-soft);
-    }
-
-    .suggestions-meta strong {
-      color: #bfdbfe;
-    }
-
-    .suggestions-toolbar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 12px;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .toolbar-left {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
-
-    .toolbar-right {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      font-size: 11px;
-      color: var(--text-soft);
-      align-items: center;
-    }
-
-    button.secondary {
-      border-radius: var(--radius-pill);
-      border: 1px solid rgba(51, 65, 85, 0.95);
-      background: rgba(15, 23, 42, 0.9);
-      color: #cbd5f5;
-      font-size: 11px;
-      padding: 6px 10px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    button.secondary:hover {
-      background: #020617;
-      border-color: rgba(96, 165, 250, 0.8);
+      color: var(--text-muted);
     }
 
     .suggestions-list {
       display: flex;
       flex-direction: column;
       gap: 10px;
-      max-height: 440px;
+      max-height: 430px;
       overflow-y: auto;
       padding-right: 2px;
     }
 
+    /* Day group styling */
     .day-group {
-      margin-bottom: 14px;
+      margin-bottom: 18px;
       padding-bottom: 10px;
-      border-bottom: 1px dashed rgba(51, 65, 85, 0.9);
+      border-bottom: 1px solid var(--border-subtle);
     }
 
     .day-group:last-of-type {
@@ -594,15 +489,14 @@
     }
 
     .day-heading {
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 600;
       margin-bottom: 2px;
-      color: #e5e7eb;
     }
 
     .day-sub {
-      font-size: 11px;
-      color: var(--text-soft);
+      font-size: 12px;
+      color: var(--text-muted);
       margin-bottom: 6px;
     }
 
@@ -613,11 +507,10 @@
     }
 
     .suggestion-card {
-      border-radius: 14px;
-      border: 1px solid rgba(51, 65, 85, 0.95);
-      padding: 10px 11px 9px;
-      background: radial-gradient(circle at 0 0, rgba(37, 99, 235, 0.12), transparent 65%),
-                  rgba(15, 23, 42, 0.98);
+      border-radius: 12px;
+      border: 1px solid rgba(209, 213, 219, 1);
+      padding: 10px 11px;
+      background: #ffffff;
     }
 
     .suggestion-top-row {
@@ -629,115 +522,152 @@
     }
 
     .suggestion-title {
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 600;
     }
 
     .chip-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 4px;
+      gap: 6px;
       font-size: 10px;
       align-items: center;
-      justify-content: flex-end;
     }
 
     .chip {
-      border-radius: var(--radius-pill);
+      border-radius: 999px;
       padding: 3px 8px;
-      border: 1px solid rgba(75, 85, 99, 0.9);
-      background: var(--chip-bg);
-      color: #cbd5f5;
-      letter-spacing: 0.12em;
+      border: 1px solid rgba(209, 213, 219, 1);
+      background: #f9fafb;
+      color: var(--text-muted);
       text-transform: uppercase;
+      letter-spacing: 0.12em;
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      cursor: pointer;
-      white-space: nowrap;
     }
 
     .chip.accent {
-      border-color: rgba(96, 165, 250, 0.9);
-      color: #bfdbfe;
-      background: rgba(15, 23, 42, 0.96);
+      border-color: rgba(37, 99, 235, 0.85);
+      color: #1d4ed8;
+      background: #eff6ff;
     }
 
-    .chip .caret {
-      font-size: 9px;
-      opacity: 0.7;
+    .chip-toggle {
+      cursor: pointer;
+      transition: background 0.12s ease, border-color 0.12s ease;
     }
 
-    .chip-label-muted {
+    .chip-toggle:hover {
+      background: #e0edff;
+      border-color: #2563eb;
+    }
+
+    .chip-caret {
+      font-size: 10px;
       opacity: 0.8;
-    }
-
-    .chip-hint {
-      font-size: 9px;
-      color: var(--text-soft);
     }
 
     .suggestion-meta-line {
       font-size: 11px;
-      color: var(--text-soft);
+      color: var(--text-muted);
       margin: 0 0 4px;
     }
 
     .suggestion-desc {
       font-size: 12px;
-      color: var(--text-main);
+      color: var(--text-soft);
       margin-bottom: 2px;
     }
 
     .suggestion-notes {
       font-size: 11px;
-      color: var(--text-soft);
+      color: var(--text-muted);
     }
 
     .empty-state {
-      border-radius: 14px;
-      border: 1px dashed rgba(75, 85, 99, 0.95);
+      border-radius: 12px;
+      border: 1px dashed rgba(209, 213, 219, 1);
       padding: 12px;
       font-size: 12px;
-      color: var(--text-soft);
-      background: rgba(15, 23, 42, 0.9);
+      color: var(--text-muted);
+      background: #f9fafb;
     }
 
-    /* Tiny tip toast */
-    .first-tip-toast {
-      position: fixed;
-      left: 50%;
-      bottom: 18px;
-      transform: translateX(-50%);
-      background: rgba(15, 23, 42, 0.97);
-      color: #e5e7eb;
-      border-radius: 999px;
-      padding: 8px 14px;
+    /* Export panel */
+    .export-panel {
+      margin-top: 12px;
+      padding: 10px 11px;
+      border-radius: 12px;
+      border: 1px solid rgba(209, 213, 219, 0.9);
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.04), rgba(236, 72, 153, 0.02));
+    }
+
+    .export-title {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .export-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-top: 6px;
+    }
+
+    .export-status {
       font-size: 11px;
-      border: 1px solid rgba(148, 163, 184, 0.9);
-      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.95);
+      color: var(--text-muted);
+    }
+
+    .export-status.success {
+      color: #16a34a;
+    }
+
+    .export-status.error {
+      color: var(--danger);
+    }
+
+    /* Tip toast */
+    .tip-toast {
+      position: absolute;
+      right: 18px;
+      top: 12px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: #0f172a;
+      color: #e5e7eb;
+      font-size: 11px;
       display: flex;
       align-items: center;
-      gap: 8px;
-      z-index: 50;
+      gap: 6px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.4);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-6px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
     }
 
-    .first-tip-toast button {
-      border: none;
-      background: none;
-      color: #9ca3af;
-      cursor: pointer;
-      font-size: 11px;
-      padding: 0;
+    .tip-toast.visible {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
     }
 
-    /* Footer */
+    .tip-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #2563eb, #22c55e, #ec4899);
+    }
+
     footer.site-footer {
-      border-top: 1px solid rgba(30, 41, 59, 0.95);
+      border-top: 1px solid rgba(209, 213, 219, 1);
       padding: 18px 18px 26px;
-      font-size: 11px;
-      color: #6b7280;
-      background: #020617;
+      font-size: 12px;
+      color: var(--text-muted);
     }
 
     .footer-inner {
@@ -757,7 +687,7 @@
     }
 
     .footer-links a {
-      color: #9ca3af;
+      color: var(--text-muted);
     }
 
     .footer-links a:hover {
@@ -775,7 +705,7 @@
   </style>
 </head>
 <body>
-  <!-- Header (same as index style) -->
+  <!-- Header (same as index) -->
   <header class="site-header">
     <div class="nav-inner">
       <div class="nav-left">
@@ -788,7 +718,7 @@
                 <stop offset="100%" stop-color="#EC4899"/>
               </linearGradient>
             </defs>
-            <circle cx="17" cy="17" r="17" fill="#020617"/>
+            <circle cx="17" cy="17" r="17" fill="white"/>
             <circle cx="17" cy="17" r="14" fill="url(#logoGrad)"/>
             <path d="M17 8 L20.5 17 L17 26 L13.5 17 Z" fill="white" opacity="0.95"/>
             <circle cx="17" cy="17" r="3" fill="white"/>
@@ -814,32 +744,22 @@
   <main>
     <section class="planner-shell" aria-labelledby="planner-title">
       <header class="planner-header">
-        <div class="planner-eyebrow-row">
-          <div class="planner-eyebrow">
-            <span class="planner-eyebrow-dot"></span>
-            Trip Itinerary Workspace
-          </div>
-          <div class="planner-beta-pill">
-            <span class="dot"></span>
-            <span>Interactive itinerary · Beta</span>
-          </div>
+        <div class="planner-eyebrow">
+          <span class="planner-eyebrow-dot"></span>
+          AI Trip Planner
         </div>
-        <h1 class="planner-title" id="planner-title">Turn a destination into a shareable travel plan.</h1>
+        <h1 class="planner-title" id="planner-title">Turn a destination into structured trip ideas.</h1>
         <p class="planner-subtitle">
-          Start with a few details about your trip. AITripPlan will generate a
-          <span class="highlight">structured, map-friendly itinerary</span> you can refine by clicking on
-          the “Morning” and “Day” chips.
+          Start simple: tell the AI where you’re going, who you’re with, the vibe, and your budget.
+          <span class="highlight">You can choose between a loose list of ideas or a full day-by-day itinerary.</span>
         </p>
       </header>
 
       <div class="planner-grid">
         <!-- Left card: Input form -->
         <section class="planner-card" aria-label="Trip details form">
-          <div class="planner-card-header">
-            <div class="planner-card-title">
-              <span class="card-step-pill">Step 1</span>
-              Trip setup
-            </div>
+          <div class="planner-card-header accent">
+            <div class="planner-card-title">Trip details</div>
             <div class="planner-card-sub">
               High-level info is enough. You can always regenerate with more specifics.
             </div>
@@ -939,13 +859,16 @@
             </div>
 
             <div>
-              <label for="vibe">Trip priorities &amp; vibe (optional)</label>
+              <label for="vibe">Trip focus (optional)</label>
               <input
                 id="vibe"
                 name="vibe"
                 type="text"
-                placeholder="Example: relaxed mornings, big focus on food and walkable neighborhoods."
+                placeholder="Example: mostly food + 1 big museum, light nightlife, lots of walking."
               />
+              <p class="helper">
+                One or two sentences on pacing and priorities.
+              </p>
             </div>
 
             <div>
@@ -953,7 +876,7 @@
               <textarea
                 id="prefs"
                 name="prefs"
-                placeholder="Example: No rental car. Prefer casual restaurants. One nice dinner with a view. Avoid big bus tours."
+                placeholder="Example: No rental car. Prefer walkable areas and casual restaurants. One nice dinner with a view."
               ></textarea>
               <p class="helper">
                 The AI uses this to tune recommendations. Bullet points or short sentences are fine.
@@ -1012,12 +935,12 @@
 
             <!-- Full itinerary toggle -->
             <div>
-              <label class="checkbox-inline">
+              <label class="checkbox-inline" title="Toggle between loose ideas and a structured plan">
                 <input type="checkbox" id="fullItinerary" name="fullItinerary" />
                 <span>Full itinerary mode (3 suggestions per day)</span>
               </label>
               <p class="helper">
-                Turn this on for a structured morning/afternoon/evening plan for each day. Leave it off for a looser list of ideas you can mix and match.
+                Turn this on for a structured morning/afternoon/evening plan for each day. Leave it off for a looser list of ideas.
               </p>
             </div>
 
@@ -1038,32 +961,23 @@
         </section>
 
         <!-- Right card: Suggestions -->
-        <section class="planner-card planner-card--right" aria-label="Suggested activities">
-          <div class="planner-card-header">
-            <div class="planner-card-title suggestions-title">
-              <span class="card-step-pill">Step 2</span>
-              Itinerary workspace
-              <span class="workspace-badge">Click chips to adjust</span>
-            </div>
+        <section class="planner-card" aria-label="Suggested activities" style="position: relative;">
+          <div class="planner-card-header accent">
+            <div class="planner-card-title suggestions-title">Suggested activities</div>
             <div class="planner-card-sub">
-              AI suggestions are grouped by day. Use the chips on each card to change the time of day or move items between days.
+              Ideas are grouped by day. You can tweak the day and time of day on each card, then export a clean text itinerary.
             </div>
           </div>
 
-          <div class="suggestions-toolbar">
-            <div class="toolbar-left">
-              <button type="button" class="secondary" id="exportBtn">
-                <span>📄</span>
-                <span>Export itinerary view</span>
-              </button>
-            </div>
-            <div class="toolbar-right">
-              <span class="chip-hint">
-                Tip: click <strong>Morning ▾</strong> or <strong>Day 1 ▾</strong> on a card to cycle timing and day.
-              </span>
-              <span class="suggestions-meta" id="metaSummary">
-                No results yet.
-              </span>
+          <!-- Tip toast -->
+          <div class="tip-toast" id="tipToast">
+            <span class="tip-dot"></span>
+            <span>Tip: click the <strong>Morning / Afternoon / Day</strong> chips on each card to adjust your plan.</span>
+          </div>
+
+          <div class="suggestions-header-row">
+            <div class="suggestions-meta" id="metaSummary">
+              No results yet.
             </div>
           </div>
 
@@ -1074,8 +988,23 @@
             </div>
           </div>
 
+          <!-- Export panel -->
+          <div class="export-panel">
+            <div class="export-title">Export your itinerary</div>
+            <p class="helper">
+              Copy a text-only version to paste into Notes, email, or Google Docs. Includes days, times, and map search hints.
+            </p>
+            <div class="export-row">
+              <button type="button" class="secondary" id="copyItineraryBtn">
+                <span class="btn-icon">📋</span>
+                <span>Copy full itinerary text</span>
+              </button>
+              <span class="export-status" id="copyStatus"></span>
+            </div>
+          </div>
+
           <p class="helper" style="margin-top: 10px;">
-            Coming soon: save &amp; share plans, plus export to PDF and calendar with one click.
+            Always double-check opening hours, reservations, and local safety guidance before you go.
           </p>
         </section>
       </div>
@@ -1093,12 +1022,6 @@
     </div>
   </footer>
 
-  <!-- First-time tip toast (hidden by default; shown via JS once) -->
-  <div class="first-tip-toast" id="firstTipToast" style="display:none;">
-    <span>💡 Tip: Click the <strong>Morning</strong> or <strong>Day 1</strong> chips on a card to cycle the time and day.</span>
-    <button type="button" id="dismissTipBtn">Got it</button>
-  </div>
-
   <script>
     const form = document.getElementById("tripForm");
     const generateBtn = document.getElementById("generateBtn");
@@ -1108,13 +1031,20 @@
     const suggestionsContainer = document.getElementById("suggestionsContainer");
     const emptyState = document.getElementById("emptyState");
     const metaSummary = document.getElementById("metaSummary");
-    const exportBtn = document.getElementById("exportBtn");
+    const tipToast = document.getElementById("tipToast");
+    const copyBtn = document.getElementById("copyItineraryBtn");
+    const copyStatus = document.getElementById("copyStatus");
 
-    const firstTipToast = document.getElementById("firstTipToast");
-    const dismissTipBtn = document.getElementById("dismissTipBtn");
-
-    // In-memory current suggestions so chip clicks can update timing/day
     let currentSuggestions = [];
+    let lastRequestedDays = null;
+    let tipShown = false;
+
+    // Load tip state from localStorage
+    try {
+      tipShown = localStorage.getItem("aitripplan-tip-shown") === "1";
+    } catch (e) {
+      tipShown = false;
+    }
 
     function setLoading(isLoading, msg) {
       if (isLoading) {
@@ -1135,50 +1065,78 @@
       }
     }
 
-    // Helper to infer number of days from input or existing suggestions
-    function getTripDays() {
-      const daysField = document.getElementById("days");
-      const val = daysField?.value?.trim();
-      let parsed = val ? parseInt(val, 10) : NaN;
-      if (Number.isFinite(parsed) && parsed > 0) return parsed;
+    function showTipToastOnce() {
+      if (tipShown || !tipToast) return;
+      tipShown = true;
+      try {
+        localStorage.setItem("aitripplan-tip-shown", "1");
+      } catch (e) {}
 
-      // Fallback to max dayHint in suggestions
-      let maxDay = 0;
-      if (Array.isArray(currentSuggestions)) {
-        currentSuggestions.forEach((s) => {
-          if (typeof s.dayHint === "number" && isFinite(s.dayHint)) {
-            if (s.dayHint > maxDay) maxDay = s.dayHint;
-          }
-        });
-      }
-      if (maxDay > 0) return maxDay;
-      return 3; // sensible default
+      tipToast.classList.add("visible");
+      setTimeout(() => {
+        tipToast.classList.remove("visible");
+      }, 7000);
     }
 
-    // Cycles time of day: morning -> afternoon -> evening -> flex -> morning
-    function cycleTimeOfDay(current) {
-      const order = ["morning", "afternoon", "evening", "flex"];
-      const normalized = (current || "flex").toString().toLowerCase();
-      const idx = order.indexOf(normalized);
-      if (idx === -1) return order[0];
-      return order[(idx + 1) % order.length];
+    // Cycle helpers for chips
+    const timeOrder = ["morning", "afternoon", "evening", "flex"];
+
+    function labelForTimeOfDay(todRaw) {
+      const tod = (todRaw || "flex").toString().toLowerCase();
+      if (tod === "morning") return "Morning";
+      if (tod === "afternoon") return "Afternoon";
+      if (tod === "evening") return "Evening";
+      return "Flexible";
     }
 
-    // Cycles day: 1..N -> Any day (null) -> 1
-    function cycleDayHint(current) {
-      const totalDays = getTripDays();
-      if (totalDays <= 0) return null;
-      if (typeof current !== "number" || !isFinite(current) || current <= 0) {
-        return 1;
+    function cycleTimeOfDay(id) {
+      const idx = currentSuggestions.findIndex((s) => s.id === id);
+      if (idx === -1) return;
+      const s = currentSuggestions[idx];
+      const current = (s.timeOfDay || "flex").toString().toLowerCase();
+      const pos = timeOrder.indexOf(current);
+      const next = timeOrder[(pos + 1) % timeOrder.length];
+      s.timeOfDay = next;
+      renderSuggestions(currentSuggestions);
+    }
+
+    function cycleDay(id) {
+      const idx = currentSuggestions.findIndex((s) => s.id === id);
+      if (idx === -1) return;
+      const s = currentSuggestions[idx];
+
+      const maxDays =
+        lastRequestedDays && Number.isFinite(lastRequestedDays)
+          ? lastRequestedDays
+          : Math.max(
+              1,
+              ...currentSuggestions
+                .map((x) => (typeof x.dayHint === "number" ? x.dayHint : 0))
+                .filter((n) => Number.isFinite(n))
+            );
+
+      const current =
+        typeof s.dayHint === "number" && isFinite(s.dayHint) ? s.dayHint : null;
+
+      let next;
+      if (current === null) {
+        next = 1;
+      } else if (current >= maxDays) {
+        next = null; // wrap to "Any day"
+      } else {
+        next = current + 1;
       }
-      const next = current + 1;
-      if (next > totalDays) return null; // wrap to "Any day"
-      return next;
+
+      s.dayHint = next;
+      renderSuggestions(currentSuggestions);
     }
 
     // Group suggestions into day buckets, sort by time-of-day, add "Any day" group
     function renderSuggestions(suggestions) {
-      currentSuggestions = Array.isArray(suggestions) ? suggestions : [];
+      currentSuggestions = Array.isArray(suggestions)
+        ? suggestions.slice()
+        : [];
+
       suggestionsContainer.innerHTML = "";
 
       if (!Array.isArray(currentSuggestions) || currentSuggestions.length === 0) {
@@ -1208,27 +1166,24 @@
         }
       });
 
-      // Sort days
       const sortedDays = Array.from(dayBuckets.keys()).sort((a, b) => a - b);
 
-      // Sort by time-of-day within a day
-      const timeOrder = { morning: 0, afternoon: 1, evening: 2, flex: 3 };
       function sortByTimeOfDay(list) {
         return list.slice().sort((a, b) => {
           const ta = (a.timeOfDay || "flex").toString().toLowerCase();
           const tb = (b.timeOfDay || "flex").toString().toLowerCase();
           const wa = Object.prototype.hasOwnProperty.call(timeOrder, ta)
-            ? timeOrder[ta]
-            : 4;
+            ? timeOrder.indexOf(ta)
+            : timeOrder.length;
           const wb = Object.prototype.hasOwnProperty.call(timeOrder, tb)
-            ? timeOrder[tb]
-            : 4;
+            ? timeOrder.indexOf(tb)
+            : timeOrder.length;
           if (wa !== wb) return wa - wb;
           return (a.title || "").localeCompare(b.title || "");
         });
       }
 
-      function buildCard(s, idx, bucketLabel) {
+      function buildCard(s, idx) {
         const card = document.createElement("article");
         card.className = "suggestion-card";
 
@@ -1245,63 +1200,50 @@
         // Time-of-day chip (clickable)
         const todChip = document.createElement("button");
         todChip.type = "button";
-        todChip.className = "chip accent";
-        const tod = (s.timeOfDay || "flex").toString().toLowerCase();
-        let todLabel = "Flexible";
-        if (tod === "morning") todLabel = "Morning";
-        else if (tod === "afternoon") todLabel = "Afternoon";
-        else if (tod === "evening") todLabel = "Evening";
-
-        todChip.innerHTML = "<span class='chip-label'>" + todLabel + "</span><span class='caret'>▾</span>";
-
+        todChip.className = "chip accent chip-toggle";
+        todChip.title = "Click to cycle through time of day";
+        const todLabel = labelForTimeOfDay(s.timeOfDay);
+        todChip.innerHTML =
+          '<span>' + todLabel + '</span><span class="chip-caret">▾</span>';
         todChip.addEventListener("click", () => {
-          const newVal = cycleTimeOfDay(s.timeOfDay);
-          s.timeOfDay = newVal;
-          renderSuggestions(currentSuggestions);
+          if (!s.id) return;
+          cycleTimeOfDay(s.id);
         });
-
         chips.appendChild(todChip);
 
-        // Day chip (clickable)
+        // Day chip (always present, cycles including Any day)
         const dayChip = document.createElement("button");
         dayChip.type = "button";
-        dayChip.className = "chip";
-        let dayLabel;
-        if (typeof s.dayHint === "number" && isFinite(s.dayHint) && s.dayHint > 0) {
-          dayLabel = "Day " + s.dayHint;
-        } else {
-          dayLabel = "Any day";
-        }
+        dayChip.className = "chip chip-toggle";
+        dayChip.title =
+          "Click to cycle through Day 1, Day 2, ... or set as Any day";
+        const dayText =
+          typeof s.dayHint === "number" && isFinite(s.dayHint)
+            ? "Day " + s.dayHint
+            : "Any day";
         dayChip.innerHTML =
-          "<span class='chip-label'>" +
-          dayLabel +
-          "</span><span class='caret'>▾</span>";
-
+          '<span>' + dayText + '</span><span class="chip-caret">▾</span>';
         dayChip.addEventListener("click", () => {
-          const newDay = cycleDayHint(s.dayHint);
-          s.dayHint = newDay;
-          renderSuggestions(currentSuggestions);
+          if (!s.id) return;
+          cycleDay(s.id);
         });
-
         chips.appendChild(dayChip);
 
         topRow.appendChild(title);
         topRow.appendChild(chips);
 
-        card.appendChild(topRow);
+        const metaLinePieces = [];
+        if (s.neighborhood && String(s.neighborhood).trim()) {
+          metaLinePieces.push(String(s.neighborhood).trim());
+        }
+        if (s.travelTime && String(s.travelTime).trim()) {
+          metaLinePieces.push(String(s.travelTime).trim());
+        }
 
-        // Map-friendly meta line (neighborhood, travel time)
-        const neighborhood =
-          s.neighborhood && String(s.neighborhood).trim();
-        const travelTime =
-          s.travelTime && String(s.travelTime).trim();
-        if (neighborhood || travelTime) {
+        if (metaLinePieces.length) {
           const meta = document.createElement("p");
           meta.className = "suggestion-meta-line";
-          const pieces = [];
-          if (neighborhood) pieces.push(neighborhood);
-          if (travelTime) pieces.push(travelTime);
-          meta.textContent = pieces.join(" · ");
+          meta.textContent = metaLinePieces.join(" · ");
           card.appendChild(meta);
         }
 
@@ -1310,6 +1252,7 @@
         desc.textContent =
           s.description ||
           "No description provided, but this activity sounded interesting.";
+        card.appendChild(desc);
 
         const notes = document.createElement("p");
         notes.className = "suggestion-notes";
@@ -1328,10 +1271,8 @@
           notes.textContent = baseNotes;
         }
 
-        card.appendChild(desc);
-        card.appendChild(notes);
-
-        return card;
+        card.appendChild(topRow);
+        return card.appendChild(desc), card.appendChild(notes), card;
       }
 
       // Render day buckets
@@ -1347,13 +1288,13 @@
 
         const sub = document.createElement("div");
         sub.className = "day-sub";
-        sub.textContent = "Suggested flow for morning, afternoon, and evening.";
+        sub.textContent = "Ideas for morning, afternoon, and evening.";
 
         const listEl = document.createElement("div");
         listEl.className = "day-suggestions";
 
         items.forEach((s, idx) => {
-          listEl.appendChild(buildCard(s, idx, "day-" + day));
+          listEl.appendChild(buildCard(s, idx));
         });
 
         groupEl.appendChild(heading);
@@ -1382,7 +1323,7 @@
         listEl.className = "day-suggestions";
 
         items.forEach((s, idx) => {
-          listEl.appendChild(buildCard(s, idx, "flex"));
+          listEl.appendChild(buildCard(s, idx));
         });
 
         groupEl.appendChild(heading);
@@ -1395,29 +1336,190 @@
       const total = currentSuggestions.length;
       const dayCount = sortedDays.length;
       if (dayCount > 0) {
-        metaSummary.innerHTML =
-          "<strong>" +
+        metaSummary.textContent =
           total +
-          "</strong> ideas across " +
+          " ideas across " +
           dayCount +
           " day" +
           (dayCount === 1 ? "" : "s") +
           (flexible.length ? " (+ flexible ideas)" : "");
       } else {
-        metaSummary.innerHTML =
-          "<strong>" +
+        metaSummary.textContent =
           total +
-          "</strong> flexible idea" +
+          " flexible idea" +
           (total === 1 ? "" : "s") +
           " with no specific day.";
       }
+
+      showTipToastOnce();
     }
+
+    // Build plain-text itinerary for export
+    function buildItineraryText() {
+      if (!currentSuggestions.length) return "";
+
+      const dayMap = new Map();
+      const flex = [];
+
+      currentSuggestions.forEach((s) => {
+        const day =
+          typeof s.dayHint === "number" && isFinite(s.dayHint)
+            ? s.dayHint
+            : null;
+        if (day === null) {
+          flex.push(s);
+        } else {
+          if (!dayMap.has(day)) dayMap.set(day, []);
+          dayMap.get(day).push(s);
+        }
+      });
+
+      const sortedDays = Array.from(dayMap.keys()).sort((a, b) => a - b);
+
+      function sortByTimeOfDay(list) {
+        return list.slice().sort((a, b) => {
+          const ta = (a.timeOfDay || "flex").toString().toLowerCase();
+          const tb = (b.timeOfDay || "flex").toString().toLowerCase();
+          const wa = Object.prototype.hasOwnProperty.call(timeOrder, ta)
+            ? timeOrder.indexOf(ta)
+            : timeOrder.length;
+          const wb = Object.prototype.hasOwnProperty.call(timeOrder, tb)
+            ? timeOrder.indexOf(tb)
+            : timeOrder.length;
+          if (wa !== wb) return wa - wb;
+          return (a.title || "").localeCompare(b.title || "");
+        });
+      }
+
+      const lines = [];
+      lines.push("Trip itinerary generated with AITripPlan");
+      lines.push("--------------------------------------");
+      lines.push("");
+
+      sortedDays.forEach((day) => {
+        lines.push("Day " + day);
+        lines.push("");
+
+        const items = sortByTimeOfDay(dayMap.get(day) || []);
+        items.forEach((s) => {
+          const todLabel = labelForTimeOfDay(s.timeOfDay);
+          const title = s.title || "Activity";
+          const pieces = [];
+
+          if (s.neighborhood && String(s.neighborhood).trim()) {
+            pieces.push(String(s.neighborhood).trim());
+          }
+          if (s.travelTime && String(s.travelTime).trim()) {
+            pieces.push(String(s.travelTime).trim());
+          }
+
+          const meta = pieces.length ? " (" + pieces.join(" · ") + ")" : "";
+          lines.push("- " + todLabel + ": " + title + meta);
+
+          if (s.description) {
+            lines.push("  " + s.description);
+          }
+          if (s.notes) {
+            lines.push("  Notes: " + s.notes);
+          }
+
+          const mapsSearch =
+            s.mapsSearch && typeof s.mapsSearch === "string"
+              ? s.mapsSearch.trim()
+              : s.mapsSearch;
+          if (mapsSearch) {
+            lines.push("  Maps search: \"" + mapsSearch + "\"");
+          }
+
+          lines.push("");
+        });
+      });
+
+      if (flex.length) {
+        lines.push("Any day ideas");
+        lines.push("");
+        const items = sortByTimeOfDay(flex);
+        items.forEach((s) => {
+          const todLabel = labelForTimeOfDay(s.timeOfDay);
+          const title = s.title || "Activity";
+          const pieces = [];
+
+          if (s.neighborhood && String(s.neighborhood).trim()) {
+            pieces.push(String(s.neighborhood).trim());
+          }
+          if (s.travelTime && String(s.travelTime).trim()) {
+            pieces.push(String(s.travelTime).trim());
+          }
+
+          const meta = pieces.length ? " (" + pieces.join(" · ") + ")" : "";
+          lines.push("- " + todLabel + ": " + title + meta);
+
+          if (s.description) {
+            lines.push("  " + s.description);
+          }
+          if (s.notes) {
+            lines.push("  Notes: " + s.notes);
+          }
+
+          const mapsSearch =
+            s.mapsSearch && typeof s.mapsSearch === "string"
+              ? s.mapsSearch.trim()
+              : s.mapsSearch;
+          if (mapsSearch) {
+            lines.push("  Maps search: \"" + mapsSearch + "\"");
+          }
+
+          lines.push("");
+        });
+      }
+
+      return lines.join("\n");
+    }
+
+    async function handleCopyItinerary() {
+      copyStatus.textContent = "";
+      copyStatus.classList.remove("success", "error");
+
+      if (!currentSuggestions.length) {
+        copyStatus.textContent = "No itinerary to copy yet.";
+        copyStatus.classList.add("error");
+        return;
+      }
+
+      const text = buildItineraryText();
+      if (!text.trim()) {
+        copyStatus.textContent = "Nothing to copy. Try regenerating your plan.";
+        copyStatus.classList.add("error");
+        return;
+      }
+
+      try {
+        await navigator.clipboard.writeText(text);
+        copyStatus.textContent = "Copied! Paste into Notes, email, or Google Docs.";
+        copyStatus.classList.add("success");
+      } catch (e) {
+        console.error("Clipboard error:", e);
+        copyStatus.textContent = "Copy failed. Select and copy manually instead.";
+        copyStatus.classList.add("error");
+      }
+
+      setTimeout(() => {
+        copyStatus.textContent = "";
+        copyStatus.classList.remove("success", "error");
+      }, 4000);
+    }
+
+    if (copyBtn) {
+      copyBtn.addEventListener("click", handleCopyItinerary);
+    }
+
+    // --- Form submit / fetch ---
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
       const destination = document.getElementById("destination").value.trim();
-      const days = document.getElementById("days").value.trim();
+      const daysVal = document.getElementById("days").value.trim();
       const dates = document.getElementById("dates").value.trim();
       const travelers = document.getElementById("travelers").value.trim();
       const budget = document.getElementById("budget").value.trim();
@@ -1437,6 +1539,15 @@
         return;
       }
 
+      let days = null;
+      if (daysVal) {
+        const parsed = parseInt(daysVal, 10);
+        if (Number.isFinite(parsed) && parsed > 0) {
+          days = parsed;
+        }
+      }
+      lastRequestedDays = days || null;
+
       const parts = [];
       parts.push("Destination: " + destination + ".");
       if (days) parts.push("Trip length: " + days + " days.");
@@ -1444,7 +1555,7 @@
       if (travelers) parts.push("Who is going: " + travelers + ".");
       if (budget) parts.push("Budget level: " + budget + ".");
       if (tripType) parts.push("Trip type: " + tripType + ".");
-      if (vibe) parts.push("Trip priorities & vibe: " + vibe + ".");
+      if (vibe) parts.push("Trip focus: " + vibe + ".");
       if (prefs) parts.push("Preferences: " + prefs + ".");
       if (mustInclude.length) {
         parts.push(
@@ -1470,11 +1581,8 @@
         );
       }
 
-      // Ask for map-friendly metadata
       parts.push(
-        "Where possible, also include map-friendly fields for each suggestion: " +
-          "Neighborhood (short name), a rough travel time like '10–15 min walk from Baixa', " +
-          "and a 'mapsSearch' string that works well if pasted into Google Maps (e.g., the place name in the local language)."
+        "For each suggestion, also include map-friendly details where possible: neighborhood, approximate travel time or walk/metro notes, and a short Google Maps search string."
       );
 
       const finalPrompt =
@@ -1524,15 +1632,7 @@
           : [];
 
         renderSuggestions(suggestions);
-        setLoading(false, "<strong>Done.</strong> Click chips to tweak your itinerary.");
-
-        // Show first-time tip toast (once per browser)
-        try {
-          const seen = window.localStorage.getItem("aitripplan-tip-seen");
-          if (!seen && suggestions.length) {
-            firstTipToast.style.display = "flex";
-          }
-        } catch {}
+        setLoading(false, "<strong>Done.</strong> Click the chips on each card to fine-tune your itinerary, then copy it out.");
       } catch (err) {
         console.error("Network error calling /api/generate-itinerary:", err);
         setLoading(
@@ -1541,159 +1641,6 @@
         );
       }
     });
-
-    if (dismissTipBtn) {
-      dismissTipBtn.addEventListener("click", () => {
-        firstTipToast.style.display = "none";
-        try {
-          window.localStorage.setItem("aitripplan-tip-seen", "1");
-        } catch {}
-      });
-    }
-
-    // Simple export: opens a new tab with plain-text itinerary
-    function buildExportText() {
-      if (!Array.isArray(currentSuggestions) || !currentSuggestions.length) {
-        return "No itinerary generated yet. Please generate a plan on aittripplan.com first.";
-      }
-
-      const lines = [];
-      lines.push("AITripPlan · Itinerary");
-      lines.push("======================");
-      lines.push("");
-
-      // Group by day
-      const dayBuckets = new Map();
-      const flexible = [];
-      currentSuggestions.forEach((s) => {
-        const day =
-          typeof s.dayHint === "number" && isFinite(s.dayHint)
-            ? s.dayHint
-            : null;
-        if (day === null) flexible.push(s);
-        else {
-          if (!dayBuckets.has(day)) dayBuckets.set(day, []);
-          dayBuckets.get(day).push(s);
-        }
-      });
-
-      const timeOrder = { morning: 0, afternoon: 1, evening: 2, flex: 3 };
-      function sortByTimeOfDay(list) {
-        return list.slice().sort((a, b) => {
-          const ta = (a.timeOfDay || "flex").toString().toLowerCase();
-          const tb = (b.timeOfDay || "flex").toString().toLowerCase();
-          const wa = Object.prototype.hasOwnProperty.call(timeOrder, ta)
-            ? timeOrder[ta]
-            : 4;
-          const wb = Object.prototype.hasOwnProperty.call(timeOrder, tb)
-            ? timeOrder[tb]
-            : 4;
-          if (wa !== wb) return wa - wb;
-          return (a.title || "").localeCompare(b.title || "");
-        });
-      }
-
-      const sortedDays = Array.from(dayBuckets.keys()).sort((a, b) => a - b);
-
-      sortedDays.forEach((day) => {
-        lines.push("Day " + day);
-        lines.push("-----");
-        const items = sortByTimeOfDay(dayBuckets.get(day) || []);
-        items.forEach((s) => {
-          const tod = (s.timeOfDay || "flex").toString().toLowerCase();
-          let todLabel =
-            tod === "morning"
-              ? "Morning"
-              : tod === "afternoon"
-              ? "Afternoon"
-              : tod === "evening"
-              ? "Evening"
-              : "Any time";
-          const title = s.title || "Activity";
-          const desc = s.description || "";
-          const neighborhood = s.neighborhood || "";
-          const travelTime = s.travelTime || "";
-          const mapsSearch = s.mapsSearch || "";
-
-          let line = "- [" + todLabel + "] " + title;
-          if (neighborhood || travelTime) {
-            const part = [neighborhood, travelTime].filter(Boolean).join(" · ");
-            line += " (" + part + ")";
-          }
-          lines.push(line);
-          if (desc) lines.push("    " + desc);
-          if (mapsSearch) lines.push('    Maps search: "' + mapsSearch + '"');
-          lines.push("");
-        });
-        lines.push("");
-      });
-
-      if (flexible.length) {
-        lines.push("Any day ideas");
-        lines.push("-------------");
-        sortByTimeOfDay(flexible).forEach((s) => {
-          const title = s.title || "Activity";
-          const desc = s.description || "";
-          const mapsSearch = s.mapsSearch || "";
-          let line = "- " + title;
-          lines.push(line);
-          if (desc) lines.push("    " + desc);
-          if (mapsSearch) lines.push('    Maps search: "' + mapsSearch + '"');
-          lines.push("");
-        });
-        lines.push("");
-      }
-
-      // Simple headers for lists a future you might care about
-      lines.push("Restaurant & bar ideas");
-      lines.push("----------------------");
-      currentSuggestions.forEach((s) => {
-        const title = s.title || "";
-        const desc = (s.description || "").toLowerCase();
-        if (
-          /restaurant|bar|cafe|coffee|dinner|lunch|brunch|wine|cocktail/.test(
-            desc + " " + title.toLowerCase()
-          )
-        ) {
-          lines.push("- " + title);
-        }
-      });
-      lines.push("");
-      lines.push("Packing & prep starter list");
-      lines.push("---------------------------");
-      lines.push("- Comfortable walking shoes");
-      lines.push("- Layered clothing for changing weather");
-      lines.push("- Travel documents (ID, passport, confirmations)");
-      lines.push("- Portable charger & adapters");
-      lines.push("- Any tickets or reservations mentioned above");
-      lines.push("");
-      lines.push("Weather reminder");
-      lines.push("----------------");
-      lines.push(
-        "Check the 7–10 day forecast for your destination a few days before you leave and adjust outfits accordingly."
-      );
-      lines.push("");
-
-      return lines.join("\n");
-    }
-
-    if (exportBtn) {
-      exportBtn.addEventListener("click", () => {
-        const text = buildExportText();
-        const win = window.open("", "_blank");
-        if (!win) return;
-        const escaped = text
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;");
-        win.document.write(
-          "<!DOCTYPE html><html><head><meta charset='UTF-8'><title>AITripPlan Export</title></head><body><pre style='white-space:pre-wrap;font-family:system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif;font-size:14px;line-height:1.5;padding:16px;'>" +
-            escaped +
-            "</pre></body></html>"
-        );
-        win.document.close();
-      });
-    }
   </script>
 </body>
 </html>
