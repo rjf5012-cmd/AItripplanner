@@ -492,28 +492,70 @@
     <!-- Hero -->
     <section class="hero" aria-labelledby="hero-title">
       <div class="hero-inner">
-        <!-- Background graphic -->
+        <!-- Background graphic (more color) -->
         <div class="hero-graphic" aria-hidden="true">
           <svg width="100%" height="100%" viewBox="0 0 1440 520" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
             <defs>
+              <!-- Main gradient -->
               <linearGradient id="heroGrad" x1="0" y1="0" x2="1440" y2="520">
                 <stop offset="0%" stop-color="#2563EB"/>
-                <stop offset="50%" stop-color="#22C55E"/>
-                <stop offset="100%" stop-color="#EC4899"/>
+                <stop offset="35%" stop-color="#22C55E"/>
+                <stop offset="70%" stop-color="#EC4899"/>
+                <stop offset="100%" stop-color="#F97316"/>
               </linearGradient>
+
+              <!-- Soft radial blobs -->
+              <radialGradient id="blobBlue" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse"
+                              gradientTransform="translate(220 130) rotate(45) scale(320 220)">
+                <stop stop-color="#38BDF8" stop-opacity="0.95"/>
+                <stop offset="1" stop-color="#38BDF8" stop-opacity="0"/>
+              </radialGradient>
+
+              <radialGradient id="blobPink" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse"
+                              gradientTransform="translate(1220 120) rotate(30) scale(320 220)">
+                <stop stop-color="#EC4899" stop-opacity="0.95"/>
+                <stop offset="1" stop-color="#EC4899" stop-opacity="0"/>
+              </radialGradient>
+
+              <radialGradient id="blobGreen" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse"
+                              gradientTransform="translate(900 420) rotate(10) scale(360 260)">
+                <stop stop-color="#22C55E" stop-opacity="0.85"/>
+                <stop offset="1" stop-color="#22C55E" stop-opacity="0"/>
+              </radialGradient>
             </defs>
-            <rect width="1440" height="520" fill="url(#heroGrad)" opacity="0.85"/>
-            <rect width="1440" height="520" fill="white" opacity="0.06"/>
-            <path d="M100 420 C 300 320, 600 520, 900 340 C 1200 160, 1400 260, 1500 100"
+
+            <!-- Base gradient background -->
+            <rect width="1440" height="520" fill="url(#heroGrad)" opacity="0.92"/>
+
+            <!-- Subtle white wash on top -->
+            <rect width="1440" height="520" fill="white" opacity="0.05"/>
+
+            <!-- Color blobs -->
+            <circle cx="220" cy="130" r="260" fill="url(#blobBlue)" />
+            <circle cx="1220" cy="120" r="260" fill="url(#blobPink)" />
+            <circle cx="900" cy="420" r="320" fill="url(#blobGreen)" />
+
+            <!-- Curved “routes” -->
+            <path d="M100 430 C 320 320, 620 540, 940 350 C 1240 180, 1400 260, 1520 120"
+                  stroke="white" stroke-width="2" stroke-opacity="0.30" fill="none"/>
+            <path d="M-40 300 C 220 210, 620 360, 1070 230 C 1410 120, 1620 200, 1740 70"
                   stroke="white" stroke-width="2" stroke-opacity="0.25" fill="none"/>
-            <path d="M-40 300 C 200 200, 600 350, 1050 220 C 1400 100, 1600 180, 1700 40"
-                  stroke="white" stroke-width="2" stroke-opacity="0.25" fill="none"/>
-            <path d="M200 180 Q 450 120 700 220 T 1200 200"
-                  stroke="white" stroke-width="4" stroke-dasharray="10 14" stroke-linecap="round" opacity="0.3"/>
+            <path d="M160 190 Q 440 120 720 220 T 1210 210"
+                  stroke="white" stroke-width="4" stroke-dasharray="10 14"
+                  stroke-linecap="round" opacity="0.35"/>
+
+            <!-- Small “destination pins” -->
+            <g opacity="0.8">
+              <circle cx="260" cy="260" r="7" fill="#F97316"/>
+              <circle cx="720" cy="170" r="7" fill="#22C55E"/>
+              <circle cx="1180" cy="260" r="7" fill="#38BDF8"/>
+            </g>
+
+            <!-- Central compass badge -->
             <g transform="translate(680, 200) scale(2.2)">
-              <circle cx="0" cy="0" r="32" fill="white" opacity="0.9"/>
+              <circle cx="0" cy="0" r="32" fill="white" opacity="0.96"/>
               <circle cx="0" cy="0" r="28" fill="url(#heroGrad)"/>
-              <path d="M0 -18 L8 0 L0 18 L-8 0 Z" fill="white" opacity="0.92"/>
+              <path d="M0 -18 L8 0 L0 18 L-8 0 Z" fill="white" opacity="0.94"/>
               <circle cx="0" cy="0" r="5" fill="white"/>
             </g>
           </svg>
