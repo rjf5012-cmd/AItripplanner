@@ -508,6 +508,7 @@
       color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.12em;
+      font-size: 10px;
     }
 
     .chip.accent {
@@ -516,14 +517,17 @@
       background: #eff6ff;
     }
 
-    .chip.clickable {
+    .chip-clickable {
       cursor: pointer;
     }
 
-    .chip.clickable:hover {
-      background: #e5edff;
+    .chip-clickable:hover {
       border-color: #2563eb;
-      color: #1d4ed8;
+      background: #e0ecff;
+    }
+
+    .day-chip {
+      font-weight: 500;
     }
 
     .suggestion-meta-line {
@@ -541,6 +545,15 @@
     .suggestion-notes {
       font-size: 11px;
       color: var(--text-muted);
+    }
+
+    .empty-state {
+      border-radius: 12px;
+      border: 1px dashed rgba(209, 213, 219, 1);
+      padding: 12px;
+      font-size: 12px;
+      color: var(--text-muted);
+      background: #f9fafb;
     }
 
     footer.site-footer {
@@ -574,12 +587,68 @@
       text-decoration: underline;
     }
 
+    /* Pro-tip toast */
+    .chip-tip-toast {
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      max-width: 260px;
+      z-index: 50;
+      display: none;
+    }
+
+    .chip-tip-inner {
+      background: #0f172a;
+      color: #e5e7eb;
+      padding: 10px 12px;
+      border-radius: 12px;
+      box-shadow: 0 14px 40px rgba(15, 23, 42, 0.8);
+      font-size: 12px;
+    }
+
+    .chip-tip-inner strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 12px;
+    }
+
+    .chip-tip-inner p {
+      margin: 0 0 8px;
+      line-height: 1.4;
+    }
+
+    .chip-tip-inner button {
+      border-radius: 999px;
+      border: none;
+      padding: 4px 10px;
+      font-size: 11px;
+      cursor: pointer;
+      background: #e5e7eb;
+      color: #111827;
+      font-weight: 500;
+    }
+
+    .chip-tip-inner button:hover {
+      background: #f9fafb;
+    }
+
+    .chip.small-demo {
+      font-size: 9px;
+      padding: 1px 6px;
+      letter-spacing: 0.12em;
+    }
+
     @media (max-width: 640px) {
       header.site-header {
         padding-inline: 0;
       }
       .nav-inner {
         padding-inline: 14px;
+      }
+      .chip-tip-toast {
+        left: 12px;
+        right: 12px;
+        bottom: 12px;
       }
     }
   </style>
@@ -739,12 +808,12 @@
             </div>
 
             <div>
-              <label for="vibe">Any extra context? (optional)</label>
+              <label for="vibe">Trip focus (optional)</label>
               <input
                 id="vibe"
                 name="vibe"
                 type="text"
-                placeholder="Example: Prefer neighborhoods with cafes and wine bars, not big nightclubs."
+                placeholder="Relaxed, food-focused, museums, nightlife, outdoors..."
               />
             </div>
 
@@ -817,7 +886,7 @@
                 <span>Full itinerary mode (3 suggestions per day)</span>
               </label>
               <p class="helper">
-                Turn this on for a structured morning/afternoon/evening plan for each day. Leave it off for a looser list of ideas.
+                Turn this on for a structured morning/afternoon/evening plan for each day. Leave it off for a looser mix-and-match idea list.
               </p>
             </div>
 
@@ -843,7 +912,7 @@
             <div>
               <div class="planner-card-title suggestions-title">Suggested activities</div>
               <div class="planner-card-sub">
-                Ideas are grouped by day. Click the time or day labels on each card to tweak your itinerary.
+                Ideas are grouped by day; adjust the Time and Day chips on each card to make the plan yours.
               </div>
             </div>
             <div class="suggestions-meta" id="metaSummary">
@@ -859,7 +928,7 @@
           </div>
 
           <p class="helper" style="margin-top: 10px;">
-            Tip: click the <strong>time-of-day</strong> or <strong>day</strong> chips on any card to adjust your plan.
+            Tip: Click the <strong>Time</strong> (Morning/Afternoon/Evening/Flexible) or <strong>Day</strong> chips on any card to change them. Use Full itinerary mode for a strict 3-per-day plan.
           </p>
         </section>
       </div>
@@ -877,6 +946,21 @@
     </div>
   </footer>
 
+  <!-- One-time “Pro tip” toast -->
+  <div id="chipTipToast" class="chip-tip-toast" aria-live="polite">
+    <div class="chip-tip-inner">
+      <strong>Pro tip</strong>
+      <p>
+        Click the
+        <span class="chip accent small-demo">Morning</span>
+        and
+        <span class="chip small-demo">Day 2 ▾</span>
+        chips on any card to change time or day.
+      </p>
+      <button type="button" id="chipTipClose">Got it</button>
+    </div>
+  </div>
+
   <script>
     const form = document.getElementById("tripForm");
     const generateBtn = document.getElementById("generateBtn");
@@ -887,9 +971,30 @@
     const emptyState = document.getElementById("emptyState");
     const metaSummary = document.getElementById("metaSummary");
 
-    // In-memory suggestions so we can update chips in-place
-    let currentSuggestions = [];
-    let inferredDaysForUI = 1; // used when cycling day chips
+    const chipTipToast = document.getElementById("chipTipToast");
+    const chipTipClose = document.getElementById("chipTipClose");
+
+    let chipTipSeen = false;
+    try {
+      chipTipSeen = window.localStorage.getItem("aitripplan_chipTipSeen") === "1";
+    } catch (e) {
+      chipTipSeen = false;
+    }
+
+    function showChipTipOnce() {
+      if (chipTipSeen || !chipTipToast) return;
+      chipTipToast.style.display = "block";
+    }
+
+    if (chipTipClose) {
+      chipTipClose.addEventListener("click", () => {
+        chipTipToast.style.display = "none";
+        chipTipSeen = true;
+        try {
+          window.localStorage.setItem("aitripplan_chipTipSeen", "1");
+        } catch (e) {}
+      });
+    }
 
     function setLoading(isLoading, msg) {
       if (isLoading) {
@@ -910,56 +1015,26 @@
       }
     }
 
-    // --- Chip interaction helpers ---
+    // Global state of current suggestions so chip clicks can mutate & re-render
+    let currentSuggestions = [];
+    let maxDayHint = 3;
 
-    function findSuggestionIndexById(id) {
-      return currentSuggestions.findIndex((s) => s.id === id);
-    }
+    // Group suggestions into day buckets, sort by time-of-day, add "Any day" group
+    function renderSuggestions(suggestions, options = {}) {
+      const fromState = options.fromState === true;
 
-    function handleTimeChipClick(id) {
-      const idx = findSuggestionIndexById(id);
-      if (idx === -1) return;
-
-      const order = ["morning", "afternoon", "evening", "flex"];
-      const current = (currentSuggestions[idx].timeOfDay || "flex").toString().toLowerCase();
-      const currentIndex = order.indexOf(current);
-      const nextIndex = currentIndex === -1 ? 0 : (currentIndex + 1) % order.length;
-      currentSuggestions[idx].timeOfDay = order[nextIndex];
-
-      renderSuggestions(currentSuggestions);
-    }
-
-    function handleDayChipClick(id) {
-      const idx = findSuggestionIndexById(id);
-      if (idx === -1) return;
-
-      const cur = currentSuggestions[idx].dayHint;
-      let next;
-
-      if (typeof cur === "number" && isFinite(cur)) {
-        const normalized = Math.min(Math.max(cur, 1), inferredDaysForUI);
-        if (normalized >= inferredDaysForUI) {
-          next = null; // wrap back to "Any day"
-        } else {
-          next = normalized + 1;
-        }
-      } else {
-        next = 1; // from Any day -> Day 1
+      if (!fromState) {
+        // Fresh load from server
+        currentSuggestions = Array.isArray(suggestions)
+          ? suggestions.map((s, idx) => ({ ...s, _idx: idx }))
+          : [];
       }
 
-      currentSuggestions[idx].dayHint = next;
-      renderSuggestions(currentSuggestions);
-    }
-
-    // --- Rendering ---
-
-    function renderSuggestions(suggestions) {
-      // Keep reference so chip handlers mutate same array
-      currentSuggestions = suggestions;
+      const list = currentSuggestions;
 
       suggestionsContainer.innerHTML = "";
 
-      if (!Array.isArray(suggestions) || suggestions.length === 0) {
+      if (!Array.isArray(list) || list.length === 0) {
         emptyState.style.display = "block";
         suggestionsContainer.appendChild(emptyState);
         metaSummary.textContent = "No results. Try tweaking your input.";
@@ -968,13 +1043,26 @@
 
       emptyState.style.display = "none";
 
+      // Determine max day for day chip cycling
+      const numericHints = list
+        .map((s) => s.dayHint)
+        .filter((v) => typeof v === "number" && isFinite(v));
+      if (numericHints.length) {
+        maxDayHint = Math.max(...numericHints);
+      } else {
+        const daysInput = parseInt(document.getElementById("days").value, 10);
+        if (Number.isFinite(daysInput) && daysInput > 0) {
+          maxDayHint = Math.min(daysInput, 7);
+        } else {
+          maxDayHint = 3;
+        }
+      }
+
       // Group by dayHint, collect flexible
       const dayBuckets = new Map(); // number -> array
       const flexible = [];
 
-      let maxDaySeen = 0;
-
-      suggestions.forEach((s) => {
+      list.forEach((s) => {
         const day =
           typeof s.dayHint === "number" && isFinite(s.dayHint)
             ? s.dayHint
@@ -985,21 +1073,16 @@
         } else {
           if (!dayBuckets.has(day)) dayBuckets.set(day, []);
           dayBuckets.get(day).push(s);
-          if (day > maxDaySeen) maxDaySeen = day;
         }
       });
-
-      if (maxDaySeen > 0) {
-        inferredDaysForUI = Math.max(inferredDaysForUI, maxDaySeen);
-      }
 
       // Sort days
       const sortedDays = Array.from(dayBuckets.keys()).sort((a, b) => a - b);
 
       // Sort by time-of-day within a day
       const timeOrder = { morning: 0, afternoon: 1, evening: 2, flex: 3 };
-      function sortByTimeOfDay(list) {
-        return list.slice().sort((a, b) => {
+      function sortByTimeOfDay(listToSort) {
+        return listToSort.slice().sort((a, b) => {
           const ta = (a.timeOfDay || "flex").toString().toLowerCase();
           const tb = (b.timeOfDay || "flex").toString().toLowerCase();
           const wa = Object.prototype.hasOwnProperty.call(timeOrder, ta)
@@ -1013,7 +1096,7 @@
         });
       }
 
-      function buildCard(s, idx) {
+      function buildCard(item, idx) {
         const card = document.createElement("article");
         card.className = "suggestion-card";
 
@@ -1022,44 +1105,51 @@
 
         const title = document.createElement("div");
         title.className = "suggestion-title";
-        title.textContent = s.title || "Activity " + (idx + 1);
+        title.textContent = item.title || "Activity " + (idx + 1);
 
         const chips = document.createElement("div");
         chips.className = "chip-row";
 
         // Time-of-day chip (clickable)
-        const todChip = document.createElement("span");
-        todChip.className = "chip accent clickable";
-        const tod = (s.timeOfDay || "flex").toString().toLowerCase();
+        const todChip = document.createElement("button");
+        todChip.type = "button";
+        todChip.className = "chip accent chip-clickable";
+        todChip.dataset.idx = String(item._idx);
+        todChip.dataset.role = "time";
+        todChip.title = "Click to change time of day";
+
+        const tod = (item.timeOfDay || "flex").toString().toLowerCase();
         if (tod === "morning") todChip.textContent = "Morning";
         else if (tod === "afternoon") todChip.textContent = "Afternoon";
         else if (tod === "evening") todChip.textContent = "Evening";
         else todChip.textContent = "Flexible";
-        todChip.title = "Click to change time of day";
-        todChip.addEventListener("click", () => handleTimeChipClick(s.id));
+
         chips.appendChild(todChip);
 
-        // Day chip (always show, even if null)
-        const dayChip = document.createElement("span");
-        dayChip.className = "chip clickable";
-        if (typeof s.dayHint === "number" && isFinite(s.dayHint)) {
-          dayChip.textContent = "Day " + s.dayHint;
+        // Day chip (clickable with caret)
+        const dayChip = document.createElement("button");
+        dayChip.type = "button";
+        dayChip.className = "chip chip-clickable day-chip";
+        dayChip.dataset.idx = String(item._idx);
+        dayChip.dataset.role = "day";
+        dayChip.title = "Click to move this to another day";
+
+        if (typeof item.dayHint === "number" && isFinite(item.dayHint)) {
+          dayChip.textContent = "Day " + item.dayHint + " ▾";
         } else {
-          dayChip.textContent = "Any day";
+          dayChip.textContent = "Any day ▾";
         }
-        dayChip.title = "Click to change day";
-        dayChip.addEventListener("click", () => handleDayChipClick(s.id));
         chips.appendChild(dayChip);
 
         topRow.appendChild(title);
         topRow.appendChild(chips);
         card.appendChild(topRow);
 
-        // Map-friendly meta line (neighborhood + travel time)
+        // Neighborhood / travel time line
         const neighborhood =
-          s.neighborhood && String(s.neighborhood).trim();
+          item.neighborhood && String(item.neighborhood).trim();
         const travelTime =
-          s.travelTime && String(s.travelTime).trim();
+          item.travelTime && String(item.travelTime).trim();
         if (neighborhood || travelTime) {
           const meta = document.createElement("p");
           meta.className = "suggestion-meta-line";
@@ -1073,19 +1163,19 @@
         const desc = document.createElement("p");
         desc.className = "suggestion-desc";
         desc.textContent =
-          s.description ||
+          item.description ||
           "No description provided, but this activity sounded interesting.";
         card.appendChild(desc);
 
         const notes = document.createElement("p");
         notes.className = "suggestion-notes";
         const baseNotes =
-          s.notes || "No extra notes from the AI for this one.";
+          item.notes || "No extra notes from the AI for this one.";
 
         const mapsSearch =
-          s.mapsSearch && typeof s.mapsSearch === "string"
-            ? s.mapsSearch.trim()
-            : s.mapsSearch;
+          item.mapsSearch && typeof item.mapsSearch === "string"
+            ? item.mapsSearch.trim()
+            : item.mapsSearch;
 
         if (mapsSearch) {
           notes.textContent =
@@ -1157,7 +1247,7 @@
         suggestionsContainer.appendChild(groupEl);
       }
 
-      const total = suggestions.length;
+      const total = list.length;
       const dayCount = sortedDays.length;
       if (dayCount > 0) {
         metaSummary.textContent =
@@ -1174,6 +1264,55 @@
           (total === 1 ? "" : "s") +
           " with no specific day.";
       }
+
+      if (!fromState) {
+        showChipTipOnce();
+      }
+    }
+
+    // Handle clicks on time/day chips (event delegation)
+    if (suggestionsContainer) {
+      suggestionsContainer.addEventListener("click", (e) => {
+        const chip = e.target.closest(".chip-clickable");
+        if (!chip) return;
+
+        const role = chip.dataset.role;
+        const idxStr = chip.dataset.idx;
+        if (!role || !idxStr) return;
+
+        const origIdx = parseInt(idxStr, 10);
+        if (!Number.isFinite(origIdx)) return;
+
+        const item = currentSuggestions.find((s) => s._idx === origIdx);
+        if (!item) return;
+
+        if (role === "time") {
+          const order = ["morning", "afternoon", "evening", "flex"];
+          const cur = (item.timeOfDay || "flex").toString().toLowerCase();
+          let i = order.indexOf(cur);
+          if (i === -1) i = order.length - 1;
+          const next = order[(i + 1) % order.length];
+          item.timeOfDay = next;
+        } else if (role === "day") {
+          if (maxDayHint < 1) {
+            item.dayHint = null;
+          } else {
+            const curDay =
+              typeof item.dayHint === "number" && isFinite(item.dayHint)
+                ? item.dayHint
+                : null;
+            if (curDay === null) {
+              item.dayHint = 1;
+            } else if (curDay >= maxDayHint) {
+              item.dayHint = null; // wrap to Any day
+            } else {
+              item.dayHint = curDay + 1;
+            }
+          }
+        }
+
+        renderSuggestions(currentSuggestions, { fromState: true });
+      });
     }
 
     // --- Form submit / fetch ---
@@ -1202,14 +1341,6 @@
         return;
       }
 
-      // Update inferredDaysForUI so day chip cycling knows the range
-      if (days) {
-        const parsedDays = parseInt(days, 10);
-        if (Number.isFinite(parsedDays) && parsedDays > 0) {
-          inferredDaysForUI = Math.min(Math.max(parsedDays, 1), 7);
-        }
-      }
-
       const parts = [];
       parts.push("Destination: " + destination + ".");
       if (days) parts.push("Trip length: " + days + " days.");
@@ -1217,7 +1348,7 @@
       if (travelers) parts.push("Who is going: " + travelers + ".");
       if (budget) parts.push("Budget level: " + budget + ".");
       if (tripType) parts.push("Trip type: " + tripType + ".");
-      if (vibe) parts.push("Extra context: " + vibe + ".");
+      if (vibe) parts.push("Trip vibe / focus: " + vibe + ".");
       if (prefs) parts.push("Preferences: " + prefs + ".");
       if (mustInclude.length) {
         parts.push(
@@ -1289,8 +1420,8 @@
           ? data.suggestions
           : [];
 
-        renderSuggestions(suggestions);
-        setLoading(false, "<strong>Done.</strong> Click the labels to tweak your plan.");
+        renderSuggestions(suggestions, { fromState: false });
+        setLoading(false, "<strong>Done.</strong> Click Time or Day on any card to tweak the plan.");
       } catch (err) {
         console.error("Network error calling /api/generate-itinerary:", err);
         setLoading(
