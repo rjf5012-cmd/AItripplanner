@@ -462,34 +462,7 @@
       padding-right: 2px;
     }
 
-    /* Desktop: turn days into columns with horizontal scroll */
-    @media (min-width: 900px) {
-      .suggestions-list {
-        flex-direction: row;
-        align-items: flex-start;
-        max-height: 60vh;
-        overflow-y: hidden;
-        overflow-x: auto;
-        padding-bottom: 4px;
-      }
-
-      .day-group {
-        border-bottom: none;
-        border-right: 1px solid var(--border-subtle);
-        padding-right: 10px;
-        margin-right: 10px;
-        margin-bottom: 0;
-        flex: 0 0 260px;
-      }
-
-      .day-group:last-of-type {
-        border-right: none;
-        margin-right: 0;
-        padding-right: 0;
-      }
-    }
-
-    /* Day group styling (stacked on mobile) */
+    /* Day group styling (stacked) */
     .day-group {
       margin-bottom: 18px;
       padding-bottom: 10px;
@@ -521,22 +494,11 @@
       min-height: 8px;
     }
 
-    .day-suggestions.drag-over {
-      background: #f3f4ff;
-      border-radius: 10px;
-      outline: 1px dashed rgba(37, 99, 235, 0.6);
-      outline-offset: 2px;
-    }
-
     .suggestion-card {
       border-radius: 12px;
       border: 1px solid rgba(209, 213, 219, 1);
       padding: 10px 11px;
       background: #ffffff;
-    }
-
-    .suggestion-card.dragging {
-      opacity: 0.6;
     }
 
     .suggestion-top-row {
@@ -558,6 +520,7 @@
       gap: 6px;
       font-size: 10px;
       align-items: center;
+      justify-content: flex-end;
     }
 
     .chip {
@@ -604,6 +567,42 @@
 
     .card-delete-btn:hover {
       color: var(--danger);
+    }
+
+    /* New: card controls (day select + arrows) */
+    .card-controls {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+    }
+
+    .card-controls label {
+      margin: 0;
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .card-controls select {
+      border-radius: 999px;
+      border: 1px solid rgba(209, 213, 219, 1);
+      background: #f9fafb;
+      font-size: 10px;
+      padding: 2px 6px;
+      outline: none;
+    }
+
+    .card-move-btn {
+      border: none;
+      background: transparent;
+      font-size: 11px;
+      cursor: pointer;
+      padding: 0 2px;
+      color: var(--text-muted);
+    }
+
+    .card-move-btn:hover {
+      color: var(--accent);
     }
 
     .empty-state {
@@ -915,7 +914,7 @@
             <div>
               <div class="planner-card-title suggestions-title">Suggested activities</div>
               <div class="planner-card-sub">
-                Ideas are grouped by day hint so you can quickly sketch your itinerary, then drag and refine.
+                Ideas are grouped by day hint so you can quickly sketch your itinerary, then tweak days and order.
               </div>
             </div>
             <div class="suggestions-meta" id="metaSummary">
@@ -923,7 +922,7 @@
             </div>
           </div>
 
-          <!-- New toolbar for add / placeholders -->
+          <!-- Toolbar for custom / placeholders -->
           <div class="suggestions-toolbar">
             <button type="button" class="secondary" id="addCustomActivityBtn">+ Custom activity</button>
             <button type="button" class="secondary" id="addMealPlaceholderBtn">+ Meal placeholder</button>
@@ -938,7 +937,7 @@
           </div>
 
           <p class="helper" style="margin-top: 10px;">
-            Drag cards between days or within a day to rearrange. Delete or add your own activities to make it your actual plan.
+            Use the day dropdown and arrows to move and reorder activities. Delete or add your own activities to make it your actual plan.
           </p>
         </section>
       </div>
@@ -970,7 +969,7 @@
     const addMealPlaceholderBtn = document.getElementById("addMealPlaceholderBtn");
     const addTransferPlaceholderBtn = document.getElementById("addTransferPlaceholderBtn");
 
-    // In-memory itinerary state so drag/drop + edits persist until you regenerate
+    // In-memory itinerary state so edits persist until you regenerate
     let itineraryState = {
       days: [], // [{ dayNumber, items: [] }]
       flex: [], // items with no specific day
@@ -1070,7 +1069,6 @@
         targetIndex = toRef.bucket.length;
       }
 
-      // Update dayHint based on destination
       if (toRef.type === "flex") {
         item.dayHint = null;
       } else if (toRef.type === "day") {
@@ -1078,6 +1076,23 @@
       }
 
       toRef.bucket.splice(targetIndex, 0, item);
+      renderItinerary();
+    }
+
+    function changeDay(fromKey, fromIndex, toKey) {
+      if (!toKey || fromKey === toKey) return;
+      moveItem(fromKey, fromIndex, toKey);
+    }
+
+    function moveWithinBucket(dayKey, index, direction) {
+      const ref = getBucketRef(dayKey);
+      if (!ref) return;
+      const arr = ref.bucket;
+      const newIndex = index + direction;
+      if (newIndex < 0 || newIndex >= arr.length) return;
+
+      const [item] = arr.splice(index, 1);
+      arr.splice(newIndex, 0, item);
       renderItinerary();
     }
 
@@ -1089,26 +1104,6 @@
       renderItinerary();
     }
 
-    // Determine index within list based on vertical mouse position
-    function getDropIndex(listEl, clientY) {
-      const cards = Array.from(
-        listEl.querySelectorAll(".suggestion-card:not(.dragging)")
-      );
-      if (!cards.length) return 0;
-
-      let closestIndex = cards.length;
-      for (let i = 0; i < cards.length; i++) {
-        const card = cards[i];
-        const rect = card.getBoundingClientRect();
-        const offset = clientY - (rect.top + rect.height / 2);
-        if (offset < 0) {
-          closestIndex = i;
-          break;
-        }
-      }
-      return closestIndex;
-    }
-
     // --- Rendering ---
 
     function renderItinerary() {
@@ -1117,7 +1112,7 @@
       const days = itineraryState.days || [];
       const flex = itineraryState.flex || [];
 
-      if ((!days.length && !flex.length)) {
+      if (!days.length && !flex.length) {
         emptyState.style.display = "block";
         suggestionsContainer.appendChild(emptyState);
         metaSummary.textContent = "No results. Try tweaking your input.";
@@ -1126,75 +1121,9 @@
 
       emptyState.style.display = "none";
 
-      const timeOrder = { morning: 0, afternoon: 1, evening: 2, flex: 3 };
-      function sortByTimeOfDay(list) {
-        return list.slice().sort((a, b) => {
-          const ta = (a.timeOfDay || "flex").toString().toLowerCase();
-          const tb = (b.timeOfDay || "flex").toString().toLowerCase();
-          const wa = Object.prototype.hasOwnProperty.call(timeOrder, ta)
-            ? timeOrder[ta]
-            : 4;
-          const wb = Object.prototype.hasOwnProperty.call(timeOrder, tb)
-            ? timeOrder[tb]
-            : 4;
-          if (wa !== wb) return wa - wb;
-          return (a.title || "").localeCompare(b.title || "");
-        });
-      }
-
-      function attachListDnD(listEl, dayKey) {
-        listEl.dataset.dayKey = dayKey;
-
-        listEl.addEventListener("dragover", (e) => {
-          e.preventDefault();
-          listEl.classList.add("drag-over");
-        });
-
-        listEl.addEventListener("dragleave", (e) => {
-          if (e.target === listEl) {
-            listEl.classList.remove("drag-over");
-          }
-        });
-
-        listEl.addEventListener("drop", (e) => {
-          e.preventDefault();
-          listEl.classList.remove("drag-over");
-          let raw = e.dataTransfer.getData("text/plain");
-          if (!raw) return;
-          let data;
-          try {
-            data = JSON.parse(raw);
-          } catch {
-            return;
-          }
-          const fromKey = data.dayKey;
-          const fromIndex = data.index;
-          if (fromKey == null || fromIndex == null) return;
-
-          const targetIndex = getDropIndex(listEl, e.clientY);
-          moveItem(fromKey, fromIndex, dayKey, targetIndex);
-        });
-      }
-
       function buildCard(item, idx, dayKey) {
         const card = document.createElement("article");
         card.className = "suggestion-card";
-        card.draggable = true;
-        card.dataset.dayKey = dayKey;
-        card.dataset.index = String(idx);
-
-        card.addEventListener("dragstart", (e) => {
-          e.dataTransfer.effectAllowed = "move";
-          e.dataTransfer.setData(
-            "text/plain",
-            JSON.stringify({ dayKey, index: idx })
-          );
-          card.classList.add("dragging");
-        });
-
-        card.addEventListener("dragend", () => {
-          card.classList.remove("dragging");
-        });
 
         const topRow = document.createElement("div");
         topRow.className = "suggestion-top-row";
@@ -1232,12 +1161,69 @@
           removeItem(dayKey, idx);
         });
 
+        const controls = document.createElement("div");
+        controls.className = "card-controls";
+
+        const dayLabel = document.createElement("label");
+        dayLabel.textContent = "Day:";
+
+        const daySelect = document.createElement("select");
+        daySelect.setAttribute("aria-label", "Change day for this activity");
+
+        const optionAny = document.createElement("option");
+        optionAny.value = "flex";
+        optionAny.textContent = "Any";
+        daySelect.appendChild(optionAny);
+
+        const allDays = (itineraryState.days || [])
+          .map((d) => d.dayNumber)
+          .sort((a, b) => a - b);
+        allDays.forEach((num) => {
+          const opt = document.createElement("option");
+          opt.value = "day-" + num;
+          opt.textContent = String(num);
+          daySelect.appendChild(opt);
+        });
+
+        daySelect.value = dayKey;
+        daySelect.addEventListener("change", (e) => {
+          const newKey = e.target.value;
+          changeDay(dayKey, idx, newKey);
+        });
+
+        const upBtn = document.createElement("button");
+        upBtn.type = "button";
+        upBtn.className = "card-move-btn";
+        upBtn.textContent = "↑";
+        upBtn.title = "Move up";
+        upBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          moveWithinBucket(dayKey, idx, -1);
+        });
+
+        const downBtn = document.createElement("button");
+        downBtn.type = "button";
+        downBtn.className = "card-move-btn";
+        downBtn.textContent = "↓";
+        downBtn.title = "Move down";
+        downBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          moveWithinBucket(dayKey, idx, 1);
+        });
+
+        controls.appendChild(dayLabel);
+        controls.appendChild(daySelect);
+        controls.appendChild(upBtn);
+        controls.appendChild(downBtn);
+        controls.appendChild(deleteBtn);
+
         const rightSide = document.createElement("div");
         rightSide.style.display = "flex";
-        rightSide.style.alignItems = "center";
+        rightSide.style.flexDirection = "column";
+        rightSide.style.alignItems = "flex-end";
         rightSide.style.gap = "4px";
         rightSide.appendChild(chips);
-        rightSide.appendChild(deleteBtn);
+        rightSide.appendChild(controls);
 
         topRow.appendChild(title);
         topRow.appendChild(rightSide);
@@ -1288,7 +1274,7 @@
 
       // Render day buckets
       days.forEach((dayObj) => {
-        const items = sortByTimeOfDay(dayObj.items || []);
+        const items = dayObj.items || [];
 
         const groupEl = document.createElement("section");
         groupEl.className = "day-group";
@@ -1305,7 +1291,6 @@
         listEl.className = "day-suggestions";
 
         const dayKey = "day-" + dayObj.dayNumber;
-        attachListDnD(listEl, dayKey);
 
         items.forEach((s, idx) => {
           listEl.appendChild(buildCard(s, idx, dayKey));
@@ -1320,7 +1305,7 @@
 
       // Render flexible suggestions (any day) last
       if (flex.length > 0) {
-        const items = sortByTimeOfDay(flex);
+        const items = flex;
 
         const groupEl = document.createElement("section");
         groupEl.className = "day-group";
@@ -1337,7 +1322,6 @@
         listEl.className = "day-suggestions";
 
         const dayKey = "flex";
-        attachListDnD(listEl, dayKey);
 
         items.forEach((s, idx) => {
           listEl.appendChild(buildCard(s, idx, dayKey));
@@ -1650,7 +1634,7 @@
           : [];
 
         renderSuggestions(suggestions);
-        setLoading(false, "<strong>Done.</strong> Drag things around to make it yours.");
+        setLoading(false, "<strong>Done.</strong> Adjust days and order to make it yours.");
       } catch (err) {
         console.error("Network error calling /api/generate-itinerary:", err);
         setLoading(
