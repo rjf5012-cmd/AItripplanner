@@ -18,7 +18,7 @@
 
   <style>
     :root {
-      --bg-page: #f3f4f6;
+      --bg-page: #e5e7eb;
       --bg-card: #ffffff;
       --bg-soft: #f9fafb;
       --text-main: #0f172a;
@@ -28,7 +28,7 @@
       --accent-green: #22c55e;
       --accent-pink: #ec4899;
       --border-subtle: rgba(209, 213, 219, 1);
-      --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.08);
+      --shadow-soft: 0 24px 60px rgba(15, 23, 42, 0.22);
       --radius-lg: 18px;
       --danger: #dc2626;
     }
@@ -41,8 +41,9 @@
       margin: 0;
       font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background:
-        radial-gradient(circle at 0% 0%, rgba(37, 99, 235, 0.04), transparent 60%),
-        radial-gradient(circle at 100% 0%, rgba(236, 72, 153, 0.04), transparent 60%),
+        radial-gradient(circle at 0% 0%, rgba(37, 99, 235, 0.20), transparent 60%),
+        radial-gradient(circle at 100% 0%, rgba(236, 72, 153, 0.16), transparent 55%),
+        radial-gradient(circle at 0% 100%, rgba(34, 197, 94, 0.14), transparent 55%),
         var(--bg-page);
       color: var(--text-main);
     }
@@ -166,7 +167,7 @@
     }
 
     main {
-      padding-top: 82px;
+      padding-top: 88px;
       padding-bottom: 40px;
     }
 
@@ -174,7 +175,22 @@
     .planner-shell {
       max-width: 1120px;
       margin: 0 auto;
-      padding: 0 18px;
+      padding: 0 18px 40px;
+    }
+
+    .planner-panel {
+      background:
+        radial-gradient(circle at 0% 0%, rgba(255,255,255,0.9), rgba(239,246,255,0.96) 50%, rgba(250,245,255,0.98));
+      border-radius: 28px;
+      border: 1px solid rgba(148, 163, 184, 0.40);
+      box-shadow: var(--shadow-soft);
+      padding: 20px 18px 22px;
+    }
+
+    @media (min-width: 900px) {
+      .planner-panel {
+        padding: 24px 24px 26px;
+      }
     }
 
     .planner-header {
@@ -200,35 +216,68 @@
 
     .planner-title {
       margin: 8px 0 4px;
-      font-size: 26px;
-      font-weight: 700;
-      letter-spacing: -0.03em;
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+    }
+
+    .planner-title span.accent {
+      background: linear-gradient(135deg, #2563eb, #22c55e);
+      -webkit-background-clip: text;
+      color: transparent;
     }
 
     .planner-subtitle {
       font-size: 14px;
       color: var(--text-soft);
-      max-width: 620px;
+      max-width: 680px;
     }
 
     .planner-grid {
+      margin-top: 14px;
+      background: rgba(255, 255, 255, 0.96);
+      border-radius: 22px;
+      border: 1px solid rgba(229, 231, 235, 0.9);
+      padding: 18px 14px;
       display: grid;
-      gap: 18px;
+      gap: 16px;
       align-items: flex-start;
     }
 
     @media (min-width: 900px) {
       .planner-grid {
+        padding: 18px 18px;
         grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.25fr);
       }
     }
 
     .planner-card {
       background: var(--bg-card);
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--border-subtle);
-      box-shadow: var(--shadow-soft);
+      border-radius: 18px;
+      border: 1px solid rgba(229, 231, 235, 1);
+      box-shadow: 0 10px 26px rgba(15, 23, 42, 0.08);
       padding: 18px 18px 16px;
+    }
+
+    .planner-card--primary {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .planner-card--primary::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 12px;
+      bottom: 12px;
+      width: 4px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, #2563eb, #22c55e, #ec4899);
+    }
+
+    .planner-card--primary-inner {
+      position: relative;
+      z-index: 1;
     }
 
     .planner-card-header {
@@ -277,7 +326,7 @@
     textarea,
     select {
       width: 100%;
-      border-radius: 10px;
+      border-radius: 11px;
       border: 1px solid var(--border-subtle);
       padding: 8px 9px;
       font-size: 13px;
@@ -285,14 +334,15 @@
       color: var(--text-main);
       background-color: #ffffff;
       outline: none;
-      transition: border-color 0.12s ease, box-shadow 0.12s ease;
+      transition: border-color 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease;
     }
 
     input:focus,
     textarea:focus,
     select:focus {
       border-color: #2563eb;
-      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.25);
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.18);
+      background-color: #f9fafb;
     }
 
     textarea {
@@ -515,7 +565,7 @@
     .day-group {
       margin-bottom: 18px;
       padding-bottom: 10px;
-      border-bottom: 1px solid var(--border-subtle);
+      border-bottom: 1px dashed rgba(209, 213, 219, 1);
     }
 
     .day-group:last-of-type {
@@ -719,268 +769,276 @@
 
   <main>
     <section class="planner-shell" aria-labelledby="planner-title">
-      <header class="planner-header">
-        <div class="planner-eyebrow">
-          <span class="planner-eyebrow-dot"></span>
-          AI Trip Planner
-        </div>
-        <h1 class="planner-title" id="planner-title">Turn a destination into structured trip ideas.</h1>
-        <p class="planner-subtitle">
-          Start simple: tell the AI where you’re going, who you’re with, the vibe, and your budget. You can choose
-          between a loose list of ideas or a full day-by-day itinerary.
-        </p>
-      </header>
-
-      <div class="planner-grid">
-        <!-- Left card: Input form -->
-        <section class="planner-card" aria-label="Trip details form">
-          <div class="planner-card-header">
-            <div class="planner-card-title">Trip details</div>
-            <div class="planner-card-sub">
-              High-level info is enough. You can always regenerate with more specifics.
-            </div>
+      <div class="planner-panel">
+        <header class="planner-header">
+          <div class="planner-eyebrow">
+            <span class="planner-eyebrow-dot"></span>
+            AI Trip Planner
           </div>
-
-          <div class="sample-strip">
-            <span>Not sure where to start?</span>
-            <button type="button" id="sampleTripBtn">
-              Load a sample Lisbon city break
-            </button>
-          </div>
-
-          <form id="tripForm">
-            <div class="field-row">
-              <div class="field-col">
-                <label for="destination">Destination *</label>
-                <input
-                  id="destination"
-                  name="destination"
-                  type="text"
-                  placeholder="Lisbon, Portugal"
-                  autocomplete="off"
-                  required
-                />
-              </div>
-              <div class="field-col">
-                <label for="days">Trip length (days)</label>
-                <input
-                  id="days"
-                  name="days"
-                  type="number"
-                  min="1"
-                  max="30"
-                  placeholder="4"
-                />
-              </div>
-            </div>
-
-            <div class="field-row">
-              <div class="field-col">
-                <label for="dates">Rough dates (optional)</label>
-                <input
-                  id="dates"
-                  name="dates"
-                  type="text"
-                  placeholder="April 12–16, 2025"
-                />
-              </div>
-              <div class="field-col">
-                <label for="travelers">Who’s going?</label>
-                <input
-                  id="travelers"
-                  name="travelers"
-                  type="text"
-                  placeholder="Couple, family with kids, solo, friends..."
-                />
-              </div>
-            </div>
-
-            <!-- Budget selector -->
-            <div class="field-row">
-              <div class="field-col">
-                <label for="budget">Rough budget</label>
-                <select id="budget" name="budget">
-                  <option value="">No preference / mixed</option>
-                  <option value="budget / backpacker level">
-                    Budget / backpacker
-                  </option>
-                  <option value="mid-range, a mix of value and comfort">
-                    Mid-range — value & comfort
-                  </option>
-                  <option value="comfortable with some splurges">
-                    Comfortable with some splurges
-                  </option>
-                  <option value="mostly luxury experiences">
-                    Mostly luxury
-                  </option>
-                </select>
-                <p class="helper">
-                  Helps the AI choose neighborhoods, activities, and restaurant styles that fit your spend.
-                </p>
-              </div>
-            </div>
-
-            <!-- Trip type selector -->
-            <div class="field-row">
-              <div class="field-col">
-                <label for="tripType">Trip type</label>
-                <select id="tripType" name="tripType">
-                  <option value="">General trip / not sure</option>
-                  <option value="romantic getaway">Romantic getaway</option>
-                  <option value="golf trip with friends">Golf trip</option>
-                  <option value="bachelor or bachelorette party">Bachelor / bachelorette party</option>
-                  <option value="family vacation with kids">Family vacation</option>
-                  <option value="relaxing recharge trip">Relaxing / recharge</option>
-                  <option value="food and wine focused trip">Food &amp; wine</option>
-                  <option value="adventure and outdoors focused trip">Adventure &amp; outdoors</option>
-                  <option value="city break focused on sightseeing and museums">City break / first-time visitor</option>
-                </select>
-                <p class="helper">
-                  Gives the AI a quick sense of what kind of trip you’re planning.
-                </p>
-              </div>
-            </div>
-
-            <div>
-              <label for="vibe">What kind of experience are you hoping for? (optional)</label>
-              <input
-                id="vibe"
-                name="vibe"
-                type="text"
-                placeholder="Slow mornings, lots of food, 1–2 big sights, some nightlife..."
-              />
-            </div>
-
-            <div>
-              <label for="prefs">Anything specific to include or avoid?</label>
-              <textarea
-                id="prefs"
-                name="prefs"
-                placeholder="Example: No rental car. Prefer walkable areas and casual restaurants. One nice dinner with a view."
-              ></textarea>
-              <p class="helper">
-                The AI uses this to tune recommendations. Bullet points or short sentences are fine.
-              </p>
-            </div>
-
-            <!-- Must include checklist -->
-            <div>
-              <label>Must include (quick checklist)</label>
-              <div class="checklist-grid">
-                <label class="check-pill">
-                  <input type="checkbox" name="mustInclude" value="best restaurants" />
-                  <span>Best restaurants</span>
-                </label>
-                <label class="check-pill">
-                  <input type="checkbox" name="mustInclude" value="beaches" />
-                  <span>Beaches</span>
-                </label>
-                <label class="check-pill">
-                  <input type="checkbox" name="mustInclude" value="museums" />
-                  <span>Museums</span>
-                </label>
-                <label class="check-pill">
-                  <input type="checkbox" name="mustInclude" value="hidden gems and local spots" />
-                  <span>Hidden gems</span>
-                </label>
-                <label class="check-pill">
-                  <input type="checkbox" name="mustInclude" value="budget friendly food options" />
-                  <span>Budget food</span>
-                </label>
-                <label class="check-pill">
-                  <input type="checkbox" name="mustInclude" value="nightlife and bars" />
-                  <span>Nightlife</span>
-                </label>
-                <label class="check-pill">
-                  <input type="checkbox" name="mustInclude" value="walkable areas and neighborhoods" />
-                  <span>Walkability</span>
-                </label>
-                <label class="check-pill">
-                  <input type="checkbox" name="mustInclude" value="kid friendly activities" />
-                  <span>Kid-friendly</span>
-                </label>
-                <label class="check-pill">
-                  <input type="checkbox" name="mustInclude" value="nature and outdoor activities" />
-                  <span>Nature/outdoors</span>
-                </label>
-                <label class="check-pill">
-                  <input type="checkbox" name="mustInclude" value="shopping areas and markets" />
-                  <span>Shopping</span>
-                </label>
-              </div>
-              <p class="helper">
-                The AI will try to weave these into the plan wherever they fit naturally.
-              </p>
-            </div>
-
-            <!-- Full itinerary toggle -->
-            <div>
-              <label class="checkbox-inline">
-                <input type="checkbox" id="fullItinerary" name="fullItinerary" />
-                <span>Full itinerary mode (3 suggestions per day)</span>
-              </label>
-              <p class="helper">
-                Turn this on for a structured morning/afternoon/evening plan for each day. Leave it off for a looser list of ideas.
-              </p>
-            </div>
-
-            <div class="actions">
-              <button type="submit" class="primary" id="generateBtn">
-                <span class="spinner-dot" id="spinner" style="display:none;"></span>
-                <span id="btnText">Generate trip ideas</span>
-              </button>
-              <span class="status-text" id="statusText">
-                Powered by AI. Usually just a few seconds.
-              </span>
-            </div>
-
-            <p class="helper">
-              Your inputs are used to generate ideas on the fly and are not stored as a saved itinerary yet.
-            </p>
-          </form>
-        </section>
-
-        <!-- Right card: Suggestions -->
-        <section class="planner-card" aria-label="Suggested activities">
-          <div class="suggestions-header-row">
-            <div>
-              <div class="planner-card-title suggestions-title">Suggested activities</div>
-              <div class="planner-card-sub">
-                Ideas are grouped by day hint so you can quickly sketch your itinerary.
-              </div>
-            </div>
-            <div class="suggestions-meta" id="metaSummary">
-              No results yet.
-            </div>
-          </div>
-
-          <div class="suggestions-toolbar">
-            <button type="button" class="secondary" id="exportBtn" disabled>
-              <span>🖨️</span>
-              <span>Export to print / notes</span>
-            </button>
-            <div class="chip-tip">
-              <span class="icon">💡</span>
-              <span>Click the Day or time chips on a card to adjust where it falls.</span>
-            </div>
-          </div>
-
-          <div id="suggestionsContainer" class="suggestions-list">
-            <div class="empty-state" id="emptyState">
-              <strong>Nothing here yet.</strong> Enter a destination and click
-              <em>Generate trip ideas</em> to see AI suggestions you can turn into an itinerary.
-            </div>
-          </div>
-
-          <div class="toast-tip" id="firstTimeTip">
-            Tip: tap the <strong>Day</strong> or <strong>Morning/Afternoon/Evening</strong> chips on a card
-            to cycle where it sits in your plan.
-          </div>
-
-          <p class="helper" style="margin-top: 10px;">
-            Next step (coming soon): richer export options and calendar/Docs integration.
+          <h1 class="planner-title" id="planner-title">
+            Turn a destination into <span class="accent">structured trip ideas.</span>
+          </h1>
+          <p class="planner-subtitle">
+            Start simple: tell the AI where you’re going, who you’re with, the vibe, and your budget. Choose
+            between a loose list of ideas or a full day-by-day itinerary, then tweak it like a real trip-planning app.
           </p>
-        </section>
+        </header>
+
+        <div class="planner-grid">
+          <!-- Left card: Input form -->
+          <section class="planner-card planner-card--primary" aria-label="Trip details form">
+            <div class="planner-card--primary-inner">
+              <div class="planner-card-header">
+                <div class="planner-card-title">Trip details</div>
+                <div class="planner-card-sub">
+                  High-level info is enough. You can always regenerate with more specifics.
+                </div>
+              </div>
+
+              <div class="sample-strip">
+                <span>Not sure where to start?</span>
+                <button type="button" id="sampleTripBtn">
+                  Load a sample Lisbon city break
+                </button>
+              </div>
+
+              <form id="tripForm">
+                <div class="field-row">
+                  <div class="field-col">
+                    <label for="destination">Destination *</label>
+                    <input
+                      id="destination"
+                      name="destination"
+                      type="text"
+                      placeholder="Lisbon, Portugal"
+                      autocomplete="off"
+                      required
+                    />
+                  </div>
+                  <div class="field-col">
+                    <label for="days">Trip length (days)</label>
+                    <input
+                      id="days"
+                      name="days"
+                      type="number"
+                      min="1"
+                      max="30"
+                      placeholder="4"
+                    />
+                  </div>
+                </div>
+
+                <div class="field-row">
+                  <div class="field-col">
+                    <label for="dates">Rough dates (optional)</label>
+                    <input
+                      id="dates"
+                      name="dates"
+                      type="text"
+                      placeholder="April 12–16, 2025"
+                    />
+                  </div>
+                  <div class="field-col">
+                    <label for="travelers">Who’s going?</label>
+                    <input
+                      id="travelers"
+                      name="travelers"
+                      type="text"
+                      placeholder="Couple, family with kids, solo, friends..."
+                    />
+                  </div>
+                </div>
+
+                <!-- Budget selector -->
+                <div class="field-row">
+                  <div class="field-col">
+                    <label for="budget">Rough budget</label>
+                    <select id="budget" name="budget">
+                      <option value="">No preference / mixed</option>
+                      <option value="budget / backpacker level">
+                        Budget / backpacker
+                      </option>
+                      <option value="mid-range, a mix of value and comfort">
+                        Mid-range — value & comfort
+                      </option>
+                      <option value="comfortable with some splurges">
+                        Comfortable with some splurges
+                      </option>
+                      <option value="mostly luxury experiences">
+                        Mostly luxury
+                      </option>
+                    </select>
+                    <p class="helper">
+                      Helps the AI choose neighborhoods, activities, and restaurant styles that fit your spend.
+                    </p>
+                  </div>
+                </div>
+
+                <!-- Trip type selector -->
+                <div class="field-row">
+                  <div class="field-col">
+                    <label for="tripType">Trip type</label>
+                    <select id="tripType" name="tripType">
+                      <option value="">General trip / not sure</option>
+                      <option value="romantic getaway">Romantic getaway</option>
+                      <option value="golf trip with friends">Golf trip</option>
+                      <option value="bachelor or bachelorette party">Bachelor / bachelorette party</option>
+                      <option value="family vacation with kids">Family vacation</option>
+                      <option value="relaxing recharge trip">Relaxing / recharge</option>
+                      <option value="food and wine focused trip">Food &amp; wine</option>
+                      <option value="adventure and outdoors focused trip">Adventure &amp; outdoors</option>
+                      <option value="city break focused on sightseeing and museums">City break / first-time visitor</option>
+                    </select>
+                    <p class="helper">
+                      Gives the AI a quick sense of what kind of trip you’re planning.
+                    </p>
+                  </div>
+                </div>
+
+                <div>
+                  <label for="vibe">What kind of experience are you hoping for? (optional)</label>
+                  <input
+                    id="vibe"
+                    name="vibe"
+                    type="text"
+                    placeholder="Slow mornings, lots of food, 1–2 big sights, some nightlife..."
+                  />
+                </div>
+
+                <div>
+                  <label for="prefs">Anything specific to include or avoid?</label>
+                  <textarea
+                    id="prefs"
+                    name="prefs"
+                    placeholder="Example: No rental car. Prefer walkable areas and casual restaurants. One nice dinner with a view."
+                  ></textarea>
+                  <p class="helper">
+                    The AI uses this to tune recommendations. Bullet points or short sentences are fine.
+                  </p>
+                </div>
+
+                <!-- Must include checklist -->
+                <div>
+                  <label>Must include (quick checklist)</label>
+                  <div class="checklist-grid">
+                    <label class="check-pill">
+                      <input type="checkbox" name="mustInclude" value="best restaurants" />
+                      <span>Best restaurants</span>
+                    </label>
+                    <label class="check-pill">
+                      <input type="checkbox" name="mustInclude" value="beaches" />
+                      <span>Beaches</span>
+                    </label>
+                    <label class="check-pill">
+                      <input type="checkbox" name="mustInclude" value="museums" />
+                      <span>Museums</span>
+                    </label>
+                    <label class="check-pill">
+                      <input type="checkbox" name="mustInclude" value="hidden gems and local spots" />
+                      <span>Hidden gems</span>
+                    </label>
+                    <label class="check-pill">
+                      <input type="checkbox" name="mustInclude" value="budget friendly food options" />
+                      <span>Budget food</span>
+                    </label>
+                    <label class="check-pill">
+                      <input type="checkbox" name="mustInclude" value="nightlife and bars" />
+                      <span>Nightlife</span>
+                    </label>
+                    <label class="check-pill">
+                      <input type="checkbox" name="mustInclude" value="walkable areas and neighborhoods" />
+                      <span>Walkability</span>
+                    </label>
+                    <label class="check-pill">
+                      <input type="checkbox" name="mustInclude" value="kid friendly activities" />
+                      <span>Kid-friendly</span>
+                    </label>
+                    <label class="check-pill">
+                      <input type="checkbox" name="mustInclude" value="nature and outdoor activities" />
+                      <span>Nature/outdoors</span>
+                    </label>
+                    <label class="check-pill">
+                      <input type="checkbox" name="mustInclude" value="shopping areas and markets" />
+                      <span>Shopping</span>
+                    </label>
+                  </div>
+                  <p class="helper">
+                    The AI will try to weave these into the plan wherever they fit naturally.
+                  </p>
+                </div>
+
+                <!-- Full itinerary toggle -->
+                <div>
+                  <label class="checkbox-inline">
+                    <input type="checkbox" id="fullItinerary" name="fullItinerary" />
+                    <span>Full itinerary mode (3 suggestions per day)</span>
+                  </label>
+                  <p class="helper">
+                    Turn this on for a structured morning/afternoon/evening plan for each day. Leave it off for a looser list of ideas.
+                  </p>
+                </div>
+
+                <div class="actions">
+                  <button type="submit" class="primary" id="generateBtn">
+                    <span class="spinner-dot" id="spinner" style="display:none;"></span>
+                    <span id="btnText">Generate trip ideas</span>
+                  </button>
+                  <span class="status-text" id="statusText">
+                    Powered by AI. Usually just a few seconds.
+                  </span>
+                </div>
+
+                <p class="helper">
+                  Your inputs are used to generate ideas on the fly and are not stored as a saved itinerary yet.
+                </p>
+              </form>
+            </div>
+          </section>
+
+          <!-- Right card: Suggestions -->
+          <section class="planner-card" aria-label="Suggested activities">
+            <div class="planner-card-header">
+              <div class="suggestions-header-row">
+                <div>
+                  <div class="planner-card-title suggestions-title">Suggested activities</div>
+                  <div class="planner-card-sub">
+                    Ideas are grouped by day so you can quickly sketch your itinerary, then adjust days and times.
+                  </div>
+                </div>
+                <div class="suggestions-meta" id="metaSummary">
+                  No results yet.
+                </div>
+              </div>
+            </div>
+
+            <div class="suggestions-toolbar">
+              <button type="button" class="secondary" id="exportBtn" disabled>
+                <span>🖨️</span>
+                <span>Open printable view</span>
+              </button>
+              <div class="chip-tip">
+                <span class="icon">💡</span>
+                <span>Click the Day or time chips on a card to adjust where it falls.</span>
+              </div>
+            </div>
+
+            <div id="suggestionsContainer" class="suggestions-list">
+              <div class="empty-state" id="emptyState">
+                <strong>Nothing here yet.</strong> Enter a destination and click
+                <em>Generate trip ideas</em> to see AI suggestions you can turn into an itinerary.
+              </div>
+            </div>
+
+            <div class="toast-tip" id="firstTimeTip">
+              Tip: tap the <strong>Day</strong> or <strong>Morning/Afternoon/Evening</strong> chips on a card
+              to cycle where it sits in your plan.
+            </div>
+
+            <p class="helper" style="margin-top: 10px;">
+              When you’re happy with the plan, open the printable view to copy it into Notes, Google Docs, or email.
+            </p>
+          </section>
+        </div>
       </div>
     </section>
   </main>
@@ -1138,7 +1196,7 @@
       const availableDays =
         dayOrder.length > 0
           ? dayOrder
-          : [1, 2, 3]; // fallback if nothing tagged with a day
+          : [1, 2, 3];
 
       const timeLabel = (tod) => formatTimeOfDayLabel(tod);
 
@@ -1157,7 +1215,6 @@
         const chips = document.createElement("div");
         chips.className = "chip-row";
 
-        // time-of-day chip
         const todChip = document.createElement("button");
         todChip.type = "button";
         todChip.className = "chip accent";
@@ -1169,7 +1226,6 @@
         caret1.textContent = "▾";
         todChip.appendChild(caret1);
 
-        // day chip
         const dayChip = document.createElement("button");
         dayChip.type = "button";
         dayChip.className = "chip";
@@ -1223,7 +1279,6 @@
         return card;
       };
 
-      // Render per-day groups
       dayOrder.forEach((day) => {
         const groupEl = document.createElement("section");
         groupEl.className = "day-group";
@@ -1255,7 +1310,6 @@
         suggestionsContainer.appendChild(groupEl);
       });
 
-      // Flexible group
       if (flex.length > 0) {
         const groupEl = document.createElement("section");
         groupEl.className = "day-group";
@@ -1305,7 +1359,6 @@
           " with no specific day.";
       }
 
-      // Attach click handlers for chips (day / timeOfDay)
       const allChips = suggestionsContainer.querySelectorAll(".chip");
       allChips.forEach((chip) => {
         const role = chip.dataset.role;
@@ -1325,7 +1378,6 @@
             s.dayHint = nextDay;
           }
 
-          // Re-render with updated state
           renderSuggestions(currentSuggestions);
 
           if (!tipShown && firstTimeTip) {
@@ -1339,7 +1391,7 @@
       });
     }
 
-    // --- Sample trip prefill ---
+    /* Sample trip prefill */
     if (sampleTripBtn) {
       sampleTripBtn.addEventListener("click", () => {
         document.getElementById("destination").value = "Lisbon, Portugal";
@@ -1351,7 +1403,7 @@
         document.getElementById("vibe").value = "Slow mornings, lots of views and neighborhoods, a couple of big sights, and great food.";
         document.getElementById("prefs").value =
           "Prefer walkable areas like Baixa, Chiado, and Alfama. One sunset viewpoint. One special dinner with a view. Avoid very late nights.";
-        // Reset checklist
+
         document
           .querySelectorAll('input[name="mustInclude"]')
           .forEach((el) => (el.checked = false));
@@ -1367,7 +1419,7 @@
       });
     }
 
-    // --- Export to print.html ---
+    /* Export to printable view */
     if (exportBtn) {
       exportBtn.addEventListener("click", () => {
         if (!currentSuggestions.length) return;
@@ -1392,8 +1444,7 @@
       });
     }
 
-    // --- Form submit / fetch ---
-
+    /* Form submit */
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
@@ -1451,7 +1502,6 @@
         );
       }
 
-      // Save meta for export
       currentMeta = {
         destination,
         days: days ? Number(days) : null,
@@ -1512,7 +1562,7 @@
           : [];
 
         renderSuggestions(suggestions);
-        setLoading(false, "<strong>Done.</strong> Tweak days and time slots, then export when ready.");
+        setLoading(false, "<strong>Done.</strong> Tweak days and time slots, then open the printable view.");
       } catch (err) {
         console.error("Network error calling /api/generate-itinerary:", err);
         setLoading(
