@@ -339,7 +339,7 @@
       box-shadow: none;
     }
 
-    /* Ghost / secondary button (used for Sample Trip) */
+    /* Ghost / secondary button (Sample Trip) */
     button.ghost {
       border-radius: 999px;
       border: 1px solid var(--border-subtle);
@@ -352,6 +352,21 @@
 
     button.ghost:hover {
       background: #f9fafb;
+    }
+
+    /* Secondary toolbar buttons */
+    button.secondary {
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      background: #f9fafb;
+      color: var(--text-soft);
+      font-size: 11px;
+      padding: 6px 10px;
+      cursor: pointer;
+    }
+
+    button.secondary:hover {
+      background: #eef2ff;
     }
 
     .spinner-dot {
@@ -447,6 +462,13 @@
       color: var(--text-muted);
     }
 
+    .suggestions-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
     .suggestions-list {
       display: flex;
       flex-direction: column;
@@ -512,6 +534,7 @@
       flex-wrap: wrap;
       gap: 6px;
       font-size: 10px;
+      align-items: center;
     }
 
     .chip {
@@ -522,12 +545,27 @@
       color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.12em;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
     }
 
     .chip.accent {
       border-color: rgba(37, 99, 235, 0.85);
       color: #1d4ed8;
       background: #eff6ff;
+    }
+
+    .chip-caret {
+      font-size: 10px;
+      opacity: 0.8;
+    }
+
+    .suggestion-meta-line {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin: 0 0 4px;
     }
 
     .suggestion-desc {
@@ -541,6 +579,19 @@
       color: var(--text-muted);
     }
 
+    .card-delete-btn {
+      border: none;
+      background: transparent;
+      font-size: 12px;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .card-delete-btn:hover {
+      color: var(--danger);
+    }
+
     .empty-state {
       border-radius: 12px;
       border: 1px dashed rgba(209, 213, 219, 1);
@@ -548,6 +599,30 @@
       font-size: 12px;
       color: var(--text-muted);
       background: #f9fafb;
+    }
+
+    /* Tip toast */
+    .chip-tip-toast {
+      margin-top: 8px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: #eff6ff;
+      border: 1px solid rgba(37, 99, 235, 0.3);
+      font-size: 11px;
+      color: #1d4ed8;
+      display: none;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .chip-tip-toast button {
+      border: none;
+      background: transparent;
+      font-size: 12px;
+      cursor: pointer;
+      color: #1d4ed8;
+      padding: 0;
     }
 
     footer.site-footer {
@@ -855,12 +930,19 @@
             <div>
               <div class="planner-card-title suggestions-title">Suggested activities</div>
               <div class="planner-card-sub">
-                Ideas are grouped by day hint so you can quickly sketch your itinerary.
+                Ideas are grouped by day. Click the day and time labels on each card to tweak your itinerary.
               </div>
             </div>
             <div class="suggestions-meta" id="metaSummary">
               No results yet.
             </div>
+          </div>
+
+          <!-- Toolbar: add custom items / placeholders -->
+          <div class="suggestions-toolbar">
+            <button type="button" class="secondary" id="addCustomActivityBtn">+ Custom activity</button>
+            <button type="button" class="secondary" id="addMealPlaceholderBtn">+ Meal placeholder</button>
+            <button type="button" class="secondary" id="addTransferPlaceholderBtn">+ Travel block</button>
           </div>
 
           <div id="suggestionsContainer" class="suggestions-list">
@@ -870,8 +952,13 @@
             </div>
           </div>
 
+          <div class="chip-tip-toast" id="chipTipToast">
+            <span>💡 Tip: Click the <strong>Day</strong> and <strong>Morning/Afternoon/Evening</strong> labels on any card to adjust where it lives in your itinerary.</span>
+            <button type="button" id="chipTipClose" aria-label="Dismiss tip">✕</button>
+          </div>
+
           <p class="helper" style="margin-top: 10px;">
-            Next step (coming soon): drag-and-drop these into day buckets and export to PDF or Notes.
+            Export tools (PDF / Notes / Google Docs) are coming soon.
           </p>
         </section>
       </div>
@@ -900,6 +987,20 @@
     const metaSummary = document.getElementById("metaSummary");
     const sampleTripBtn = document.getElementById("sampleTripBtn");
 
+    const addCustomActivityBtn = document.getElementById("addCustomActivityBtn");
+    const addMealPlaceholderBtn = document.getElementById("addMealPlaceholderBtn");
+    const addTransferPlaceholderBtn = document.getElementById("addTransferPlaceholderBtn");
+
+    const chipTipToast = document.getElementById("chipTipToast");
+    const chipTipClose = document.getElementById("chipTipClose");
+
+    let hasShownChipTip = false;
+
+    // currentSuggestions is the in-memory editable list
+    let currentSuggestions = [];
+    let currentMinDay = 1;
+    let currentMaxDay = 1;
+
     function setLoading(isLoading, msg) {
       if (isLoading) {
         generateBtn.disabled = true;
@@ -919,11 +1020,30 @@
       }
     }
 
-    // Group suggestions into day buckets, sort by time-of-day, add "Any day" group
-    function renderSuggestions(suggestions) {
+    function hideChipTip() {
+      if (chipTipToast) {
+        chipTipToast.style.display = "none";
+      }
+      hasShownChipTip = true;
+    }
+
+    function maybeShowChipTip() {
+      if (!hasShownChipTip && chipTipToast) {
+        chipTipToast.style.display = "flex";
+      }
+    }
+
+    if (chipTipClose) {
+      chipTipClose.addEventListener("click", hideChipTip);
+    }
+
+    // --- Rendering ---
+
+    function renderSuggestions(suggestionsInput) {
       suggestionsContainer.innerHTML = "";
 
-      if (!Array.isArray(suggestions) || suggestions.length === 0) {
+      if (!Array.isArray(suggestionsInput) || suggestionsInput.length === 0) {
+        currentSuggestions = [];
         emptyState.style.display = "block";
         suggestionsContainer.appendChild(emptyState);
         metaSummary.textContent = "No results. Try tweaking your input.";
@@ -932,8 +1052,45 @@
 
       emptyState.style.display = "none";
 
+      // Ensure each suggestion has a stable __index
+      const hasIndex = suggestionsInput.every(
+        (s) => typeof s.__index === "number"
+      );
+      if (!hasIndex) {
+        currentSuggestions = suggestionsInput.map((s, idx) => ({
+          ...s,
+          __index: idx,
+        }));
+      } else {
+        currentSuggestions = suggestionsInput;
+      }
+
+      const suggestions = currentSuggestions;
+
+      // Determine day range for cycling
+      const numericDays = suggestions
+        .map((s) =>
+          typeof s.dayHint === "number" && isFinite(s.dayHint)
+            ? s.dayHint
+            : null
+        )
+        .filter((n) => n !== null);
+
+      if (numericDays.length) {
+        currentMinDay = Math.min(...numericDays);
+        currentMaxDay = Math.max(...numericDays);
+      } else {
+        const daysField = document.getElementById("days").value.trim();
+        let fallbackDays = parseInt(daysField, 10);
+        if (!Number.isFinite(fallbackDays) || fallbackDays <= 0) {
+          fallbackDays = 3;
+        }
+        currentMinDay = 1;
+        currentMaxDay = fallbackDays;
+      }
+
       // Group by dayHint, collect flexible
-      const dayBuckets = new Map(); // number -> array
+      const dayBuckets = new Map(); // day -> [items]
       const flexible = [];
 
       suggestions.forEach((s) => {
@@ -941,7 +1098,6 @@
           typeof s.dayHint === "number" && isFinite(s.dayHint)
             ? s.dayHint
             : null;
-
         if (day === null) {
           flexible.push(s);
         } else {
@@ -950,13 +1106,11 @@
         }
       });
 
-      // Sort days
       const sortedDays = Array.from(dayBuckets.keys()).sort((a, b) => a - b);
 
-      // Sort by time-of-day within a day
       const timeOrder = { morning: 0, afternoon: 1, evening: 2, flex: 3 };
       function sortByTimeOfDay(list) {
-        return list.sort((a, b) => {
+        return list.slice().sort((a, b) => {
           const ta = (a.timeOfDay || "flex").toString().toLowerCase();
           const tb = (b.timeOfDay || "flex").toString().toLowerCase();
           const wa = Object.prototype.hasOwnProperty.call(timeOrder, ta)
@@ -970,8 +1124,44 @@
         });
       }
 
-      // Helper to build a card
-      function buildCard(s, idx) {
+      function cycleTimeOfDay(suggestionIndex) {
+        const s = currentSuggestions[suggestionIndex];
+        const options = ["morning", "afternoon", "evening", "flex"];
+        const current = (s.timeOfDay || "flex").toString().toLowerCase();
+        const idx = options.indexOf(current);
+        const next = options[(idx + 1) % options.length];
+        s.timeOfDay = next;
+        hideChipTip();
+        renderSuggestions(currentSuggestions);
+      }
+
+      function cycleDayHint(suggestionIndex) {
+        const s = currentSuggestions[suggestionIndex];
+        if (
+          typeof s.dayHint !== "number" ||
+          !isFinite(s.dayHint)
+        ) {
+          s.dayHint = currentMinDay;
+        } else {
+          const next = s.dayHint + 1;
+          if (next > currentMaxDay) {
+            s.dayHint = null; // back to "Any day"
+          } else {
+            s.dayHint = next;
+          }
+        }
+        hideChipTip();
+        renderSuggestions(currentSuggestions);
+      }
+
+      function removeSuggestion(suggestionIndex) {
+        currentSuggestions = currentSuggestions.filter(
+          (s) => s.__index !== suggestionIndex
+        );
+        renderSuggestions(currentSuggestions);
+      }
+
+      function buildCard(s) {
         const card = document.createElement("article");
         card.className = "suggestion-card";
 
@@ -980,44 +1170,105 @@
 
         const title = document.createElement("div");
         title.className = "suggestion-title";
-        title.textContent = s.title || "Activity " + (idx + 1);
+        title.textContent = s.title || "Activity";
 
         const chips = document.createElement("div");
         chips.className = "chip-row";
 
-        const todChip = document.createElement("span");
+        // Time of day chip (click to cycle)
+        const todChip = document.createElement("button");
+        todChip.type = "button";
         todChip.className = "chip accent";
         const tod = (s.timeOfDay || "flex").toString().toLowerCase();
-        if (tod === "morning") todChip.textContent = "Morning";
-        else if (tod === "afternoon") todChip.textContent = "Afternoon";
-        else if (tod === "evening") todChip.textContent = "Evening";
-        else todChip.textContent = "Flexible";
+        let todLabel = "Flexible";
+        if (tod === "morning") todLabel = "Morning";
+        else if (tod === "afternoon") todLabel = "Afternoon";
+        else if (tod === "evening") todLabel = "Evening";
 
+        todChip.innerHTML =
+          '<span>' + todLabel + '</span><span class="chip-caret">▾</span>';
+        todChip.addEventListener("click", () => {
+          cycleTimeOfDay(s.__index);
+        });
         chips.appendChild(todChip);
 
+        // Day chip (click to cycle days + Any day)
+        const dayChip = document.createElement("button");
+        dayChip.type = "button";
+        dayChip.className = "chip";
+        let dayLabel;
         if (typeof s.dayHint === "number" && isFinite(s.dayHint)) {
-          const dayChip = document.createElement("span");
-          dayChip.className = "chip";
-          dayChip.textContent = "Day " + s.dayHint;
-          chips.appendChild(dayChip);
+          dayLabel = "Day " + s.dayHint;
+        } else {
+          dayLabel = "Any day";
         }
+        dayChip.innerHTML =
+          '<span>' + dayLabel + '</span><span class="chip-caret">▾</span>';
+        dayChip.addEventListener("click", () => {
+          cycleDayHint(s.__index);
+        });
+        chips.appendChild(dayChip);
+
+        // Delete button
+        const deleteBtn = document.createElement("button");
+        deleteBtn.type = "button";
+        deleteBtn.className = "card-delete-btn";
+        deleteBtn.title = "Remove from itinerary";
+        deleteBtn.textContent = "✕";
+        deleteBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          removeSuggestion(s.__index);
+        });
+
+        const rightSide = document.createElement("div");
+        rightSide.style.display = "flex";
+        rightSide.style.alignItems = "center";
+        rightSide.style.gap = "4px";
+        rightSide.appendChild(chips);
+        rightSide.appendChild(deleteBtn);
 
         topRow.appendChild(title);
-        topRow.appendChild(chips);
+        topRow.appendChild(rightSide);
+        card.appendChild(topRow);
+
+        // Map-friendly meta line
+        const neighborhood =
+          s.neighborhood && String(s.neighborhood).trim();
+        const travelTime =
+          s.travelTime && String(s.travelTime).trim();
+        if (neighborhood || travelTime) {
+          const meta = document.createElement("p");
+          meta.className = "suggestion-meta-line";
+          const pieces = [];
+          if (neighborhood) pieces.push(neighborhood);
+          if (travelTime) pieces.push(travelTime);
+          meta.textContent = pieces.join(" · ");
+          card.appendChild(meta);
+        }
 
         const desc = document.createElement("p");
         desc.className = "suggestion-desc";
         desc.textContent =
           s.description ||
           "No description provided, but this activity sounded interesting.";
+        card.appendChild(desc);
 
         const notes = document.createElement("p");
         notes.className = "suggestion-notes";
-        notes.textContent =
+        const baseNotes =
           s.notes || "No extra notes from the AI for this one.";
 
-        card.appendChild(topRow);
-        card.appendChild(desc);
+        const mapsSearch =
+          s.mapsSearch && typeof s.mapsSearch === "string"
+            ? s.mapsSearch.trim()
+            : null;
+
+        if (mapsSearch) {
+          notes.textContent =
+            baseNotes + ' Maps search: "' + mapsSearch + '".';
+        } else {
+          notes.textContent = baseNotes;
+        }
         card.appendChild(notes);
 
         return card;
@@ -1041,8 +1292,8 @@
         const listEl = document.createElement("div");
         listEl.className = "day-suggestions";
 
-        items.forEach((s, idx) => {
-          listEl.appendChild(buildCard(s, idx));
+        items.forEach((s) => {
+          listEl.appendChild(buildCard(s));
         });
 
         groupEl.appendChild(heading);
@@ -1070,8 +1321,8 @@
         const listEl = document.createElement("div");
         listEl.className = "day-suggestions";
 
-        items.forEach((s, idx) => {
-          listEl.appendChild(buildCard(s, idx));
+        items.forEach((s) => {
+          listEl.appendChild(buildCard(s));
         });
 
         groupEl.appendChild(heading);
@@ -1098,6 +1349,151 @@
           (total === 1 ? "" : "s") +
           " with no specific day.";
       }
+
+      maybeShowChipTip();
+    }
+
+    // Called after we get suggestions from the server
+    function handleNewSuggestions(suggestions) {
+      renderSuggestions(Array.isArray(suggestions) ? suggestions : []);
+    }
+
+    // --- Add / placeholders ---
+
+    function promptForDayNumber() {
+      const defaultDay =
+        typeof currentMinDay === "number" && isFinite(currentMinDay)
+          ? String(currentMinDay)
+          : "";
+      const input = window.prompt(
+        "Which day should this belong to? Enter a day number, or leave blank for 'Any day'.",
+        defaultDay
+      );
+      if (input === null) return null; // cancelled
+      const trimmed = input.trim();
+      if (!trimmed) return null; // Any day
+      const n = parseInt(trimmed, 10);
+      if (!Number.isFinite(n) || n <= 0) return null;
+      return n;
+    }
+
+    function addCustomActivity() {
+      const dayNum = promptForDayNumber();
+      if (dayNum === null && dayNum !== 0) {
+        // null => Any day; allowed
+      }
+
+      const title = window.prompt(
+        "Custom activity title:",
+        "Free time / explore on your own"
+      );
+      if (!title || !title.trim()) return;
+
+      const todInput = window.prompt(
+        "Time of day? (morning, afternoon, evening, flex)",
+        "flex"
+      );
+      const todRaw = (todInput || "flex").toString().toLowerCase();
+      const allowedTods = ["morning", "afternoon", "evening", "flex"];
+      const timeOfDay = allowedTods.includes(todRaw) ? todRaw : "flex";
+
+      const desc =
+        window.prompt("Short description (optional):", "") || "";
+      const notes =
+        window.prompt("Notes / logistics (optional):", "") || "";
+
+      const item = {
+        id: "custom-" + Date.now() + "-" + Math.random().toString(16).slice(2),
+        title: title.trim(),
+        timeOfDay,
+        dayHint:
+          typeof dayNum === "number" && isFinite(dayNum) ? dayNum : null,
+        description:
+          desc.trim() || "Custom activity added by the user.",
+        notes: notes.trim() || "User-added activity.",
+      };
+
+      currentSuggestions.push(item);
+      hideChipTip();
+      renderSuggestions(currentSuggestions);
+    }
+
+    function addMealPlaceholder() {
+      const dayNum = promptForDayNumber();
+
+      const defaultLabel = "Dinner reservation";
+      const label =
+        window.prompt(
+          "Meal placeholder (e.g., Breakfast near hotel, Lunch by the beach):",
+          defaultLabel
+        ) || defaultLabel;
+
+      const lower = label.toLowerCase();
+      let timeOfDay = "flex";
+      if (lower.includes("breakfast") || lower.includes("brunch")) {
+        timeOfDay = "morning";
+      } else if (lower.includes("lunch")) {
+        timeOfDay = "afternoon";
+      } else if (lower.includes("dinner")) {
+        timeOfDay = "evening";
+      }
+
+      const item = {
+        id: "meal-" + Date.now() + "-" + Math.random().toString(16).slice(2),
+        title: label.trim(),
+        timeOfDay,
+        dayHint:
+          typeof dayNum === "number" && isFinite(dayNum) ? dayNum : null,
+        description:
+          "Placeholder for choosing a restaurant. Use this slot to pick a spot that fits your vibe and budget.",
+        notes:
+          "Use Google Maps or a reservation app (Resy, OpenTable, etc.) to lock something in.",
+      };
+
+      currentSuggestions.push(item);
+      hideChipTip();
+      renderSuggestions(currentSuggestions);
+    }
+
+    function addTransferPlaceholder() {
+      const dayNum = promptForDayNumber();
+
+      const defaultLabel = "Travel / transit block";
+      const label =
+        window.prompt(
+          "Travel time placeholder (e.g., Train to Porto, Flight home):",
+          defaultLabel
+        ) || defaultLabel;
+
+      const item = {
+        id:
+          "transfer-" +
+          Date.now() +
+          "-" +
+          Math.random().toString(16).slice(2),
+        title: label.trim(),
+        timeOfDay: "flex",
+        dayHint:
+          typeof dayNum === "number" && isFinite(dayNum) ? dayNum : null,
+        description:
+          "Time reserved for getting from A to B. Use this block for transfers, check-ins, or airport time.",
+        notes:
+          "Adjust timing based on your actual tickets and leave buffer for delays.",
+      };
+
+      currentSuggestions.push(item);
+      hideChipTip();
+      renderSuggestions(currentSuggestions);
+    }
+
+    if (addCustomActivityBtn) {
+      addCustomActivityBtn.addEventListener("click", addCustomActivity);
+    }
+    if (addMealPlaceholderBtn) {
+      addMealPlaceholderBtn.addEventListener("click", addMealPlaceholder);
+    }
+    if (addTransferPlaceholderBtn) {
+      addTransferPlaceholderBtn.addEventListener("click", addTransferPlaceholder);
     }
 
     // Sample Paris trip loader (prefills only)
@@ -1118,24 +1514,27 @@
       travelers.value = "First-time visitors (couple)";
       budget.value = "comfortable with some splurges";
       tripType.value = "city break focused on sightseeing and museums";
-      vibe.value = "Romantic, museums, iconic landmarks, cafés, and walkable neighborhoods.";
-      prefs.value = "No rental car. Prioritize iconic sites (Eiffel Tower, Louvre, Notre-Dame area), museums, and neighborhood cafés in walkable areas. One nice dinner with a view of the Eiffel Tower.";
+      vibe.value =
+        "Romantic, museums, iconic landmarks, cafés, and walkable neighborhoods.";
+      prefs.value =
+        "No rental car. Prioritize iconic sites (Eiffel Tower, Louvre, Notre-Dame area), museums, and neighborhood cafés in walkable areas. One nice dinner with a view of the Eiffel Tower.";
 
-      // Clear and re-check must include pills
-      const mustIncludeBoxes = document.querySelectorAll('input[name="mustInclude"]');
+      // Must include pills
+      const mustIncludeBoxes = document.querySelectorAll(
+        'input[name="mustInclude"]'
+      );
       const wanted = new Set([
         "best restaurants",
         "museums",
         "hidden gems and local spots",
         "walkable areas and neighborhoods",
-        "shopping areas and markets"
+        "shopping areas and markets",
       ]);
 
       mustIncludeBoxes.forEach((box) => {
         box.checked = wanted.has(box.value);
       });
 
-      // Turn on full itinerary mode
       fullItinerary.checked = true;
 
       statusText.innerHTML =
@@ -1145,6 +1544,8 @@
     if (sampleTripBtn) {
       sampleTripBtn.addEventListener("click", loadSampleParisTrip);
     }
+
+    // --- Form submit / fetch ---
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -1249,8 +1650,11 @@
           ? data.suggestions
           : [];
 
-        renderSuggestions(suggestions);
-        setLoading(false, "<strong>Done.</strong> Scroll through your ideas.");
+        handleNewSuggestions(suggestions);
+        setLoading(
+          false,
+          "<strong>Done.</strong> Scroll through your ideas, then click the day/time labels to tweak your plan."
+        );
       } catch (err) {
         console.error("Network error calling /api/generate-itinerary:", err);
         setLoading(
