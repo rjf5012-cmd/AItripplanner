@@ -432,6 +432,28 @@
       color: var(--text-muted);
     }
 
+    .suggestions-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+      justify-content: flex-end;
+    }
+
+    button.secondary {
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      background: #f9fafb;
+      color: var(--text-soft);
+      font-size: 11px;
+      padding: 6px 10px;
+      cursor: pointer;
+    }
+
+    button.secondary:hover {
+      background: #eef2ff;
+    }
+
     .suggestions-list {
       display: flex;
       flex-direction: column;
@@ -441,7 +463,7 @@
       padding-right: 2px;
     }
 
-    /* Day group styling */
+    /* Day group styling (stacked) */
     .day-group {
       margin-bottom: 18px;
       padding-bottom: 10px;
@@ -498,6 +520,7 @@
       gap: 6px;
       font-size: 10px;
       align-items: center;
+      justify-content: flex-end;
     }
 
     .chip {
@@ -508,7 +531,7 @@
       color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.12em;
-      font-size: 10px;
+      white-space: nowrap;
     }
 
     .chip.accent {
@@ -517,17 +540,15 @@
       background: #eff6ff;
     }
 
-    .chip-clickable {
+    .chip.cycle {
       cursor: pointer;
+      position: relative;
+      padding-right: 16px;
     }
 
-    .chip-clickable:hover {
-      border-color: #2563eb;
-      background: #e0ecff;
-    }
-
-    .day-chip {
-      font-weight: 500;
+    .chip-caret {
+      font-size: 9px;
+      margin-left: 3px;
     }
 
     .suggestion-meta-line {
@@ -587,55 +608,38 @@
       text-decoration: underline;
     }
 
-    /* Pro-tip toast */
-    .chip-tip-toast {
+    /* Tip toast */
+    .toast-tip {
       position: fixed;
       right: 16px;
-      bottom: 16px;
-      max-width: 260px;
+      bottom: 18px;
       z-index: 50;
+      max-width: 260px;
+      background: #0f172a;
+      color: #e5e7eb;
+      border-radius: 14px;
+      padding: 10px 12px;
+      box-shadow: 0 18px 40px rgba(15,23,42,0.35);
+      font-size: 11px;
       display: none;
     }
 
-    .chip-tip-inner {
-      background: #0f172a;
-      color: #e5e7eb;
-      padding: 10px 12px;
-      border-radius: 12px;
-      box-shadow: 0 14px 40px rgba(15, 23, 42, 0.8);
-      font-size: 12px;
+    .toast-tip strong {
+      font-weight: 600;
     }
 
-    .chip-tip-inner strong {
-      display: block;
-      margin-bottom: 4px;
-      font-size: 12px;
-    }
-
-    .chip-tip-inner p {
-      margin: 0 0 8px;
-      line-height: 1.4;
-    }
-
-    .chip-tip-inner button {
-      border-radius: 999px;
+    .toast-tip button {
       border: none;
-      padding: 4px 10px;
+      background: transparent;
+      color: #9ca3af;
       font-size: 11px;
       cursor: pointer;
-      background: #e5e7eb;
-      color: #111827;
-      font-weight: 500;
+      padding: 0;
+      margin-left: 10px;
     }
 
-    .chip-tip-inner button:hover {
-      background: #f9fafb;
-    }
-
-    .chip.small-demo {
-      font-size: 9px;
-      padding: 1px 6px;
-      letter-spacing: 0.12em;
+    .toast-tip button:hover {
+      color: #e5e7eb;
     }
 
     @media (max-width: 640px) {
@@ -645,10 +649,10 @@
       .nav-inner {
         padding-inline: 14px;
       }
-      .chip-tip-toast {
+      .toast-tip {
         left: 12px;
         right: 12px;
-        bottom: 12px;
+        bottom: 14px;
       }
     }
   </style>
@@ -808,13 +812,16 @@
             </div>
 
             <div>
-              <label for="vibe">Trip focus (optional)</label>
+              <label for="vibe">Extra context about your trip (optional)</label>
               <input
                 id="vibe"
                 name="vibe"
                 type="text"
-                placeholder="Relaxed, food-focused, museums, nightlife, outdoors..."
+                placeholder="Example: Honeymoon, celebrating a birthday, first time in Europe, etc."
               />
+              <p class="helper">
+                Use this for anything that sets the tone &mdash; special occasions, preferences, mobility needs, or constraints.
+              </p>
             </div>
 
             <div>
@@ -886,7 +893,7 @@
                 <span>Full itinerary mode (3 suggestions per day)</span>
               </label>
               <p class="helper">
-                Turn this on for a structured morning/afternoon/evening plan for each day. Leave it off for a looser mix-and-match idea list.
+                Turn this on for a structured morning/afternoon/evening plan for each day. Leave it off for a looser list of ideas.
               </p>
             </div>
 
@@ -911,13 +918,20 @@
           <div class="suggestions-header-row">
             <div>
               <div class="planner-card-title suggestions-title">Suggested activities</div>
-              <div class="planner-card-sub">
-                Ideas are grouped by day; adjust the Time and Day chips on each card to make the plan yours.
+              <div class="planner-card-sub" id="suggestionsSub">
+                Ideas are grouped by day so you can tweak the timing, then export to a shareable PDF.
               </div>
             </div>
             <div class="suggestions-meta" id="metaSummary">
               No results yet.
             </div>
+          </div>
+
+          <!-- Export toolbar -->
+          <div class="suggestions-toolbar">
+            <button type="button" class="secondary" id="exportBtn">
+              Export &amp; Save as PDF
+            </button>
           </div>
 
           <div id="suggestionsContainer" class="suggestions-list">
@@ -928,7 +942,7 @@
           </div>
 
           <p class="helper" style="margin-top: 10px;">
-            Tip: Click the <strong>Time</strong> (Morning/Afternoon/Evening/Flexible) or <strong>Day</strong> chips on any card to change them. Use Full itinerary mode for a strict 3-per-day plan.
+            Tip: click the <strong>Morning / Afternoon / Evening</strong> or <strong>Day</strong> chips on each card to change when that activity happens.
           </p>
         </section>
       </div>
@@ -946,18 +960,13 @@
     </div>
   </footer>
 
-  <!-- One-time “Pro tip” toast -->
-  <div id="chipTipToast" class="chip-tip-toast" aria-live="polite">
-    <div class="chip-tip-inner">
-      <strong>Pro tip</strong>
-      <p>
-        Click the
-        <span class="chip accent small-demo">Morning</span>
-        and
-        <span class="chip small-demo">Day 2 ▾</span>
-        chips on any card to change time or day.
-      </p>
-      <button type="button" id="chipTipClose">Got it</button>
+  <!-- First-time chip tip -->
+  <div class="toast-tip" id="chipTip">
+    <div>
+      <strong>Pro tip:</strong> Click the <em>Morning / Afternoon / Evening</em> and <em>Day</em> chips on each card to cycle when it happens.
+    </div>
+    <div style="margin-top:4px; display:flex; justify-content:flex-end;">
+      <button type="button" id="chipTipDismiss">Got it</button>
     </div>
   </div>
 
@@ -970,31 +979,12 @@
     const suggestionsContainer = document.getElementById("suggestionsContainer");
     const emptyState = document.getElementById("emptyState");
     const metaSummary = document.getElementById("metaSummary");
+    const exportBtn = document.getElementById("exportBtn");
+    const chipTip = document.getElementById("chipTip");
+    const chipTipDismiss = document.getElementById("chipTipDismiss");
 
-    const chipTipToast = document.getElementById("chipTipToast");
-    const chipTipClose = document.getElementById("chipTipClose");
-
-    let chipTipSeen = false;
-    try {
-      chipTipSeen = window.localStorage.getItem("aitripplan_chipTipSeen") === "1";
-    } catch (e) {
-      chipTipSeen = false;
-    }
-
-    function showChipTipOnce() {
-      if (chipTipSeen || !chipTipToast) return;
-      chipTipToast.style.display = "block";
-    }
-
-    if (chipTipClose) {
-      chipTipClose.addEventListener("click", () => {
-        chipTipToast.style.display = "none";
-        chipTipSeen = true;
-        try {
-          window.localStorage.setItem("aitripplan_chipTipSeen", "1");
-        } catch (e) {}
-      });
-    }
+    let latestSuggestions = [];
+    let latestTripMeta = null;
 
     function setLoading(isLoading, msg) {
       if (isLoading) {
@@ -1015,26 +1005,64 @@
       }
     }
 
-    // Global state of current suggestions so chip clicks can mutate & re-render
-    let currentSuggestions = [];
-    let maxDayHint = 3;
+    function maybeShowChipTip() {
+      if (!latestSuggestions || !latestSuggestions.length) return;
+      if (!chipTip) return;
+      if (localStorage.getItem("aitripplan_seen_chip_tip") === "1") return;
+      chipTip.style.display = "block";
+    }
+
+    if (chipTipDismiss && chipTip) {
+      chipTipDismiss.addEventListener("click", () => {
+        chipTip.style.display = "none";
+        localStorage.setItem("aitripplan_seen_chip_tip", "1");
+      });
+    }
+
+    // Helpers to infer days count for cycling
+    function getDaysCount() {
+      if (latestTripMeta && latestTripMeta.daysNumber) {
+        return latestTripMeta.daysNumber;
+      }
+      let maxDay = 0;
+      latestSuggestions.forEach((s) => {
+        if (typeof s.dayHint === "number" && isFinite(s.dayHint)) {
+          if (s.dayHint > maxDay) maxDay = s.dayHint;
+        }
+      });
+      return maxDay || 3;
+    }
+
+    const TIME_ORDER = ["morning", "afternoon", "evening", "flex"];
+
+    function cycleTimeOfDay(suggestion) {
+      const current = (suggestion.timeOfDay || "flex").toString().toLowerCase();
+      const idx = TIME_ORDER.indexOf(current);
+      const nextIdx = idx === -1 ? 0 : (idx + 1) % TIME_ORDER.length;
+      suggestion.timeOfDay = TIME_ORDER[nextIdx];
+      renderSuggestions(latestSuggestions);
+    }
+
+    function cycleDayHint(suggestion) {
+      const daysCount = getDaysCount();
+      const current = suggestion.dayHint;
+      // cycle: 1..N -> null ("Any day") -> 1...
+      if (typeof current !== "number" || !isFinite(current)) {
+        suggestion.dayHint = 1;
+      } else if (current >= daysCount) {
+        suggestion.dayHint = null;
+      } else {
+        suggestion.dayHint = current + 1;
+      }
+      renderSuggestions(latestSuggestions);
+    }
 
     // Group suggestions into day buckets, sort by time-of-day, add "Any day" group
-    function renderSuggestions(suggestions, options = {}) {
-      const fromState = options.fromState === true;
-
-      if (!fromState) {
-        // Fresh load from server
-        currentSuggestions = Array.isArray(suggestions)
-          ? suggestions.map((s, idx) => ({ ...s, _idx: idx }))
-          : [];
-      }
-
-      const list = currentSuggestions;
-
+    function renderSuggestions(suggestions) {
+      latestSuggestions = Array.isArray(suggestions) ? suggestions : [];
       suggestionsContainer.innerHTML = "";
 
-      if (!Array.isArray(list) || list.length === 0) {
+      if (!latestSuggestions.length) {
         emptyState.style.display = "block";
         suggestionsContainer.appendChild(emptyState);
         metaSummary.textContent = "No results. Try tweaking your input.";
@@ -1043,26 +1071,11 @@
 
       emptyState.style.display = "none";
 
-      // Determine max day for day chip cycling
-      const numericHints = list
-        .map((s) => s.dayHint)
-        .filter((v) => typeof v === "number" && isFinite(v));
-      if (numericHints.length) {
-        maxDayHint = Math.max(...numericHints);
-      } else {
-        const daysInput = parseInt(document.getElementById("days").value, 10);
-        if (Number.isFinite(daysInput) && daysInput > 0) {
-          maxDayHint = Math.min(daysInput, 7);
-        } else {
-          maxDayHint = 3;
-        }
-      }
-
       // Group by dayHint, collect flexible
       const dayBuckets = new Map(); // number -> array
       const flexible = [];
 
-      list.forEach((s) => {
+      latestSuggestions.forEach((s) => {
         const day =
           typeof s.dayHint === "number" && isFinite(s.dayHint)
             ? s.dayHint
@@ -1080,23 +1093,23 @@
       const sortedDays = Array.from(dayBuckets.keys()).sort((a, b) => a - b);
 
       // Sort by time-of-day within a day
-      const timeOrder = { morning: 0, afternoon: 1, evening: 2, flex: 3 };
-      function sortByTimeOfDay(listToSort) {
-        return listToSort.slice().sort((a, b) => {
+      const timeOrderWeights = { morning: 0, afternoon: 1, evening: 2, flex: 3 };
+      function sortByTimeOfDay(list) {
+        return list.slice().sort((a, b) => {
           const ta = (a.timeOfDay || "flex").toString().toLowerCase();
           const tb = (b.timeOfDay || "flex").toString().toLowerCase();
-          const wa = Object.prototype.hasOwnProperty.call(timeOrder, ta)
-            ? timeOrder[ta]
+          const wa = Object.prototype.hasOwnProperty.call(timeOrderWeights, ta)
+            ? timeOrderWeights[ta]
             : 4;
-          const wb = Object.prototype.hasOwnProperty.call(timeOrder, tb)
-            ? timeOrder[tb]
+          const wb = Object.prototype.hasOwnProperty.call(timeOrderWeights, tb)
+            ? timeOrderWeights[tb]
             : 4;
           if (wa !== wb) return wa - wb;
           return (a.title || "").localeCompare(b.title || "");
         });
       }
 
-      function buildCard(item, idx) {
+      function buildCard(s, idx) {
         const card = document.createElement("article");
         card.className = "suggestion-card";
 
@@ -1105,51 +1118,52 @@
 
         const title = document.createElement("div");
         title.className = "suggestion-title";
-        title.textContent = item.title || "Activity " + (idx + 1);
+        title.textContent = s.title || "Activity " + (idx + 1);
 
         const chips = document.createElement("div");
         chips.className = "chip-row";
 
-        // Time-of-day chip (clickable)
+        // Time of day chip
         const todChip = document.createElement("button");
         todChip.type = "button";
-        todChip.className = "chip accent chip-clickable";
-        todChip.dataset.idx = String(item._idx);
-        todChip.dataset.role = "time";
-        todChip.title = "Click to change time of day";
-
-        const tod = (item.timeOfDay || "flex").toString().toLowerCase();
+        todChip.className = "chip accent cycle";
+        const tod = (s.timeOfDay || "flex").toString().toLowerCase();
         if (tod === "morning") todChip.textContent = "Morning";
         else if (tod === "afternoon") todChip.textContent = "Afternoon";
         else if (tod === "evening") todChip.textContent = "Evening";
         else todChip.textContent = "Flexible";
-
+        const todCaret = document.createElement("span");
+        todCaret.className = "chip-caret";
+        todCaret.textContent = "▾";
+        todChip.appendChild(todCaret);
+        todChip.title = "Click to cycle morning / afternoon / evening / flexible";
+        todChip.addEventListener("click", () => cycleTimeOfDay(s));
         chips.appendChild(todChip);
 
-        // Day chip (clickable with caret)
+        // Day chip
         const dayChip = document.createElement("button");
         dayChip.type = "button";
-        dayChip.className = "chip chip-clickable day-chip";
-        dayChip.dataset.idx = String(item._idx);
-        dayChip.dataset.role = "day";
-        dayChip.title = "Click to move this to another day";
-
-        if (typeof item.dayHint === "number" && isFinite(item.dayHint)) {
-          dayChip.textContent = "Day " + item.dayHint + " ▾";
-        } else {
-          dayChip.textContent = "Any day ▾";
-        }
+        dayChip.className = "chip cycle";
+        const hasDay = typeof s.dayHint === "number" && isFinite(s.dayHint);
+        const dayLabel = hasDay ? "Day " + s.dayHint : "Any day";
+        dayChip.textContent = dayLabel;
+        const dayCaret = document.createElement("span");
+        dayCaret.className = "chip-caret";
+        dayCaret.textContent = "▾";
+        dayChip.appendChild(dayCaret);
+        dayChip.title = "Click to cycle between days or 'Any day'";
+        dayChip.addEventListener("click", () => cycleDayHint(s));
         chips.appendChild(dayChip);
 
         topRow.appendChild(title);
         topRow.appendChild(chips);
+
         card.appendChild(topRow);
 
-        // Neighborhood / travel time line
         const neighborhood =
-          item.neighborhood && String(item.neighborhood).trim();
+          s.neighborhood && String(s.neighborhood).trim();
         const travelTime =
-          item.travelTime && String(item.travelTime).trim();
+          s.travelTime && String(s.travelTime).trim();
         if (neighborhood || travelTime) {
           const meta = document.createElement("p");
           meta.className = "suggestion-meta-line";
@@ -1163,19 +1177,19 @@
         const desc = document.createElement("p");
         desc.className = "suggestion-desc";
         desc.textContent =
-          item.description ||
+          s.description ||
           "No description provided, but this activity sounded interesting.";
         card.appendChild(desc);
 
         const notes = document.createElement("p");
         notes.className = "suggestion-notes";
         const baseNotes =
-          item.notes || "No extra notes from the AI for this one.";
+          s.notes || "No extra notes from the AI for this one.";
 
         const mapsSearch =
-          item.mapsSearch && typeof item.mapsSearch === "string"
-            ? item.mapsSearch.trim()
-            : item.mapsSearch;
+          s.mapsSearch && typeof s.mapsSearch === "string"
+            ? s.mapsSearch.trim()
+            : s.mapsSearch;
 
         if (mapsSearch) {
           notes.textContent =
@@ -1247,7 +1261,7 @@
         suggestionsContainer.appendChild(groupEl);
       }
 
-      const total = list.length;
+      const total = latestSuggestions.length;
       const dayCount = sortedDays.length;
       if (dayCount > 0) {
         metaSummary.textContent =
@@ -1265,54 +1279,45 @@
           " with no specific day.";
       }
 
-      if (!fromState) {
-        showChipTipOnce();
-      }
+      maybeShowChipTip();
     }
 
-    // Handle clicks on time/day chips (event delegation)
-    if (suggestionsContainer) {
-      suggestionsContainer.addEventListener("click", (e) => {
-        const chip = e.target.closest(".chip-clickable");
-        if (!chip) return;
+    function buildTripMetaFromForm() {
+      const destination = document.getElementById("destination").value.trim();
+      const days = document.getElementById("days").value.trim();
+      const dates = document.getElementById("dates").value.trim();
+      const travelers = document.getElementById("travelers").value.trim();
+      const budget = document.getElementById("budget").value.trim();
+      const tripType = document.getElementById("tripType").value.trim();
+      const vibe = document.getElementById("vibe").value.trim();
+      const prefs = document.getElementById("prefs").value.trim();
+      const fullItinerary = document.getElementById("fullItinerary").checked;
 
-        const role = chip.dataset.role;
-        const idxStr = chip.dataset.idx;
-        if (!role || !idxStr) return;
+      const mustIncludeEls = document.querySelectorAll(
+        'input[name="mustInclude"]:checked'
+      );
+      const mustInclude = Array.from(mustIncludeEls).map((el) => el.value);
 
-        const origIdx = parseInt(idxStr, 10);
-        if (!Number.isFinite(origIdx)) return;
-
-        const item = currentSuggestions.find((s) => s._idx === origIdx);
-        if (!item) return;
-
-        if (role === "time") {
-          const order = ["morning", "afternoon", "evening", "flex"];
-          const cur = (item.timeOfDay || "flex").toString().toLowerCase();
-          let i = order.indexOf(cur);
-          if (i === -1) i = order.length - 1;
-          const next = order[(i + 1) % order.length];
-          item.timeOfDay = next;
-        } else if (role === "day") {
-          if (maxDayHint < 1) {
-            item.dayHint = null;
-          } else {
-            const curDay =
-              typeof item.dayHint === "number" && isFinite(item.dayHint)
-                ? item.dayHint
-                : null;
-            if (curDay === null) {
-              item.dayHint = 1;
-            } else if (curDay >= maxDayHint) {
-              item.dayHint = null; // wrap to Any day
-            } else {
-              item.dayHint = curDay + 1;
-            }
-          }
+      let daysNumber = null;
+      if (days) {
+        const parsed = parseInt(days, 10);
+        if (Number.isFinite(parsed) && parsed > 0) {
+          daysNumber = parsed;
         }
+      }
 
-        renderSuggestions(currentSuggestions, { fromState: true });
-      });
+      return {
+        destination,
+        daysNumber,
+        dates,
+        travelers,
+        budget,
+        tripType,
+        vibe,
+        prefs,
+        mustInclude,
+        fullItinerary,
+      };
     }
 
     // --- Form submit / fetch ---
@@ -1341,6 +1346,8 @@
         return;
       }
 
+      latestTripMeta = buildTripMetaFromForm();
+
       const parts = [];
       parts.push("Destination: " + destination + ".");
       if (days) parts.push("Trip length: " + days + " days.");
@@ -1348,7 +1355,7 @@
       if (travelers) parts.push("Who is going: " + travelers + ".");
       if (budget) parts.push("Budget level: " + budget + ".");
       if (tripType) parts.push("Trip type: " + tripType + ".");
-      if (vibe) parts.push("Trip vibe / focus: " + vibe + ".");
+      if (vibe) parts.push("Trip context: " + vibe + ".");
       if (prefs) parts.push("Preferences: " + prefs + ".");
       if (mustInclude.length) {
         parts.push(
@@ -1420,8 +1427,8 @@
           ? data.suggestions
           : [];
 
-        renderSuggestions(suggestions, { fromState: false });
-        setLoading(false, "<strong>Done.</strong> Click Time or Day on any card to tweak the plan.");
+        renderSuggestions(suggestions);
+        setLoading(false, "<strong>Done.</strong> Adjust the chips, then export as a PDF.");
       } catch (err) {
         console.error("Network error calling /api/generate-itinerary:", err);
         setLoading(
@@ -1430,6 +1437,39 @@
         );
       }
     });
+
+    // --- Export to print.html via localStorage ---
+
+    if (exportBtn) {
+      exportBtn.addEventListener("click", () => {
+        if (!latestSuggestions || !latestSuggestions.length) {
+          alert("Generate an itinerary first, then you can export it.");
+          return;
+        }
+        if (!latestTripMeta || !latestTripMeta.destination) {
+          latestTripMeta = buildTripMetaFromForm();
+        }
+
+        const payload = {
+          meta: latestTripMeta,
+          suggestions: latestSuggestions,
+          exportedAt: new Date().toISOString(),
+        };
+
+        try {
+          localStorage.setItem(
+            "aitripplan_latest_export",
+            JSON.stringify(payload)
+          );
+        } catch (err) {
+          console.error("Failed to store itinerary in localStorage:", err);
+          alert("Unable to prepare export in this browser.");
+          return;
+        }
+
+        window.open("/print.html", "_blank");
+      });
+    }
   </script>
 </body>
 </html>
