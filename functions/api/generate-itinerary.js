@@ -56,42 +56,44 @@ export async function onRequestPost({ request, env }) {
     const days = Math.min(Math.max(inferredDays, 1), 7);
     const totalSuggestions = days * 3;
 
-    // --- Build the actual prompt sent to the model ---
-    let combinedPrompt = userPrompt;
-
+    // --- Build dynamic constraints based on mode ---
+    let modeConstraints;
     if (mode === "full-itinerary") {
-      const itineraryInstructions = [
-        `The trip should last exactly ${days} day(s).`,
-        `You MUST return exactly ${totalSuggestions} suggestions in the "suggestions" array.`,
-        `Distribute suggestions evenly across the days so there are exactly 3 suggestions per day.`,
+      modeConstraints = [
+        "MODE: FULL_ITINERARY_MODE.",
+        `Trip length: approximately ${days} day(s).`,
+        `You MUST create exactly ${totalSuggestions} suggestions in the "suggestions" array.`,
+        `You MUST distribute suggestions evenly across the days so there are exactly 3 suggestions per day.`,
         `For each day d (1 to ${days}) you MUST include exactly:`,
-        `- 1 suggestion with "timeOfDay": "morning"`,
-        `- 1 suggestion with "timeOfDay": "afternoon"`,
-        `- 1 suggestion with "timeOfDay": "evening"`,
+        "- 1 suggestion with \"timeOfDay\": \"morning\"",
+        "- 1 suggestion with \"timeOfDay\": \"afternoon\"",
+        "- 1 suggestion with \"timeOfDay\": \"evening\"",
         `Set "dayHint" to the correct day number (1–${days}) for each suggestion.`,
-        `Keep titles short and scannable; keep description and notes concise.`,
       ].join("\n");
-
-      combinedPrompt =
-        userPrompt +
-        "\n\nTrip structure constraints (full itinerary mode):\n" +
-        itineraryInstructions;
     } else {
-      // "Ideas" mode – more relaxed, just gentle structure hints
-      const ideasInstructions = [
-        `The trip is approximately ${days} day(s) long.`,
-        `You do NOT need to fill every day. Focus on high-quality ideas.`,
+      modeConstraints = [
+        "MODE: LOOSE_IDEAS_MODE.",
+        `Trip length: approximately ${days} day(s).`,
+        "You should generate between 12 and 18 total suggestions.",
+        "You do NOT need to fill every day.",
         `Use "timeOfDay" as "morning", "afternoon", "evening", or "flex" where it makes sense.`,
         `Use "dayHint" between 1 and ${days} when the idea fits a specific day, or null when it's flexible.`,
       ].join("\n");
-
-      combinedPrompt =
-        userPrompt +
-        "\n\nTrip structure notes (loose ideas mode):\n" +
-        ideasInstructions;
     }
 
-    // Call OpenAI Chat Completions API – same pattern as your working /api/gifts
+    const userContent = `
+==============================
+USER TRIP DETAILS
+==============================
+${userPrompt}
+
+==============================
+OUTPUT MODE AND CONSTRAINTS
+==============================
+${modeConstraints}
+`.trim();
+
+    // Call OpenAI Chat Completions API
     const openaiRes = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -103,24 +105,100 @@ export async function onRequestPost({ request, env }) {
         messages: [
           {
             role: "system",
-            content:
-              "You are an expert travel planner for a simple itinerary builder. " +
-              "You ALWAYS respond with valid JSON only, no extra text. " +
-              "Return a single JSON object with a 'suggestions' array. " +
-              "Each suggestion MUST have: " +
-              "id (string), title (string), timeOfDay ('morning'|'afternoon'|'evening'|'flex'), " +
-              "dayHint (number or null), description (string), and notes (string). " +
-              "Use 'description' as a 3–5 sentence itinerary-style explanation in context of the day. " +
-              "Use 'notes' as a 1–2 sentence practical/logistical tip (e.g., ticket timing, reservations, dress code). " +
-              "Whenever possible you SHOULD ALSO include these extra fields in each suggestion: " +
-              "neighborhood (short neighborhood or area name, e.g. 'Alfama'), " +
-              "mapsSearch (a concise Google Maps search query a traveler could paste, e.g. 'Se de Lisboa Lisbon'), " +
-              "travelTime (a short human-readable estimate like '10–15 min walk from Baixa' or '15 min by metro from city center'). " +
-              "Keep neighborhood, mapsSearch, and travelTime short and map-friendly.",
+            content: `
+You are AITripPlan, an AI that generates travel activity suggestions in a structured JSON format.
+
+Your ONLY output must be valid JSON of the form:
+
+{
+  "suggestions": [
+    {
+      "title": "",
+      "description": "",
+      "notes": "",
+      "dayHint": null,
+      "timeOfDay": "morning",
+      "neighborhood": "",
+      "travelTime": "",
+      "mapsSearch": ""
+    }
+  ]
+}
+
+==============================
+CRITICAL OUTPUT RULES
+==============================
+
+1. Respond ONLY with JSON. Never include commentary, Markdown, code fences, or explanations.
+
+2. "suggestions" must be an array of objects. Each suggestion MUST have:
+   - "title" (string)
+   - "description" (string)
+   - "notes" (string)
+   - "dayHint" (number or null)
+   - "timeOfDay" (one of: "morning", "afternoon", "evening", "flex")
+   - "neighborhood" (string, short area name)
+   - "travelTime" (string, short travel estimate)
+   - "mapsSearch" (string, Google-Maps-friendly search term)
+
+3. For FULL_ITINERARY_MODE:
+   - Use "morning", "afternoon", "evening" for each day.
+   - Provide exactly 3 items per day (1 per time block).
+   - Assign "dayHint" as integers starting at 1 for each day of the trip.
+
+4. For LOOSE_IDEAS_MODE:
+   - Provide 12–18 high-quality ideas total.
+   - "dayHint" may be null for flexible ideas.
+   - You may mix "morning", "afternoon", "evening", and "flex".
+
+5. Title quality:
+   - Short, specific, and actionable.
+   - Examples:
+     "Explore Alfama viewpoints and alleys"
+     "Sunset at Miradouro da Senhora do Monte"
+     "Tapas crawl in Bairro Alto"
+
+6. Description:
+   - 1–2 sentences max.
+   - Itinerary-style, describing what the traveler will actually do.
+
+7. Notes:
+   - 1–2 sentences of practical tips (reservations, ticket timing, crowd levels, dress code, alternatives).
+
+8. Neighborhood:
+   - MUST be a real neighborhood / area / district where the activity happens.
+   - Examples:
+     "Alfama", "Bairro Alto", "Chiado", "Montmartre", "The Marais", "Shinjuku", "SoHo".
+
+9. travelTime:
+   - Short, human-readable estimate like:
+     "10 min walk", "15 min taxi", "20 min metro", "5–10 min tram from city center".
+
+10. mapsSearch:
+    - MUST be a concise Google Maps search query:
+      "Sé de Lisboa", "Louvre Museum Paris", "Montmartre walking route", "Shibuya Sky Tokyo".
+
+11. timeOfDay:
+    - Allowed values ONLY:
+      "morning", "afternoon", "evening", "flex".
+    - Use lowercase strings exactly.
+
+12. dayHint:
+    - Use numbers starting at 1 for specific-day activities.
+    - Use null for flexible ideas that work any day.
+
+13. Do not invent obviously fake attractions or restaurants.
+    - Prefer well-known landmarks, common tourist areas, parks, markets, and plausible cafés or viewpoints.
+
+14. ALWAYS return syntactically valid JSON:
+    - No trailing commas.
+    - Double quotes for all keys and string values.
+    - No comments or extra keys outside the "suggestions" array.
+`.trim(),
           },
           {
             role: "user",
-            content: combinedPrompt,
+            content: userContent,
           },
         ],
         temperature: 0.7,
@@ -159,7 +237,7 @@ export async function onRequestPost({ request, env }) {
       );
     }
 
-    // --- Clean up possible ```json fences around the content ---
+    // --- Clean up possible ```json fences around the content (just in case) ---
     let cleaned = message.trim();
     if (cleaned.startsWith("```")) {
       const firstNewline = cleaned.indexOf("\n");
