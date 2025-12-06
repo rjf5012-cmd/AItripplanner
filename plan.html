@@ -667,6 +667,24 @@
       margin-bottom: 2px;
     }
 
+    /* NEW: pricing line */
+    .price-line {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin: 0 0 4px;
+    }
+
+    .price-line strong {
+      font-weight: 600;
+      color: var(--text-soft);
+    }
+
+    .price-line a {
+      color: #1d4ed8;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
     .suggestion-notes {
       font-size: 11px;
       color: var(--text-muted);
@@ -1112,7 +1130,11 @@
           timeOfDay: (s.timeOfDay || "flex").toString().toLowerCase(),
           neighborhood: s.neighborhood || "",
           travelTime: s.travelTime || "",
-          mapsSearch: s.mapsSearch || ""
+          mapsSearch: s.mapsSearch || "",
+          approxCost: s.approxCost || "",
+          bookingLink: s.bookingLink || "",
+          closedDays: s.closedDays || "",
+          sellOut: s.sellOut || s.sellsOut || ""
         };
       });
     }
@@ -1264,6 +1286,56 @@
           desc.className = "suggestion-desc";
           desc.textContent = s.description;
           card.appendChild(desc);
+        }
+
+        // Price & booking line
+        const hasPricing =
+          (s.approxCost && String(s.approxCost).trim()) ||
+          (s.closedDays && String(s.closedDays).trim()) ||
+          (s.sellOut && String(s.sellOut).trim()) ||
+          (s.bookingLink && String(s.bookingLink).trim());
+
+        if (hasPricing) {
+          const price = document.createElement("p");
+          price.className = "price-line";
+
+          const segments = [];
+          if (s.approxCost && String(s.approxCost).trim()) {
+            segments.push("Approx " + String(s.approxCost).trim());
+          }
+          if (s.closedDays && String(s.closedDays).trim()) {
+            segments.push(String(s.closedDays).trim());
+          }
+          if (s.sellOut && String(s.sellOut).trim()) {
+            segments.push(String(s.sellOut).trim());
+          }
+
+          const linkIsValid =
+            s.bookingLink &&
+            typeof s.bookingLink === "string" &&
+            /^https?:\/\//i.test(s.bookingLink);
+
+          // Start text
+          if (segments.length) {
+            const strong = document.createElement("strong");
+            strong.textContent = segments[0];
+            price.appendChild(strong);
+            if (segments.length > 1) {
+              price.append(" · " + segments.slice(1).join(" · "));
+            }
+          }
+
+          if (linkIsValid) {
+            if (segments.length) price.append(" · ");
+            const a = document.createElement("a");
+            a.href = s.bookingLink;
+            a.target = "_blank";
+            a.rel = "noopener noreferrer";
+            a.textContent = "Booking link";
+            price.appendChild(a);
+          }
+
+          card.appendChild(price);
         }
 
         const notes = document.createElement("p");
