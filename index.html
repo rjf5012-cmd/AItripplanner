@@ -110,6 +110,7 @@
       gap: 18px;
       font-size: 14px;
       color: var(--text-muted);
+      flex-wrap: wrap;
     }
 
     nav.primary-nav a {
@@ -437,15 +438,72 @@
       text-decoration: underline;
     }
 
+    /* Mobile tweaks */
     @media (max-width: 640px) {
       header.site-header {
         padding-inline: 0;
       }
+
       .nav-inner {
-        padding-inline: 14px;
+        padding-inline: 10px;
       }
+
+      /* Slightly smaller logo + wordmark */
+      .logo-mark {
+        width: 30px;
+        height: 30px;
+      }
+      .logo-word {
+        font-size: 16px;
+      }
+
+      nav.primary-nav {
+        gap: 10px;
+        font-size: 13px;
+      }
+
+      /* Hide secondary links + big CTA on small screens */
+      nav.primary-nav a[href="/about.html"],
+      nav.primary-nav a[href="/faq.html"],
+      .nav-cta {
+        display: none;
+      }
+
+      /* Hero becomes auto-height and tighter */
+      .hero {
+        height: auto;
+        margin-bottom: 28px;
+      }
+
       .hero-content {
-        padding-top: 32px;
+        padding: 28px 16px 32px;
+        max-width: 100%;
+      }
+
+      .hero-title {
+        font-size: 26px;
+        margin-top: 14px;
+      }
+
+      .hero-sub {
+        font-size: 14px;
+        margin-bottom: 18px;
+      }
+
+      .hero-cta-row {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .hero-kpis {
+        margin-top: 18px;
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .hero-kpi-pill {
+        width: 100%;
+        justify-content: flex-start;
       }
     }
   </style>
