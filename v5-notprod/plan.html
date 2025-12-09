@@ -28,7 +28,7 @@
       --accent-green: #22c55e;
       --accent-pink: #ec4899;
       --border-subtle: rgba(209, 213, 219, 1);
-      --shadow-soft: 0 24px 60px rgba(15, 23, 42, 0.22);
+      --shadow-soft: 0 20px 60px rgba(15, 23, 42, 0.16);
       --radius-lg: 18px;
       --danger: #dc2626;
     }
@@ -67,7 +67,7 @@
     .nav-inner {
       max-width: 1120px;
       margin: 0 auto;
-      padding: 14px 18px;
+      padding: 12px 18px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -155,6 +155,7 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
+      white-space: nowrap;
     }
 
     .nav-cta span.icon {
@@ -167,7 +168,7 @@
     }
 
     main {
-      padding-top: 88px;
+      padding-top: 84px;
       padding-bottom: 40px;
     }
 
@@ -175,26 +176,20 @@
     .planner-shell {
       max-width: 1120px;
       margin: 0 auto;
-      padding: 0 18px 40px;
+      padding: 0 16px 40px;
     }
 
     .planner-panel {
       background:
-        radial-gradient(circle at 0% 0%, rgba(255,255,255,0.9), rgba(239,246,255,0.96) 50%, rgba(250,245,255,0.98));
-      border-radius: 28px;
-      border: 1px solid rgba(148, 163, 184, 0.40);
+        radial-gradient(circle at 0% 0%, rgba(255,255,255,0.96), rgba(239,246,255,0.98) 55%, rgba(250,245,255,0.99));
+      border-radius: 26px;
+      border: 1px solid rgba(148, 163, 184, 0.45);
       box-shadow: var(--shadow-soft);
-      padding: 20px 18px 22px;
-    }
-
-    @media (min-width: 900px) {
-      .planner-panel {
-        padding: 24px 24px 26px;
-      }
+      padding: 18px 14px 20px;
     }
 
     .planner-header {
-      margin-bottom: 20px;
+      margin-bottom: 18px;
     }
 
     .planner-eyebrow {
@@ -216,7 +211,7 @@
 
     .planner-title {
       margin: 8px 0 4px;
-      font-size: 28px;
+      font-size: 24px;
       font-weight: 800;
       letter-spacing: -0.04em;
     }
@@ -228,27 +223,21 @@
     }
 
     .planner-subtitle {
-      font-size: 14px;
+      font-size: 13px;
       color: var(--text-soft);
       max-width: 680px;
+      line-height: 1.55;
     }
 
     .planner-grid {
       margin-top: 14px;
       background: rgba(255, 255, 255, 0.96);
-      border-radius: 22px;
+      border-radius: 20px;
       border: 1px solid rgba(229, 231, 235, 0.9);
-      padding: 18px 14px;
+      padding: 14px 12px;
       display: grid;
-      gap: 16px;
+      gap: 14px;
       align-items: flex-start;
-    }
-
-    @media (min-width: 900px) {
-      .planner-grid {
-        padding: 18px 18px;
-        grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.25fr);
-      }
     }
 
     .planner-card {
@@ -256,7 +245,7 @@
       border-radius: 18px;
       border: 1px solid rgba(229, 231, 235, 1);
       box-shadow: 0 10px 26px rgba(15, 23, 42, 0.08);
-      padding: 18px 18px 16px;
+      padding: 16px 15px 14px;
     }
 
     .planner-card--primary {
@@ -268,8 +257,8 @@
       content: "";
       position: absolute;
       left: 0;
-      top: 12px;
-      bottom: 12px;
+      top: 10px;
+      bottom: 10px;
       width: 4px;
       border-radius: 999px;
       background: linear-gradient(180deg, #2563eb, #22c55e, #ec4899);
@@ -285,13 +274,13 @@
     }
 
     .planner-card-title {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 600;
       margin-bottom: 4px;
     }
 
     .planner-card-sub {
-      font-size: 13px;
+      font-size: 12px;
       color: var(--text-muted);
     }
 
@@ -310,7 +299,7 @@
     }
 
     .field-col {
-      flex: 1 1 140px;
+      flex: 1 1 150px;
       min-width: 0;
     }
 
@@ -379,6 +368,7 @@
       padding: 0;
       text-decoration: underline;
       text-underline-offset: 2px;
+      white-space: nowrap;
     }
 
     .actions {
@@ -426,6 +416,7 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
+      white-space: nowrap;
     }
 
     button.secondary:hover:not(:disabled) {
@@ -602,7 +593,7 @@
     .suggestion-card {
       border-radius: 12px;
       border: 1px solid rgba(209, 213, 219, 1);
-      padding: 10px 11px;
+      padding: 9px 10px;
       background: #ffffff;
     }
 
@@ -667,7 +658,7 @@
       margin-bottom: 2px;
     }
 
-    /* NEW: pricing line */
+    /* Price line */
     .price-line {
       font-size: 11px;
       color: var(--text-muted);
@@ -741,88 +732,76 @@
       text-decoration: underline;
     }
 
-    /* Mobile tweaks */
+    /* MOBILE TWEAKS */
     @media (max-width: 640px) {
       header.site-header {
         padding-inline: 0;
       }
-
       .nav-inner {
-        padding-inline: 10px;
+        padding-inline: 14px;
       }
-
-      .logo-mark {
-        width: 30px;
-        height: 30px;
+      .planner-panel {
+        padding: 14px 12px 18px;
+        border-radius: 22px;
       }
-
-      .logo-word {
-        font-size: 16px;
+      .planner-grid {
+        padding: 12px 10px;
       }
-
-      nav.primary-nav {
-        gap: 10px;
-        font-size: 13px;
+      .suggestions-list {
+        max-height: none;
       }
+    }
 
-      /* Hide secondary links + big CTA on small screens */
-      nav.primary-nav a[href="/about.html"],
-      nav.primary-nav a[href="/faq.html"],
-      .nav-cta {
-        display: none;
-      }
-
+    /* DESKTOP / LARGE SCREEN TWEAKS */
+    @media (min-width: 900px) {
       main {
-        padding-top: 78px;
+        padding-top: 96px;
       }
 
       .planner-shell {
-        padding: 0 12px 32px;
+        padding: 10px 24px 52px;
       }
 
       .planner-panel {
-        border-radius: 22px;
-        padding: 16px 14px 20px;
+        padding: 24px 26px 26px;
+        border-radius: 30px;
+        box-shadow: 0 26px 70px rgba(15, 23, 42, 0.18);
+      }
+
+      .planner-header {
+        margin-bottom: 22px;
       }
 
       .planner-title {
-        font-size: 22px;
+        font-size: 30px;
       }
 
       .planner-subtitle {
-        font-size: 13px;
+        font-size: 14px;
       }
 
       .planner-grid {
-        padding: 14px 10px;
-        gap: 14px;
-      }
-
-      .planner-card {
-        padding: 14px 12px 14px;
-      }
-
-      .actions {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .suggestions-toolbar {
-        flex-direction: column;
+        padding: 18px 18px;
+        grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.25fr);
+        gap: 18px;
         align-items: stretch;
       }
 
-      .suggestions-toolbar .secondary {
-        width: 100%;
-        justify-content: center;
-      }
-
-      .chip-tip {
-        align-items: flex-start;
+      .planner-card {
+        padding: 18px 18px 16px;
       }
 
       .suggestions-list {
-        max-height: none; /* let the page scroll instead of an inner scroll area */
+        max-height: 540px;
+      }
+    }
+
+    @media (min-width: 1200px) {
+      .planner-shell {
+        max-width: 1160px;
+      }
+      .planner-title {
+        font-size: 32px;
       }
     }
   </style>
@@ -983,7 +962,7 @@
                       <option value="family vacation with kids">Family vacation</option>
                       <option value="relaxing recharge trip">Relaxing / recharge</option>
                       <option value="food and wine focused trip">Food &amp; wine</option>
-                      <option value="adventure and outdoor activities focused trip">Adventure &amp; outdoors</option>
+                      <option value="adventure and outdoors focused trip">Adventure &amp; outdoors</option>
                       <option value="city break focused on sightseeing and museums">City break / first-time visitor</option>
                     </select>
                     <p class="helper">
