@@ -741,12 +741,88 @@
       text-decoration: underline;
     }
 
+    /* Mobile tweaks */
     @media (max-width: 640px) {
       header.site-header {
         padding-inline: 0;
       }
+
       .nav-inner {
-        padding-inline: 14px;
+        padding-inline: 10px;
+      }
+
+      .logo-mark {
+        width: 30px;
+        height: 30px;
+      }
+
+      .logo-word {
+        font-size: 16px;
+      }
+
+      nav.primary-nav {
+        gap: 10px;
+        font-size: 13px;
+      }
+
+      /* Hide secondary links + big CTA on small screens */
+      nav.primary-nav a[href="/about.html"],
+      nav.primary-nav a[href="/faq.html"],
+      .nav-cta {
+        display: none;
+      }
+
+      main {
+        padding-top: 78px;
+      }
+
+      .planner-shell {
+        padding: 0 12px 32px;
+      }
+
+      .planner-panel {
+        border-radius: 22px;
+        padding: 16px 14px 20px;
+      }
+
+      .planner-title {
+        font-size: 22px;
+      }
+
+      .planner-subtitle {
+        font-size: 13px;
+      }
+
+      .planner-grid {
+        padding: 14px 10px;
+        gap: 14px;
+      }
+
+      .planner-card {
+        padding: 14px 12px 14px;
+      }
+
+      .actions {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .suggestions-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .suggestions-toolbar .secondary {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .chip-tip {
+        align-items: flex-start;
+      }
+
+      .suggestions-list {
+        max-height: none; /* let the page scroll instead of an inner scroll area */
       }
     }
   </style>
@@ -907,7 +983,7 @@
                       <option value="family vacation with kids">Family vacation</option>
                       <option value="relaxing recharge trip">Relaxing / recharge</option>
                       <option value="food and wine focused trip">Food &amp; wine</option>
-                      <option value="adventure and outdoors focused trip">Adventure &amp; outdoors</option>
+                      <option value="adventure and outdoor activities focused trip">Adventure &amp; outdoors</option>
                       <option value="city break focused on sightseeing and museums">City break / first-time visitor</option>
                     </select>
                     <p class="helper">
@@ -1315,7 +1391,6 @@
             typeof s.bookingLink === "string" &&
             /^https?:\/\//i.test(s.bookingLink);
 
-          // Start text
           if (segments.length) {
             const strong = document.createElement("strong");
             strong.textContent = segments[0];
