@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="page-planner">
 <head>
   <meta charset="UTF-8" />
   <title>Plan a Trip | AITripPlan — AI Itinerary Builder</title>
@@ -11,661 +11,42 @@
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="canonical" href="https://aitripplan.com/plan.html" />
 
-  <!-- Font & Global Styles -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Font + Styles -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
   <link rel="stylesheet" href="/style.css" />
-
-  <!-- Page-specific planner styles -->
-  <style>
-    main {
-      padding-top: 84px;
-      padding-bottom: 40px;
-    }
-
-    .planner-shell {
-      max-width: 1160px;
-      margin: 0 auto;
-      padding: 0 18px 40px;
-    }
-
-    .planner-panel {
-      background:
-        radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.98), rgba(239, 246, 255, 0.98) 45%, rgba(248, 250, 252, 0.99)),
-        linear-gradient(135deg, rgba(37, 99, 235, 0.08), rgba(236, 72, 153, 0.04));
-      border-radius: 26px;
-      border: 1px solid rgba(148, 163, 184, 0.45);
-      box-shadow:
-        0 26px 60px rgba(15, 23, 42, 0.22),
-        0 0 0 1px rgba(255, 255, 255, 0.9) inset;
-      padding: 20px 16px 22px;
-      backdrop-filter: blur(18px);
-    }
-
-    @media (min-width: 900px) {
-      .planner-panel {
-        padding: 24px 22px 26px;
-      }
-    }
-
-    .planner-header {
-      margin-bottom: 18px;
-    }
-
-    .planner-eyebrow {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: var(--text-muted);
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .planner-eyebrow-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 999px;
-      background: linear-gradient(135deg, #2563eb, #22c55e, #ec4899);
-      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
-    }
-
-    .planner-title {
-      margin: 8px 0 4px;
-      font-size: 27px;
-      font-weight: 800;
-      letter-spacing: -0.04em;
-    }
-
-    .planner-title .accent {
-      background: linear-gradient(135deg, #2563eb, #22c55e);
-      -webkit-background-clip: text;
-      color: transparent;
-    }
-
-    .planner-subtitle {
-      font-size: 14px;
-      color: var(--text-soft);
-      max-width: 700px;
-    }
-
-    @media (max-width: 640px) {
-      .planner-title {
-        font-size: 22px;
-      }
-      .planner-subtitle {
-        font-size: 13px;
-      }
-    }
-
-    .planner-grid {
-      margin-top: 14px;
-      background: rgba(255, 255, 255, 0.96);
-      border-radius: 22px;
-      border: 1px solid rgba(229, 231, 235, 0.95);
-      padding: 16px 12px 70px; /* extra bottom space for sticky bar */
-      display: grid;
-      gap: 16px;
-      align-items: flex-start;
-    }
-
-    @media (min-width: 900px) {
-      .planner-grid {
-        padding: 18px 18px 18px;
-        grid-template-columns: minmax(0, 1.02fr) minmax(0, 1.25fr);
-      }
-    }
-
-    .planner-card {
-      background:
-        linear-gradient(145deg, rgba(255,255,255,0.96), rgba(248,250,252,0.98));
-      border-radius: 18px;
-      border: 1px solid rgba(229, 231, 235, 1);
-      box-shadow:
-        0 12px 28px rgba(15, 23, 42, 0.08),
-        0 0 0 1px rgba(255, 255, 255, 0.9) inset;
-      padding: 18px 16px 16px;
-    }
-
-    .planner-card--primary {
-      position: relative;
-      overflow: hidden;
-    }
-
-    .planner-card--primary::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 12px;
-      bottom: 12px;
-      width: 4px;
-      border-radius: 999px;
-      background: linear-gradient(180deg, #2563eb, #22c55e, #ec4899);
-    }
-
-    .planner-card--primary-inner {
-      position: relative;
-      z-index: 1;
-    }
-
-    .planner-card-header {
-      margin-bottom: 10px;
-    }
-
-    .planner-card-title {
-      font-size: 16px;
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
-
-    .planner-card-sub {
-      font-size: 13px;
-      color: var(--text-muted);
-    }
-
-    /* Form layout */
-    form#tripForm {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-top: 6px;
-    }
-
-    .field-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .field-col {
-      flex: 1 1 145px;
-      min-width: 0;
-    }
-
-    label {
-      display: block;
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--text-soft);
-      margin-bottom: 3px;
-    }
-
-    input,
-    textarea,
-    select {
-      width: 100%;
-      border-radius: 11px;
-      border: 1px solid var(--border-subtle);
-      padding: 8px 9px;
-      font-size: 13px;
-      font-family: inherit;
-      color: var(--text-main);
-      background-color: #ffffff;
-      outline: none;
-      transition: border-color 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease;
-    }
-
-    input:focus,
-    textarea:focus,
-    select:focus {
-      border-color: #2563eb;
-      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.18);
-      background-color: #f9fafb;
-    }
-
-    textarea {
-      min-height: 80px;
-      resize: vertical;
-    }
-
-    .helper {
-      font-size: 11px;
-      color: var(--text-muted);
-      margin-top: 3px;
-    }
-
-    .sample-strip {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 11px;
-      color: var(--text-muted);
-      padding: 6px 10px;
-      border-radius: 999px;
-      background: var(--bg-soft);
-      border: 1px solid rgba(209, 213, 219, 0.85);
-      margin: 4px 0 4px;
-    }
-
-    .sample-strip button {
-      border: none;
-      background: transparent;
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--accent);
-      cursor: pointer;
-      padding: 0;
-      text-decoration: underline;
-      text-underline-offset: 2px;
-    }
-
-    .actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      align-items: center;
-      margin-top: 4px;
-    }
-
-    .status-text {
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-
-    .status-text strong {
-      color: var(--accent);
-    }
-
-    .status-error {
-      color: #dc2626;
-    }
-
-    /* Spinner */
-    .spinner-dot {
-      width: 11px;
-      height: 11px;
-      border-radius: 999px;
-      border: 2px solid rgba(15, 23, 42, 0.2);
-      border-top-color: #f9fafb;
-      animation: spin 0.7s linear infinite;
-    }
-
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    /* Checklist pills */
-    .checklist-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px 10px;
-      margin-top: 4px;
-    }
-
-    .check-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 12px;
-      color: var(--text-soft);
-      padding: 4px 8px;
-      border-radius: 999px;
-      border: 1px solid var(--border-subtle);
-      background: #f9fafb;
-      cursor: pointer;
-      user-select: none;
-    }
-
-    .check-pill input[type="checkbox"] {
-      width: 14px;
-      height: 14px;
-      cursor: pointer;
-    }
-
-    .checkbox-inline {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 12px;
-      color: var(--text-soft);
-      cursor: pointer;
-      user-select: none;
-    }
-
-    .checkbox-inline input[type="checkbox"] {
-      width: 14px;
-      height: 14px;
-      cursor: pointer;
-    }
-
-    /* Suggestions area */
-    .suggestions-header-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 10px;
-    }
-
-    .suggestions-title {
-      font-size: 15px;
-      font-weight: 600;
-    }
-
-    .suggestions-meta {
-      font-size: 11px;
-      color: var(--text-muted);
-      text-align: right;
-      max-width: 220px;
-    }
-
-    .suggestions-toolbar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 8px;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .chip-tip {
-      font-size: 11px;
-      color: var(--text-muted);
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .chip-tip .icon {
-      font-size: 12px;
-    }
-
-    .suggestions-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      max-height: 430px;
-      overflow-y: auto;
-      padding-right: 2px;
-    }
-
-    @media (max-width: 768px) {
-      .suggestions-list {
-        max-height: none;
-        max-height: 70vh;
-      }
-      .chip-tip {
-        font-size: 10px;
-      }
-    }
-
-    .day-group {
-      margin-bottom: 18px;
-      padding-bottom: 10px;
-      border-bottom: 1px dashed rgba(209, 213, 219, 1);
-    }
-
-    .day-group:last-of-type {
-      border-bottom: none;
-      margin-bottom: 0;
-      padding-bottom: 0;
-    }
-
-    .day-heading-row {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      gap: 8px;
-      margin-bottom: 4px;
-    }
-
-    .day-heading {
-      font-size: 14px;
-      font-weight: 600;
-    }
-
-    .day-sub {
-      font-size: 11px;
-      color: var(--text-muted);
-      margin-bottom: 4px;
-    }
-
-    .day-suggestions {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .suggestion-card {
-      border-radius: 12px;
-      border: 1px solid rgba(209, 213, 219, 1);
-      padding: 10px 11px;
-      background: #ffffff;
-    }
-
-    .suggestion-top-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      margin-bottom: 4px;
-    }
-
-    .suggestion-title {
-      font-size: 14px;
-      font-weight: 600;
-    }
-
-    /* Smaller, tighter chips */
-    .chip-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 4px;
-      font-size: 10px;
-      align-items: center;
-      justify-content: flex-end;
-    }
-
-    .chip {
-      border-radius: 999px;
-      padding: 1px 6px;
-      border: 1px solid rgba(209, 213, 219, 1);
-      background: #f9fafb;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.09em;
-      display: inline-flex;
-      align-items: center;
-      gap: 3px;
-      cursor: pointer;
-      font-size: 10px;
-      line-height: 1.3;
-    }
-
-    .chip.accent {
-      border-color: rgba(37, 99, 235, 0.7);
-      color: #1d4ed8;
-      background: #eff6ff;
-    }
-
-    .chip .caret {
-      font-size: 8px;
-      opacity: 0.75;
-    }
-
-    .suggestion-meta-line {
-      font-size: 11px;
-      color: var(--text-muted);
-      margin: 0 0 4px;
-    }
-
-    .suggestion-desc {
-      font-size: 12px;
-      color: var(--text-soft);
-      margin-bottom: 2px;
-    }
-
-    /* Price / booking line */
-    .price-line {
-      font-size: 11px;
-      color: var(--text-muted);
-      margin: 0 0 4px;
-    }
-
-    .price-line strong {
-      font-weight: 600;
-      color: var(--text-soft);
-    }
-
-    .price-line a {
-      color: #1d4ed8;
-      text-decoration: underline;
-      text-underline-offset: 2px;
-    }
-
-    .suggestion-notes {
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-
-    .empty-state {
-      border-radius: 12px;
-      border: 1px dashed rgba(209, 213, 219, 1);
-      padding: 12px;
-      font-size: 12px;
-      color: var(--text-muted);
-      background: #f9fafb;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .empty-illustration {
-      flex-shrink: 0;
-      width: 42px;
-      height: 42px;
-      border-radius: 16px;
-      background: radial-gradient(circle at 30% 20%, #e5e7eb, #f9fafb);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 1px solid rgba(209, 213, 219, 0.8);
-    }
-
-    .toast-tip {
-      margin-top: 6px;
-      font-size: 11px;
-      color: var(--text-muted);
-      padding: 6px 8px;
-      border-radius: 10px;
-      background: #eff6ff;
-      border: 1px solid rgba(191, 219, 254, 1);
-      display: none;
-    }
-
-    /* Secondary ghost button (export) */
-    .secondary-ghost {
-      border-radius: 999px;
-      border: 1px solid rgba(209, 213, 219, 1);
-      background: #f9fafb;
-      color: var(--text-soft);
-      font-size: 11px;
-      padding: 7px 11px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .secondary-ghost:hover:not(:disabled) {
-      background: #eef2ff;
-    }
-
-    .secondary-ghost:disabled {
-      opacity: 0.5;
-      cursor: default;
-    }
-
-    /* Sticky bottom mobile action bar */
-    .mobile-action-bar {
-      position: fixed;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      z-index: 45;
-      padding: 10px 14px calc(env(safe-area-inset-bottom, 0px) + 8px);
-      background: linear-gradient(to top, rgba(15, 23, 42, 0.90), rgba(15, 23, 42, 0.70));
-      backdrop-filter: blur(10px);
-      border-top: 1px solid rgba(148, 163, 184, 0.5);
-      display: none;
-    }
-
-    .mobile-action-inner {
-      max-width: 1160px;
-      margin: 0 auto;
-      display: flex;
-      gap: 8px;
-    }
-
-    .mobile-action-inner button {
-      flex: 1;
-      justify-content: center;
-      font-size: 12px;
-    }
-
-    .mobile-export-btn {
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.9);
-      background: rgba(15, 23, 42, 0.85);
-      color: #e5e7eb;
-      padding: 9px 12px;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      cursor: pointer;
-      font-weight: 500;
-    }
-
-    .mobile-export-btn:disabled {
-      opacity: 0.55;
-      cursor: default;
-    }
-
-    @media (max-width: 900px) {
-      .mobile-action-bar {
-        display: block;
-      }
-      /* Give footer some room so it doesn't hide behind the bar */
-      footer.site-footer {
-        padding-bottom: 60px;
-      }
-    }
-
-    @media (max-width: 640px) {
-      main {
-        padding-top: 78px;
-      }
-      .planner-panel {
-        padding-inline: 14px;
-        border-radius: 22px;
-      }
-    }
-  </style>
 </head>
 <body>
   <!-- Header -->
   <header class="site-header">
     <div class="nav-inner">
       <div class="nav-left">
-        <!-- Refined compass logo -->
         <div class="logo-mark" aria-hidden="true">
-          <svg width="34" height="34" viewBox="0 0 34 34" xmlns="http://www.w3.org/2000/svg">
+          <svg
+            width="34"
+            height="34"
+            viewBox="0 0 34 34"
+            xmlns="http://www.w3.org/2000/svg"
+          >
             <defs>
               <linearGradient id="logoGrad" x1="4" y1="4" x2="30" y2="30">
-                <stop offset="0%" stop-color="#2563EB"/>
-                <stop offset="50%" stop-color="#22C55E"/>
-                <stop offset="100%" stop-color="#EC4899"/>
+                <stop offset="0%" stop-color="#4F46E5" />
+                <stop offset="45%" stop-color="#22C55E" />
+                <stop offset="100%" stop-color="#EC4899" />
               </linearGradient>
             </defs>
-            <circle cx="17" cy="17" r="17" fill="#F9FAFB"/>
-            <circle cx="17" cy="17" r="14" fill="url(#logoGrad)"/>
-            <circle cx="17" cy="17" r="11" fill="rgba(15,23,42,0.08)"/>
-            <path d="M17 7.8 L21 17 L17 26.2 L13 17 Z" fill="#FFFFFF" opacity="0.97"/>
-            <circle cx="17" cy="17" r="3.1" fill="#FFFFFF"/>
+            <circle cx="17" cy="17" r="17" fill="#020617" />
+            <circle cx="17" cy="17" r="14" fill="url(#logoGrad)" />
+            <path
+              d="M17 7.5L21 17L17 26.5L13 17Z"
+              fill="white"
+              opacity="0.98"
+            />
+            <circle cx="17" cy="17" r="2.8" fill="#020617" />
           </svg>
         </div>
         <div class="logo-word">
@@ -677,7 +58,11 @@
         <a href="/plan.html">Plan a Trip</a>
         <a href="/about.html">About</a>
         <a href="/faq.html">FAQ</a>
-        <button class="nav-cta" type="button" onclick="window.location.href='/plan.html'">
+        <button
+          class="nav-cta"
+          type="button"
+          onclick="window.location.href='/plan.html'"
+        >
           <span class="icon">🧭</span>
           <span>Launch Planner</span>
         </button>
@@ -897,7 +282,7 @@
                 </div>
 
                 <div class="actions">
-                  <button type="submit" class="nav-cta" id="generateBtn">
+                  <button type="submit" class="primary" id="generateBtn">
                     <span class="spinner-dot" id="spinner" style="display:none;"></span>
                     <span id="btnText">Generate trip ideas</span>
                   </button>
@@ -930,29 +315,23 @@
             </div>
 
             <div class="suggestions-toolbar">
-              <button type="button" class="secondary-ghost" id="exportBtn" disabled>
+              <button type="button" class="secondary" id="exportBtn" disabled>
                 <span>🖨️</span>
                 <span>Open printable view</span>
               </button>
               <div class="chip-tip">
                 <span class="icon">💡</span>
-                <span>Click the Day or time chips on a card to adjust where it falls.</span>
+                <span>Tap the Day or time chips on a card to adjust where it falls.</span>
               </div>
             </div>
 
             <div id="suggestionsContainer" class="suggestions-list">
               <div class="empty-state" id="emptyState">
-                <div class="empty-illustration">
-                  <svg width="26" height="26" viewBox="0 0 26 26" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="4" y="7" width="18" height="12" rx="4" fill="#ffffff" stroke="#e5e7eb" stroke-width="1.1"/>
-                    <path d="M7 15L10 12.2L12.8 14.6L15.2 11.8L19 15" stroke="#9ca3af" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>
-                    <circle cx="10" cy="11" r="1" fill="#9ca3af"/>
-                  </svg>
-                </div>
-                <div>
-                  <strong>Nothing here yet.</strong><br />
-                  Enter a destination and tap <em>Generate trip ideas</em> to let the AI sketch your itinerary.
-                </div>
+                <span>🧭</span>
+                <span>
+                  <strong>Nothing here yet.</strong>
+                  Enter a destination and click <em>Generate trip ideas</em> to see AI suggestions you can turn into an itinerary.
+                </span>
               </div>
             </div>
 
@@ -971,16 +350,23 @@
   </main>
 
   <!-- Sticky mobile action bar -->
-  <div class="mobile-action-bar" aria-label="Planner actions">
-    <div class="mobile-action-inner">
-      <button type="button" class="nav-cta" id="mobileGenerateBtn">
-        <span>✨ Generate</span>
-      </button>
-      <button type="button" class="mobile-export-btn" id="mobileExportBtn" disabled>
-        <span>🖨️</span>
-        <span>Export</span>
-      </button>
-    </div>
+  <div class="mobile-action-bar">
+    <button
+      type="button"
+      class="mobile-primary"
+      onclick="document.getElementById('tripForm').requestSubmit();"
+    >
+      <span>✨ Generate</span>
+    </button>
+    <button
+      type="button"
+      class="mobile-secondary"
+      id="mobileExportBtn"
+      onclick="document.getElementById('exportBtn').click();"
+      disabled
+    >
+      <span>🖨️ Export</span>
+    </button>
   </div>
 
   <footer class="site-footer">
@@ -1004,11 +390,9 @@
     const emptyState = document.getElementById("emptyState");
     const metaSummary = document.getElementById("metaSummary");
     const exportBtn = document.getElementById("exportBtn");
+    const mobileExportBtn = document.getElementById("mobileExportBtn");
     const firstTimeTip = document.getElementById("firstTimeTip");
     const sampleTripBtn = document.getElementById("sampleTripBtn");
-
-    const mobileGenerateBtn = document.getElementById("mobileGenerateBtn");
-    const mobileExportBtn = document.getElementById("mobileExportBtn");
 
     let currentSuggestions = [];
     let currentMeta = null;
@@ -1017,18 +401,12 @@
     function setLoading(isLoading, msg) {
       if (isLoading) {
         generateBtn.disabled = true;
-        if (mobileGenerateBtn) mobileGenerateBtn.disabled = true;
         spinner.style.display = "inline-block";
         btnText.textContent = "Generating...";
-        if (mobileGenerateBtn) mobileGenerateBtn.textContent = "Generating…";
         statusText.innerHTML =
           msg || "<strong>Thinking...</strong> Asking AI for trip ideas.";
       } else {
         generateBtn.disabled = false;
-        if (mobileGenerateBtn) {
-          mobileGenerateBtn.disabled = false;
-          mobileGenerateBtn.textContent = "✨ Generate";
-        }
         spinner.style.display = "none";
         btnText.textContent = "Generate trip ideas";
         if (!msg) {
@@ -1404,16 +782,24 @@
         document.getElementById("travelers").value = "Couple";
         document.getElementById("budget").value = "comfortable with some splurges";
         document.getElementById("tripType").value = "city break focused on sightseeing and museums";
-        document.getElementById("vibe").value = "Slow mornings, lots of views and neighborhoods, a couple of big sights, and great food.";
+        document.getElementById("vibe").value =
+          "Slow mornings, lots of views and neighborhoods, a couple of big sights, and great food.";
         document.getElementById("prefs").value =
           "Prefer walkable areas like Baixa, Chiado, and Alfama. One sunset viewpoint. One special dinner with a view. Avoid very late nights.";
 
         document
           .querySelectorAll('input[name="mustInclude"]')
           .forEach((el) => (el.checked = false));
-        const defaults = ["best restaurants", "hidden gems and local spots", "walkable areas and neighborhoods", "nature and outdoor activities"];
+        const defaults = [
+          "best restaurants",
+          "hidden gems and local spots",
+          "walkable areas and neighborhoods",
+          "nature and outdoor activities",
+        ];
         defaults.forEach((val) => {
-          const el = document.querySelector('input[name="mustInclude"][value="' + val + '"]');
+          const el = document.querySelector(
+            'input[name="mustInclude"][value="' + val + '"]'
+          );
           if (el) el.checked = true;
         });
         document.getElementById("fullItinerary").checked = true;
@@ -1432,7 +818,7 @@
           version: "v1",
           generatedAt: new Date().toISOString(),
           meta: currentMeta || {},
-          suggestions: currentSuggestions
+          suggestions: currentSuggestions,
         };
 
         try {
@@ -1445,23 +831,6 @@
         }
 
         window.location.href = "/print.html";
-      });
-    }
-
-    /* Mobile action bar buttons trigger same actions */
-    if (mobileGenerateBtn) {
-      mobileGenerateBtn.addEventListener("click", () => {
-        if (form && !generateBtn.disabled) {
-          form.requestSubmit();
-        }
-      });
-    }
-
-    if (mobileExportBtn) {
-      mobileExportBtn.addEventListener("click", () => {
-        if (!mobileExportBtn.disabled) {
-          exportBtn.click();
-        }
       });
     }
 
@@ -1500,9 +869,7 @@
       if (vibe) parts.push("Trip vibe / pacing: " + vibe + ".");
       if (prefs) parts.push("Preferences: " + prefs + ".");
       if (mustInclude.length) {
-        parts.push(
-          "Must include elements: " + mustInclude.join(", ") + "."
-        );
+        parts.push("Must include elements: " + mustInclude.join(", ") + ".");
       }
 
       if (fullItinerary) {
@@ -1533,7 +900,7 @@
         vibe,
         prefs,
         mustInclude,
-        fullItinerary
+        fullItinerary,
       };
 
       const finalPrompt =
@@ -1583,7 +950,10 @@
           : [];
 
         renderSuggestions(suggestions);
-        setLoading(false, "<strong>Done.</strong> Tweak days and time slots, then open the printable view.");
+        setLoading(
+          false,
+          "<strong>Done.</strong> Tweak days and time slots, then open the printable view."
+        );
       } catch (err) {
         console.error("Network error calling /api/generate-itinerary:", err);
         setLoading(
