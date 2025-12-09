@@ -1,0 +1,449 @@
+/* -----------------------------------------------------------
+   AITripPlan — Premium Global Stylesheet
+   Applies across index.html, plan.html, and print.html
+   Mobile-first SaaS design with unified spacing + typography
+----------------------------------------------------------- */
+
+:root {
+  --brand-blue: #2563eb;
+  --brand-green: #22c55e;
+  --brand-pink: #ec4899;
+
+  --text-main: #0f172a;
+  --text-soft: #475569;
+  --text-muted: #64748b;
+
+  --bg-page: #f6f7f9;
+  --bg-surface: #ffffff;
+  --bg-subtle: #f8fafc;
+
+  --border-subtle: #e2e8f0;
+  --border-strong: #cbd5e1;
+
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+
+  --shadow-soft: 0 8px 26px rgba(15, 23, 42, 0.08);
+  --shadow-card: 0 18px 40px rgba(15, 23, 42, 0.10);
+
+  --gradient-brand: linear-gradient(135deg, #2563eb, #22c55e, #ec4899);
+
+  --transition-fast: 150ms ease;
+  --transition-med: 220ms cubic-bezier(.4,0,.2,1);
+}
+
+/* -----------------------------------------------------------
+   Global Base
+----------------------------------------------------------- */
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: var(--bg-page);
+  color: var(--text-main);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  transition: opacity var(--transition-fast);
+}
+
+a:hover {
+  opacity: 0.8;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* -----------------------------------------------------------
+   Premium Header
+----------------------------------------------------------- */
+
+.site-header {
+  position: fixed;
+  top: 0;
+  inset-inline: 0;
+  z-index: 50;
+  background: rgba(255,255,255,0.88);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(226,232,240,0.9);
+}
+
+.nav-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo-mark {
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  overflow: hidden;
+  box-shadow: 0 6px 16px rgba(15,23,42,0.20);
+}
+
+.logo-word {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.logo-word .accent {
+  background: var(--gradient-brand);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.primary-nav {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.primary-nav a {
+  position: relative;
+  padding-bottom: 3px;
+}
+
+.primary-nav a::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 2px;
+  background: var(--gradient-brand);
+  border-radius: 999px;
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform var(--transition-fast);
+}
+
+.primary-nav a:hover::after,
+.primary-nav a.active::after {
+  transform: scaleX(1);
+}
+
+.nav-cta {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 999px;
+  background: var(--gradient-brand);
+  color: #fff;
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  letter-spacing: .05em;
+  box-shadow: 0 10px 24px rgba(37,99,235,0.30);
+  transition: var(--transition-med);
+}
+
+.nav-cta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 16px 30px rgba(37,99,235,0.40);
+}
+
+/* -----------------------------------------------------------
+   Page Containers
+----------------------------------------------------------- */
+
+main {
+  padding-top: 90px;
+}
+
+.section {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.section-header h2 {
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.section-header p {
+  font-size: 15px;
+  color: var(--text-muted);
+}
+
+/* -----------------------------------------------------------
+   Cards + Surfaces
+----------------------------------------------------------- */
+
+.card,
+.planner-card,
+.feature-card,
+.step-card,
+.faq-item {
+  background: var(--bg-surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-soft);
+  padding: 20px;
+}
+
+/* -----------------------------------------------------------
+   Buttons
+----------------------------------------------------------- */
+
+.primary {
+  background: var(--gradient-brand);
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: none;
+  font-weight: 600;
+  font-size: 14px;
+  box-shadow: 0 12px 26px rgba(37,99,235,0.30);
+  transition: var(--transition-med);
+}
+
+.primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 16px 36px rgba(37,99,235,0.40);
+}
+
+.secondary {
+  background: #f8fafc;
+  border: 1px solid var(--border-subtle);
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  color: var(--text-soft);
+  transition: var(--transition-fast);
+}
+
+.secondary:hover {
+  background: #eef2ff;
+}
+
+/* -----------------------------------------------------------
+   Chips (Premium)
+----------------------------------------------------------- */
+
+.chip {
+  border-radius: 999px;
+  padding: 3px 8px;
+  background: #f1f5f9;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.chip.accent {
+  background: #eef6ff;
+  border-color: #bfdbfe;
+  color: var(--brand-blue);
+}
+
+.chip:hover {
+  background: #e2e8f0;
+}
+
+.chip .caret {
+  font-size: 8px;
+  opacity: 0.7;
+}
+
+/* -----------------------------------------------------------
+   Suggestion Cards
+----------------------------------------------------------- */
+
+.suggestion-card {
+  background: #fff;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  padding: 14px 16px;
+  box-shadow: var(--shadow-soft);
+  transition: var(--transition-med);
+}
+
+.suggestion-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card);
+}
+
+.suggestion-title {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.suggestion-meta-line,
+.suggestion-notes,
+.price-line {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.suggestion-desc {
+  font-size: 13px;
+  color: var(--text-soft);
+  margin-bottom: 6px;
+}
+
+/* -----------------------------------------------------------
+   Planner Panel
+----------------------------------------------------------- */
+
+.planner-panel {
+  background: var(--bg-subtle);
+  border-radius: 28px;
+  border: 1px solid rgba(148,163,184,0.30);
+  box-shadow: var(--shadow-card);
+  padding: 24px;
+}
+
+.planner-title {
+  font-size: 30px;
+  font-weight: 800;
+}
+
+.planner-title .accent {
+  background: var(--gradient-brand);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.planner-grid {
+  display: grid;
+  gap: 20px;
+}
+
+@media (min-width: 900px) {
+  .planner-grid {
+    grid-template-columns: 1fr 1.2fr;
+  }
+}
+
+/* -----------------------------------------------------------
+   Forms
+----------------------------------------------------------- */
+
+label {
+  font-size: 13px;
+  color: var(--text-soft);
+  margin-bottom: 4px;
+  display: block;
+}
+
+input, textarea, select {
+  width: 100%;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+  padding: 10px 12px;
+  font-size: 14px;
+  background: #fff;
+  transition: var(--transition-fast);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--brand-blue);
+  box-shadow: 0 0 0 2px rgba(37,99,235,0.18);
+}
+
+.helper {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* -----------------------------------------------------------
+   Mobile Improvements
+----------------------------------------------------------- */
+
+@media (max-width: 640px) {
+  .nav-inner {
+    padding-inline: 14px;
+  }
+
+  .primary-nav {
+    gap: 14px;
+    font-size: 13px;
+  }
+
+  .suggestion-card {
+    padding: 12px;
+  }
+
+  .chip {
+    padding: 3px 6px;
+    font-size: 10px;
+  }
+
+  .planner-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* -----------------------------------------------------------
+   Footer
+----------------------------------------------------------- */
+
+.site-footer {
+  padding: 24px 20px;
+  border-top: 1px solid var(--border-subtle);
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.footer-inner {
+  max-width: 1180px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* -----------------------------------------------------------
+   Print Styles
+----------------------------------------------------------- */
+
+@media print {
+  header.site-header,
+  .nav-cta,
+  button,
+  .footer-inner {
+    display: none !important;
+  }
+
+  body {
+    background: #fff;
+  }
+
+  .suggestion-card {
+    box-shadow: none;
+    border: 1px solid #ccc;
+  }
+}
