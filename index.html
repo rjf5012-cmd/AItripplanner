@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="page-home">
 <head>
   <meta charset="UTF-8" />
   <title>AITripPlan — AI Trip Itinerary Generator</title>
@@ -14,555 +14,50 @@
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
   <meta property="og:title" content="AITripPlan — AI Trip Itinerary Generator" />
-  <meta property="og:description" content="Generate personalized, exportable day-by-day trip itineraries in seconds with AI." />
+  <meta
+    property="og:description"
+    content="Generate personalized, exportable day-by-day trip itineraries in seconds with AI."
+  />
   <meta property="og:url" content="https://aitripplan.com/" />
   <meta property="og:image" content="https://aitripplan.com/og-image.png" />
 
-  <!-- Font & Global Styles -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Font + Styles -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
   <link rel="stylesheet" href="/style.css" />
-
-  <!-- Home page specific styles -->
-  <style>
-    main {
-      padding-top: 84px;
-      padding-bottom: 40px;
-    }
-
-    /* HERO */
-    .hero {
-      position: relative;
-      max-width: 1160px;
-      margin: 0 auto 40px;
-      padding: 0 18px;
-    }
-
-    .hero-shell {
-      position: relative;
-      border-radius: 28px;
-      overflow: hidden;
-      background:
-        radial-gradient(circle at 0% 0%, rgba(59,130,246,0.18), transparent 55%),
-        radial-gradient(circle at 100% 0%, rgba(236,72,153,0.18), transparent 55%),
-        linear-gradient(145deg, #0b1220, #020617);
-      box-shadow:
-        0 30px 80px rgba(15, 23, 42, 0.60),
-        0 0 0 1px rgba(148, 163, 184, 0.6);
-      color: #f9fafb;
-    }
-
-    .hero-inner {
-      position: relative;
-      z-index: 1;
-      display: grid;
-      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
-      gap: 20px;
-      padding: 26px 22px 22px;
-    }
-
-    .hero-left {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 4px 11px;
-      border-radius: 999px;
-      border: 1px solid rgba(191, 219, 254, 0.9);
-      background: rgba(15, 23, 42, 0.55);
-      font-size: 11px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-    }
-
-    .hero-title {
-      font-size: clamp(26px, 3.4vw, 34px);
-      font-weight: 800;
-      letter-spacing: -0.04em;
-      line-height: 1.1;
-      margin: 4px 0 2px;
-    }
-
-    .hero-title span.accent {
-      background: linear-gradient(135deg, #bfdbfe, #f9fafb);
-      -webkit-background-clip: text;
-      color: transparent;
-    }
-
-    .hero-sub {
-      font-size: 14px;
-      max-width: 520px;
-      line-height: 1.6;
-      color: #e5e7eb;
-      opacity: 0.95;
-    }
-
-    .hero-cta-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      align-items: center;
-      margin-top: 4px;
-    }
-
-    .hero-secondary {
-      font-size: 12px;
-      color: #e5e7eb;
-      opacity: 0.9;
-    }
-
-    .hero-kpis {
-      margin-top: 10px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      font-size: 11px;
-      color: #e5e7eb;
-      opacity: 0.95;
-    }
-
-    .hero-kpi-pill {
-      padding: 6px 11px;
-      border-radius: 999px;
-      background: rgba(15, 23, 42, 0.65);
-      border: 1px solid rgba(148, 163, 184, 0.85);
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-    }
-
-    .hero-kpi-pill strong {
-      font-weight: 600;
-    }
-
-    /* Right side hero "app preview" card */
-    .hero-right {
-      display: flex;
-      align-items: stretch;
-    }
-
-    .hero-preview-card {
-      margin-left: auto;
-      width: 100%;
-      max-width: 360px;
-      border-radius: 22px;
-      padding: 14px 14px 12px;
-      background:
-        radial-gradient(circle at 0% 0%, rgba(59,130,246,0.18), transparent 60%),
-        linear-gradient(155deg, rgba(15,23,42,0.94), rgba(15,23,42,0.85));
-      border: 1px solid rgba(148, 163, 184, 0.7);
-      box-shadow:
-        0 24px 60px rgba(15, 23, 42, 0.8),
-        0 0 0 1px rgba(15, 23, 42, 0.9) inset;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .preview-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 11px;
-      color: #e5e7eb;
-      margin-bottom: 4px;
-    }
-
-    .preview-pill {
-      border-radius: 999px;
-      padding: 2px 8px;
-      background: rgba(15,23,42,0.9);
-      border: 1px solid rgba(148,163,184,0.7);
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .preview-pill-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 999px;
-      background: linear-gradient(135deg,#22c55e,#a3e635);
-    }
-
-    .preview-body {
-      border-radius: 14px;
-      background: rgba(15,23,42,0.85);
-      border: 1px solid rgba(55,65,81,0.9);
-      padding: 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .preview-row-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .preview-destination {
-      font-size: 12px;
-      font-weight: 600;
-    }
-
-    .preview-chip {
-      border-radius: 999px;
-      padding: 2px 8px;
-      font-size: 10px;
-      background: rgba(15,23,42,0.95);
-      border: 1px solid rgba(148,163,184,0.8);
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      text-transform: uppercase;
-      letter-spacing: 0.09em;
-    }
-
-    .preview-list {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      margin-top: 4px;
-    }
-
-    .preview-item {
-      border-radius: 10px;
-      padding: 6px 8px;
-      background: rgba(15,23,42,0.9);
-      border: 1px solid rgba(55,65,81,1);
-      font-size: 11px;
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .preview-item-top {
-      display: flex;
-      justify-content: space-between;
-      gap: 6px;
-    }
-
-    .preview-item-title {
-      font-weight: 500;
-    }
-
-    .preview-item-meta {
-      font-size: 10px;
-      color: #9ca3af;
-      text-align: right;
-    }
-
-    .preview-price-line {
-      font-size: 10px;
-      color: #9ca3af;
-    }
-
-    .preview-price-line strong {
-      color: #e5e7eb;
-    }
-
-    .preview-footer {
-      margin-top: 6px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 10px;
-      color: #9ca3af;
-    }
-
-    .preview-footer-cta {
-      border-radius: 999px;
-      padding: 4px 8px;
-      background: #f9fafb;
-      color: #0f172a;
-      font-size: 10px;
-      font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .preview-footer-cta span.icon {
-      font-size: 12px;
-    }
-
-    /* Background decorative lines */
-    .hero-shell::before,
-    .hero-shell::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-    }
-
-    .hero-shell::before {
-      background:
-        radial-gradient(circle at 15% 20%, rgba(96,165,250,0.24), transparent 55%),
-        radial-gradient(circle at 85% 15%, rgba(244,114,182,0.22), transparent 55%);
-      opacity: 0.9;
-    }
-
-    .hero-shell::after {
-      background-image:
-        linear-gradient(
-          120deg,
-          rgba(148,163,184,0.15) 0%,
-          transparent 18%,
-          transparent 82%,
-          rgba(148,163,184,0.15) 100%
-        );
-      mix-blend-mode: soft-light;
-      opacity: 0.4;
-    }
-
-    /* Stack hero on mobile */
-    @media (max-width: 900px) {
-      .hero-inner {
-        grid-template-columns: minmax(0,1fr);
-        padding: 20px 18px 16px;
-      }
-      .hero-right {
-        order: -1;
-      }
-      .hero-preview-card {
-        margin-left: 0;
-        max-width: none;
-      }
-      .hero-title {
-        font-size: 24px;
-      }
-      .hero-sub {
-        font-size: 13px;
-      }
-      .hero-kpi-pill {
-        font-size: 10px;
-      }
-    }
-
-    @media (max-width: 640px) {
-      main {
-        padding-top: 78px;
-      }
-      .hero {
-        padding-inline: 14px;
-      }
-      .hero-shell {
-        border-radius: 24px;
-      }
-      .hero-inner {
-        padding-inline: 16px;
-      }
-    }
-
-    /* SECTIONS */
-    .section {
-      max-width: 1160px;
-      margin: 0 auto;
-      padding: 0 18px 64px;
-    }
-
-    .section-header {
-      text-align: center;
-      max-width: 640px;
-      margin: 0 auto 28px;
-    }
-
-    .section-header h2 {
-      font-size: 24px;
-      margin-bottom: 6px;
-      letter-spacing: -0.03em;
-    }
-
-    .section-header p {
-      font-size: 14px;
-      color: var(--text-soft);
-    }
-
-    @media (max-width: 640px) {
-      .section-header h2 {
-        font-size: 20px;
-      }
-      .section-header p {
-        font-size: 13px;
-      }
-    }
-
-    .steps-grid {
-      display: grid;
-      gap: 16px;
-    }
-
-    @media (min-width: 768px) {
-      .steps-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-      }
-    }
-
-    .step-card {
-      background:
-        linear-gradient(145deg, #ffffff, #f9fafb);
-      border-radius: 18px;
-      border: 1px solid rgba(229, 231, 235, 1);
-      padding: 18px 16px;
-      box-shadow:
-        0 14px 30px rgba(15, 23, 42, 0.06),
-        0 0 0 1px rgba(255, 255, 255, 0.9) inset;
-    }
-
-    .step-label {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--text-muted);
-      margin-bottom: 4px;
-    }
-
-    .step-title {
-      font-size: 15px;
-      margin-bottom: 4px;
-      font-weight: 600;
-    }
-
-    .step-body {
-      font-size: 13px;
-      color: var(--text-soft);
-      line-height: 1.6;
-    }
-
-    .section-cta {
-      text-align: center;
-      margin-top: 18px;
-    }
-
-    /* Features */
-    .feature-grid {
-      display: grid;
-      gap: 16px;
-    }
-
-    @media (min-width: 900px) {
-      .feature-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-      }
-    }
-
-    .feature-card {
-      background:
-        linear-gradient(145deg, #ffffff, #f9fafb);
-      border-radius: 18px;
-      border: 1px solid rgba(229, 231, 235, 1);
-      padding: 18px 16px;
-      box-shadow:
-        0 14px 30px rgba(15, 23, 42, 0.06),
-        0 0 0 1px rgba(255, 255, 255, 0.9) inset;
-    }
-
-    .feature-tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 3px 9px;
-      border-radius: 999px;
-      background: #eff6ff;
-      color: #1d4ed8;
-      font-size: 11px;
-      margin-bottom: 6px;
-    }
-
-    .feature-card h3 {
-      font-size: 16px;
-      margin-bottom: 4px;
-    }
-
-    .feature-card p {
-      font-size: 13px;
-      color: var(--text-soft);
-      line-height: 1.6;
-    }
-
-    /* FAQ */
-    .faq-grid {
-      max-width: 760px;
-      margin: 0 auto;
-      display: grid;
-      gap: 16px;
-    }
-
-    .faq-item {
-      background:
-        linear-gradient(145deg, #ffffff, #f9fafb);
-      border-radius: 16px;
-      border: 1px solid rgba(229, 231, 235, 1);
-      padding: 14px 16px;
-      box-shadow:
-        0 10px 24px rgba(15, 23, 42, 0.05),
-        0 0 0 1px rgba(255, 255, 255, 0.9) inset;
-    }
-
-    .faq-q {
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
-
-    .faq-a {
-      font-size: 13px;
-      color: var(--text-soft);
-      line-height: 1.6;
-    }
-
-    .faq-more {
-      text-align: center;
-      margin-top: 22px;
-      font-size: 13px;
-    }
-
-    .faq-more a {
-      color: var(--accent);
-      text-decoration: none;
-    }
-
-    .faq-more a:hover {
-      text-decoration: underline;
-    }
-
-    /* Adjust header nav on very small screens to avoid crowding */
-    @media (max-width: 480px) {
-      .primary-nav a[href="/about.html"],
-      .primary-nav a[href="/faq.html"] {
-        display: none;
-      }
-    }
-  </style>
 </head>
 <body>
   <!-- Header -->
   <header class="site-header">
     <div class="nav-inner">
       <div class="nav-left">
-        <!-- Refined compass logo -->
+        <!-- Logo mark (premium compass) -->
         <div class="logo-mark" aria-hidden="true">
-          <svg width="34" height="34" viewBox="0 0 34 34" xmlns="http://www.w3.org/2000/svg">
+          <svg
+            width="34"
+            height="34"
+            viewBox="0 0 34 34"
+            xmlns="http://www.w3.org/2000/svg"
+          >
             <defs>
               <linearGradient id="logoGrad" x1="4" y1="4" x2="30" y2="30">
-                <stop offset="0%" stop-color="#2563EB"/>
-                <stop offset="50%" stop-color="#22C55E"/>
-                <stop offset="100%" stop-color="#EC4899"/>
+                <stop offset="0%" stop-color="#4F46E5" />
+                <stop offset="45%" stop-color="#22C55E" />
+                <stop offset="100%" stop-color="#EC4899" />
               </linearGradient>
             </defs>
-            <circle cx="17" cy="17" r="17" fill="#F9FAFB"/>
-            <circle cx="17" cy="17" r="14" fill="url(#logoGrad)"/>
-            <circle cx="17" cy="17" r="11" fill="rgba(15,23,42,0.08)"/>
-            <path d="M17 7.8 L21 17 L17 26.2 L13 17 Z" fill="#FFFFFF" opacity="0.97"/>
-            <circle cx="17" cy="17" r="3.1" fill="#FFFFFF"/>
+            <circle cx="17" cy="17" r="17" fill="#020617" />
+            <circle cx="17" cy="17" r="14" fill="url(#logoGrad)" />
+            <path
+              d="M17 7.5L21 17L17 26.5L13 17Z"
+              fill="white"
+              opacity="0.98"
+            />
+            <circle cx="17" cy="17" r="2.8" fill="#020617" />
           </svg>
         </div>
         <div class="logo-word">
@@ -574,7 +69,11 @@
         <a href="/plan.html">Plan a Trip</a>
         <a href="/about.html">About</a>
         <a href="/faq.html">FAQ</a>
-        <button class="nav-cta" type="button" onclick="window.location.href='/plan.html'">
+        <button
+          class="nav-cta"
+          type="button"
+          onclick="window.location.href='/plan.html'"
+        >
           <span class="icon">🧭</span>
           <span>Launch Planner</span>
         </button>
@@ -583,115 +82,149 @@
   </header>
 
   <main>
-    <!-- HERO -->
+    <!-- Hero -->
     <section class="hero" aria-labelledby="hero-title">
-      <div class="hero-shell">
-        <div class="hero-inner">
-          <div class="hero-left">
-            <div class="hero-badge">
-              <span>✨ AI-Powered Trip Planner</span>
-            </div>
-            <h1 class="hero-title" id="hero-title">
-              Plan a premium <span class="accent">day-by-day itinerary</span> in seconds.
-            </h1>
-            <p class="hero-sub">
-              AITripPlan turns your destination, dates, budget, and travel style into a clear, map-friendly plan.
-              Adjust days and times with a tap, get rough price estimates, and export a print-ready version for your group.
-            </p>
-            <div class="hero-cta-row">
-              <button class="nav-cta" type="button" onclick="window.location.href='/plan.html'">
-                <span class="icon">🧭</span>
-                <span>Generate My Itinerary</span>
-              </button>
-              <span class="hero-secondary">No signup required for your first plan.</span>
-            </div>
-            <div class="hero-kpis">
-              <div class="hero-kpi-pill">
-                <span>⚡</span>
-                <span><strong>First draft</strong> in seconds</span>
-              </div>
-              <div class="hero-kpi-pill">
-                <span>🗺️</span>
-                <span>Neighborhood, travel time &amp; Maps-ready names</span>
-              </div>
-              <div class="hero-kpi-pill">
-                <span>💳</span>
-                <span>AI price estimate &amp; booking links per activity</span>
-              </div>
-            </div>
+      <div class="hero-inner">
+        <!-- Background graphic -->
+        <div class="hero-graphic" aria-hidden="true">
+          <svg
+            width="100%"
+            height="100%"
+            viewBox="0 0 1440 520"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            preserveAspectRatio="xMidYMid slice"
+          >
+            <defs>
+              <linearGradient id="heroGrad" x1="0" y1="0" x2="1440" y2="520">
+                <stop offset="0%" stop-color="#4F46E5" />
+                <stop offset="35%" stop-color="#22C55E" />
+                <stop offset="70%" stop-color="#EC4899" />
+                <stop offset="100%" stop-color="#F97316" />
+              </linearGradient>
+
+              <radialGradient
+                id="blobBlue"
+                cx="0"
+                cy="0"
+                r="1"
+                gradientUnits="userSpaceOnUse"
+                gradientTransform="translate(220 130) rotate(45) scale(320 220)"
+              >
+                <stop stop-color="#38BDF8" stop-opacity="0.95" />
+                <stop offset="1" stop-color="#38BDF8" stop-opacity="0" />
+              </radialGradient>
+
+              <radialGradient
+                id="blobPink"
+                cx="0"
+                cy="0"
+                r="1"
+                gradientUnits="userSpaceOnUse"
+                gradientTransform="translate(1220 120) rotate(30) scale(320 220)"
+              >
+                <stop stop-color="#EC4899" stop-opacity="0.95" />
+                <stop offset="1" stop-color="#EC4899" stop-opacity="0" />
+              </radialGradient>
+
+              <radialGradient
+                id="blobGreen"
+                cx="0"
+                cy="0"
+                r="1"
+                gradientUnits="userSpaceOnUse"
+                gradientTransform="translate(900 420) rotate(10) scale(360 260)"
+              >
+                <stop stop-color="#22C55E" stop-opacity="0.85" />
+                <stop offset="1" stop-color="#22C55E" stop-opacity="0" />
+              </radialGradient>
+            </defs>
+
+            <rect width="1440" height="520" fill="url(#heroGrad)" opacity="0.92" />
+            <rect width="1440" height="520" fill="#020617" opacity="0.16" />
+
+            <circle cx="220" cy="130" r="260" fill="url(#blobBlue)" />
+            <circle cx="1220" cy="120" r="260" fill="url(#blobPink)" />
+            <circle cx="900" cy="420" r="320" fill="url(#blobGreen)" />
+
+            <path
+              d="M100 430 C 320 320, 620 540, 940 350 C 1240 180, 1400 260, 1520 120"
+              stroke="white"
+              stroke-width="2"
+              stroke-opacity="0.30"
+              fill="none"
+            />
+            <path
+              d="M-40 300 C 220 210, 620 360, 1070 230 C 1410 120, 1620 200, 1740 70"
+              stroke="white"
+              stroke-width="2"
+              stroke-opacity="0.25"
+              fill="none"
+            />
+            <path
+              d="M160 190 Q 440 120 720 220 T 1210 210"
+              stroke="white"
+              stroke-width="4"
+              stroke-dasharray="10 14"
+              stroke-linecap="round"
+              opacity="0.35"
+            />
+
+            <g opacity="0.8">
+              <circle cx="260" cy="260" r="7" fill="#F97316" />
+              <circle cx="720" cy="170" r="7" fill="#22C55E" />
+              <circle cx="1180" cy="260" r="7" fill="#38BDF8" />
+            </g>
+
+            <g transform="translate(680, 200) scale(2.2)">
+              <circle cx="0" cy="0" r="32" fill="#020617" opacity="0.98" />
+              <circle cx="0" cy="0" r="28" fill="url(#heroGrad)" />
+              <path
+                d="M0 -18 L8 0 L0 18 L-8 0 Z"
+                fill="white"
+                opacity="0.94"
+              />
+              <circle cx="0" cy="0" r="5" fill="#020617" />
+            </g>
+          </svg>
+        </div>
+
+        <!-- Text -->
+        <div class="hero-content">
+          <div class="hero-badge">
+            <span>✨ AI-Powered Trip Planner</span>
           </div>
-
-          <!-- Right: app-style preview card -->
-          <div class="hero-right" aria-hidden="true">
-            <div class="hero-preview-card">
-              <div class="preview-header">
-                <span>Sample Lisbon city break</span>
-                <div class="preview-pill">
-                  <span class="preview-pill-dot"></span>
-                  <span>Draft itinerary</span>
-                </div>
-              </div>
-              <div class="preview-body">
-                <div class="preview-row-top">
-                  <div class="preview-destination">Lisbon · 4 days</div>
-                  <div class="preview-chip">
-                    <span>FULL ITINERARY</span>
-                  </div>
-                </div>
-                <div class="preview-list">
-                  <div class="preview-item">
-                    <div class="preview-item-top">
-                      <div class="preview-item-title">Alfama viewpoints &amp; tram ride</div>
-                      <div class="preview-item-meta">
-                        Morning · Alfama<br/>10–15 min tram
-                      </div>
-                    </div>
-                    <div class="preview-price-line">
-                      <strong>Approx $15–25 pp</strong> · open daily · tickets can sell out same day
-                    </div>
-                    <div class="preview-price-line">
-                      Booking: official tram tickets or local kiosks
-                    </div>
-                  </div>
-
-                  <div class="preview-item">
-                    <div class="preview-item-top">
-                      <div class="preview-item-title">Belém tower, river walk &amp; pastel stop</div>
-                      <div class="preview-item-meta">
-                        Afternoon · Belém<br/>20 min tram
-                      </div>
-                    </div>
-                    <div class="preview-price-line">
-                      <strong>Approx $20–35 pp</strong> · closed Mondays
-                    </div>
-                    <div class="preview-price-line">
-                      Booking: official monument site or trusted reseller
-                    </div>
-                  </div>
-
-                  <div class="preview-item">
-                    <div class="preview-item-top">
-                      <div class="preview-item-title">Sunset drinks &amp; dinner in Bairro Alto</div>
-                      <div class="preview-item-meta">
-                        Evening · Bairro Alto<br/>10 min taxi
-                      </div>
-                    </div>
-                    <div class="preview-price-line">
-                      <strong>Approx $40–70 pp</strong> · reservations recommended on weekends
-                    </div>
-                    <div class="preview-price-line">
-                      Booking: restaurant websites or Resy / OpenTable
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="preview-footer">
-                <span>Tap day &amp; time chips to reshuffle.</span>
-                <button class="preview-footer-cta" type="button">
-                  <span class="icon">🖨️</span>
-                  <span>Open printable view</span>
-                </button>
-              </div>
+          <h1 class="hero-title" id="hero-title">
+            Plan your next <span class="accent">trip itinerary</span> in seconds.
+          </h1>
+          <p class="hero-sub">
+            AITripPlan turns your destination, dates, budget, and travel style into a
+            clear, map-friendly day-by-day plan. Adjust timing with a tap, then export
+            everything to a print-ready view for your travel group.
+          </p>
+          <div class="hero-cta-row">
+            <button
+              class="nav-cta"
+              type="button"
+              onclick="window.location.href='/plan.html'"
+            >
+              <span class="icon">🧭</span>
+              <span>Generate My Itinerary</span>
+            </button>
+            <span class="hero-secondary">No signup required for your first plan.</span>
+          </div>
+          <div class="hero-kpis">
+            <div class="hero-kpi-pill">
+              <span>⚡</span
+              ><span><strong>First draft in seconds</strong> for most trips</span>
+            </div>
+            <div class="hero-kpi-pill">
+              <span>🗺️</span
+              ><span>Neighborhood &amp; travel-time tags for easier mapping</span>
+            </div>
+            <div class="hero-kpi-pill">
+              <span>📄</span
+              ><span>Export to a print-ready itinerary and lists</span>
             </div>
           </div>
         </div>
@@ -701,39 +234,43 @@
     <!-- How it works -->
     <section class="section" aria-labelledby="how-it-works-title">
       <div class="section-header">
-        <h2 id="how-it-works-title">How AITripPlan works</h2>
-        <p>From a rough idea in your head to a structured, exportable itinerary in three steps.</p>
+        <h2 id="how-it-works-title">How AITripPlan Works</h2>
+        <p>From idea to exportable day-by-day itinerary in three simple steps.</p>
       </div>
 
       <div class="steps-grid">
         <article class="step-card">
           <div class="step-label">Step 1</div>
-          <div class="step-title">Describe your trip</div>
+          <div class="step-title">Tell us about your trip</div>
           <div class="step-body">
-            Tell the planner your destination, trip length, who you’re traveling with, rough budget,
-            and the kind of experience you want—slow, packed, food-heavy, kid-friendly, nightlife-first, and more.
+            Enter your destination, trip length, budget, who you’re traveling with,
+            and the kind of experience you want—food, culture, nightlife, nature, and more.
           </div>
         </article>
         <article class="step-card">
           <div class="step-label">Step 2</div>
-          <div class="step-title">AI builds a smart outline</div>
+          <div class="step-title">Let AI build your plan</div>
           <div class="step-body">
-            AITripPlan proposes morning, afternoon, and evening ideas for each day, with neighborhood and
-            travel-time context plus rough price ranges and suggested booking links for each activity.
+            Our AI planner designs a realistic, efficient schedule with morning, afternoon,
+            and evening suggestions for each day—plus neighborhood, travel-time, and map search hints.
           </div>
         </article>
         <article class="step-card">
           <div class="step-label">Step 3</div>
-          <div class="step-title">Tweak &amp; export</div>
+          <div class="step-title">Tweak timing &amp; export</div>
           <div class="step-body">
-            Tap the day or time chips on any card to move it around. When it feels right, open the printable view
-            and save everything as a PDF or paste it into your notes app for the group.
+            Tap the chips on each activity to change the day and time of day. When it looks right,
+            open a print-ready itinerary view with map links, restaurant ideas, and a starter packing list.
           </div>
         </article>
       </div>
 
       <div class="section-cta">
-        <button class="nav-cta" type="button" onclick="window.location.href='/plan.html'">
+        <button
+          class="nav-cta"
+          type="button"
+          onclick="window.location.href='/plan.html'"
+        >
           <span class="icon">✨</span>
           <span>Try the Planner</span>
         </button>
@@ -744,34 +281,35 @@
     <section class="section" aria-labelledby="features-title">
       <div class="section-header">
         <h2 id="features-title">Why travelers use AITripPlan</h2>
-        <p>Premium planning feel, without needing a spreadsheet or 20 open tabs.</p>
+        <p>Smart enough to feel magical, simple enough for anyone to use.</p>
       </div>
 
       <div class="feature-grid">
         <article class="feature-card">
           <div class="feature-tag">Personalized</div>
-          <h3>Plans that match your style</h3>
+          <h3>Plans that match your travel style</h3>
           <p>
-            City break, honeymoon, golf trip, family vacation, or solo recharge—AITripPlan adapts ideas to your
-            pace, budget, and “must include” list: restaurants, beaches, museums, nightlife, walkability, and more.
+            Whether you’re into street food, museums, rooftop bars, or hiking, AITripPlan
+            adapts recommendations to your preferences, budget, and pacing—solo trips,
+            couples getaways, family vacations, and friend groups.
           </p>
         </article>
-
         <article class="feature-card">
           <div class="feature-tag">Map-friendly</div>
-          <h3>Neighborhoods, routes &amp; search-ready names</h3>
+          <h3>Neighborhoods, travel time, and search-ready names</h3>
           <p>
-            Each suggestion can include a neighborhood tag, rough travel time, and a Google-Maps-friendly search term,
-            so you can quickly pin everything and see how your days actually fit together on a map.
+            Each suggestion can include neighborhood tags, rough walk or metro times,
+            and Google Maps search names so it’s easy to drop everything into your map
+            or navigation app of choice.
           </p>
         </article>
-
         <article class="feature-card">
-          <div class="feature-tag">AI price estimator</div>
-          <h3>Cost hints &amp; booking shortcuts</h3>
+          <div class="feature-tag">Exportable</div>
+          <h3>One plan, many ways to share it</h3>
           <p>
-            For each activity, the AI can add a rough cost range, note which days are closed, highlight if tickets
-            tend to sell out, and suggest a booking link (official or affiliate-ready if you choose to monetize later).
+            Once you’re happy with the chips for each activity, export a print-friendly
+            version with your day-by-day plan, map links, restaurant list, packing starter,
+            and weather reminder—ready to save as PDF, screenshot, or paste into notes.
           </p>
         </article>
       </div>
@@ -781,35 +319,34 @@
     <section class="section" aria-labelledby="faq-title">
       <div class="section-header">
         <h2 id="faq-title">Quick questions</h2>
-        <p>A couple of things people ask before they try it.</p>
+        <p>A few details before you pack your bags.</p>
       </div>
 
       <div class="faq-grid">
         <div class="faq-item">
           <div class="faq-q">Is AITripPlan free to use?</div>
           <div class="faq-a">
-            You can generate your first itinerary without creating an account. In the future, there may be
-            optional paid features for frequent travelers or advanced exports—but the core planner is built
-            to be approachable from day one.
+            You can generate your first itinerary without creating an account. In the future,
+            we may add optional paid features for power users and frequent travelers.
           </div>
         </div>
         <div class="faq-item">
-          <div class="faq-q">Can I trust the recommendations and prices?</div>
+          <div class="faq-q">Can I export or print my itinerary?</div>
           <div class="faq-a">
-            The AI is tuned to suggest realistic activities and rough price ranges, not exact quotes.
-            Always double-check opening hours, current pricing, and safety guidance before booking or traveling.
+            Yes. After generating and tweaking your plan, you can open an export view tailored
+            for printing or saving as a PDF, and reuse those details in your notes app or docs.
           </div>
         </div>
         <div class="faq-item">
-          <div class="faq-q">Can I export or share my itinerary?</div>
+          <div class="faq-q">Can I trust the recommendations?</div>
           <div class="faq-a">
-            Yes. Once you’re happy with the chips on each card, open the printable view and save it as a PDF,
-            screenshot it, or paste everything into Notes, Google Docs, or an email thread for the group.
+            AITripPlan is designed to suggest realistic, common-sense activities and neighborhoods.
+            Always double-check opening hours, safety guidance, and local conditions before you go.
           </div>
         </div>
       </div>
 
-      <div class="faq-more">
+      <div class="section-cta" style="margin-top: 24px;">
         <a href="/faq.html">View full FAQ →</a>
       </div>
     </section>
@@ -817,7 +354,10 @@
 
   <footer class="site-footer">
     <div class="footer-inner">
-      <span>© 2025 AITripPlan.com · Not official travel advice. Always verify important details before you travel.</span>
+      <span
+        >© 2025 AITripPlan.com · Not official travel advice. Always verify important
+        details before you travel.</span
+      >
       <div class="footer-links">
         <a href="/privacy.html">Privacy</a>
         <a href="/about.html">About</a>
