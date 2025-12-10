@@ -18,18 +18,18 @@
     href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
     rel="stylesheet"
   />
-  <!-- This can stay; inline styles below take precedence where overlapping -->
+
+  <!-- (Optional) shared styles if you keep this file wired to styles.css -->
   <link rel="stylesheet" href="/styles.css" />
+
   <style>
     :root {
-      --bg-page: #e5e7eb;
+      --bg-page: #f3f4f6;
       --bg-card: #ffffff;
       --text-main: #0f172a;
       --text-soft: #4b5563;
       --text-muted: #6b7280;
       --accent: #2563eb;
-      --accent-green: #22c55e;
-      --accent-pink: #ec4899;
       --border-subtle: rgba(209, 213, 219, 1);
       --radius-lg: 16px;
     }
@@ -43,26 +43,14 @@
       margin: 0;
       padding: 0;
       font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      line-height: 1.5;
-      background:
-        radial-gradient(circle at 0% 0%, rgba(37, 99, 235, 0.10), transparent 60%),
-        radial-gradient(circle at 100% 0%, rgba(236, 72, 153, 0.10), transparent 60%),
-        var(--bg-page);
+      background: var(--bg-page);
       color: var(--text-main);
     }
 
     .page {
-      max-width: 1120px;
-      margin: 32px auto 40px;
-      padding: 0 18px 40px;
-    }
-
-    .page-inner {
-      background: linear-gradient(180deg, rgba(249, 250, 251, 0.98), #ffffff);
-      border-radius: 24px;
-      border: 1px solid rgba(209, 213, 219, 0.9);
-      box-shadow: 0 22px 60px rgba(15, 23, 42, 0.10);
-      padding: 22px 18px 26px;
+      max-width: 1024px;
+      margin: 32px auto;
+      padding: 0 16px 40px;
     }
 
     .print-header {
@@ -70,9 +58,7 @@
       align-items: center;
       justify-content: space-between;
       gap: 16px;
-      margin-bottom: 18px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid rgba(229, 231, 235, 1);
+      margin-bottom: 20px;
     }
 
     .print-brand {
@@ -117,7 +103,7 @@
     .btn-back {
       border-radius: 999px;
       border: 1px solid var(--border-subtle);
-      padding: 7px 13px;
+      padding: 7px 12px;
       font-size: 12px;
       cursor: pointer;
       background: #f9fafb;
@@ -125,34 +111,25 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      transition: background 0.14s ease, box-shadow 0.14s ease, transform 0.14s ease, border-color 0.14s ease;
     }
 
     .btn-print {
       border-color: #2563eb;
-      background: linear-gradient(135deg, #2563eb, #22c55e, #ec4899);
+      background: #2563eb;
       color: #f9fafb;
-      box-shadow: 0 10px 26px rgba(37, 99, 235, 0.45);
-      font-weight: 600;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
     }
 
     .btn-print:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 16px 36px rgba(37, 99, 235, 0.55);
-      filter: brightness(1.03);
+      background: #1d4ed8;
+      border-color: #1d4ed8;
     }
 
     .btn-back:hover {
       background: #eef2ff;
-      border-color: rgba(129, 140, 248, 0.8);
-      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
-      transform: translateY(-1px);
     }
 
     .print-meta {
-      margin-bottom: 18px;
+      margin-bottom: 16px;
       font-size: 13px;
       color: var(--text-soft);
     }
@@ -164,17 +141,13 @@
     .two-column {
       display: grid;
       grid-template-columns: minmax(0, 1.6fr) minmax(0, 1.1fr);
-      gap: 18px;
+      gap: 16px;
       align-items: flex-start;
     }
 
     @media (max-width: 800px) {
       .two-column {
         grid-template-columns: minmax(0, 1fr);
-      }
-      .page-inner {
-        border-radius: 18px;
-        padding: 18px 14px 22px;
       }
     }
 
@@ -184,14 +157,12 @@
       border: 1px solid var(--border-subtle);
       padding: 14px 14px 12px;
       margin-bottom: 12px;
-      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.04);
     }
 
     .card h2,
     .card h3 {
       margin: 0 0 6px;
       font-size: 16px;
-      letter-spacing: -0.01em;
     }
 
     .card h3 {
@@ -297,6 +268,13 @@
       margin-bottom: 4px;
     }
 
+    /* Weather notes mini-intro */
+    .weather-intro {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin: 0 0 4px;
+    }
+
     /* Hide buttons in actual printout */
     @media print {
       .print-actions {
@@ -306,13 +284,6 @@
         margin: 0;
         padding: 0 8px 16px;
         max-width: 100%;
-      }
-      .page-inner {
-        margin: 0;
-        padding: 0;
-        border-radius: 0;
-        border: none;
-        box-shadow: none;
       }
       body {
         background: #ffffff;
@@ -328,106 +299,118 @@
 </head>
 <body>
   <div class="page">
-    <div class="page-inner">
-      <header class="print-header">
-        <div class="print-brand">
-          <div class="print-logo-mark" aria-hidden="true">
-            <svg width="34" height="34" viewBox="0 0 34 34" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <linearGradient id="printLogoGrad" x1="4" y1="4" x2="30" y2="30">
-                  <stop offset="0%" stop-color="#2563EB"/>
-                  <stop offset="50%" stop-color="#22C55E"/>
-                  <stop offset="100%" stop-color="#EC4899"/>
-                </linearGradient>
-              </defs>
-              <circle cx="17" cy="17" r="17" fill="white"/>
-              <circle cx="17" cy="17" r="14" fill="url(#printLogoGrad)"/>
-              <path d="M17 8 L20.5 17 L17 26 L13.5 17 Z" fill="white" opacity="0.95"/>
-              <circle cx="17" cy="17" r="3" fill="white"/>
-            </svg>
+    <header class="print-header">
+      <div class="print-brand">
+        <div class="print-logo-mark" aria-hidden="true">
+          <svg width="34" height="34" viewBox="0 0 34 34" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="printLogoGrad" x1="4" y1="4" x2="30" y2="30">
+                <stop offset="0%" stop-color="#2563EB"/>
+                <stop offset="50%" stop-color="#22C55E"/>
+                <stop offset="100%" stop-color="#EC4899"/>
+              </linearGradient>
+            </defs>
+            <circle cx="17" cy="17" r="17" fill="white"/>
+            <circle cx="17" cy="17" r="14" fill="url(#printLogoGrad)"/>
+            <path d="M17 8 L20.5 17 L17 26 L13.5 17 Z" fill="white" opacity="0.95"/>
+            <circle cx="17" cy="17" r="3" fill="white"/>
+          </svg>
+        </div>
+        <div class="print-logo-word">
+          AITrip<span class="accent">Plan</span>
+        </div>
+      </div>
+      <div class="print-actions">
+        <button class="btn-back" type="button" onclick="window.location.href='/plan.html'">
+          ← Back to planner
+        </button>
+        <button class="btn-print" type="button" onclick="window.print()">
+          🖨️ Print / Save as PDF
+        </button>
+      </div>
+    </header>
+
+    <div class="print-meta" id="metaSummary">
+      Your itinerary will appear here once you export it from the planner.
+    </div>
+
+    <div class="two-column">
+      <!-- Left: Day-by-day schedule -->
+      <section id="daysColumn">
+        <div class="card">
+          <h2>Day-by-day schedule</h2>
+          <div class="card-sub">
+            Morning / afternoon / evening activities grouped by day. Great for a one-page overview.
           </div>
-          <div class="print-logo-word">
-            AITrip<span class="accent">Plan</span>
+          <div id="daysContainer">
+            <p class="print-section-body">
+              No itinerary loaded yet. Go back to the planner, generate ideas, tweak the chips, and then use
+              “Open printable view”.
+            </p>
           </div>
         </div>
-        <div class="print-actions">
-          <button class="btn-back" type="button" onclick="window.location.href='/plan.html'">
-            ← Back to planner
-          </button>
-          <button class="btn-print" type="button" onclick="window.print()">
-            🖨️ Print / Save as PDF
-          </button>
+      </section>
+
+      <!-- Right: Lists / notes -->
+      <section id="listsColumn">
+        <div class="card" id="quickFactsCard">
+          <h3>Trip snapshot</h3>
+          <div class="card-sub">Destination, dates, and who’s going.</div>
+          <div id="tripSnapshot">
+            <p class="print-section-body">
+              When you export from the planner, quick facts about your trip will show here.
+            </p>
+          </div>
         </div>
-      </header>
 
-      <div class="print-meta" id="metaSummary">
-        Your itinerary will appear here once you export it from the planner.
-      </div>
+        <div class="card" id="placesCard">
+          <h3>Places &amp; neighborhoods to remember</h3>
+          <div class="card-sub">Good for dropping into Google Maps or sharing with your group.</div>
+          <ul class="list" id="placesList">
+            <li>No places yet. After you export, this will list neighborhoods and key spots from your activities.</li>
+          </ul>
+        </div>
 
-      <div class="two-column">
-        <!-- Left: Day-by-day schedule -->
-        <section id="daysColumn">
-          <div class="card">
-            <h2>Day-by-day schedule</h2>
-            <div class="card-sub">
-              Morning / afternoon / evening activities grouped by day. Great for a one-page overview.
-            </div>
-            <div id="daysContainer">
-              <p class="print-section-body">
-                No itinerary loaded yet. Go back to the planner, generate ideas, tweak the chips, and then use
-                “Open printable view”.
-              </p>
-            </div>
+        <div class="card" id="restaurantsCard">
+          <h3>Food &amp; drink ideas</h3>
+          <div class="card-sub">Use this as a starting list for restaurant and bar reservations.</div>
+          <ul class="list" id="restaurantsList">
+            <li>
+              Any restaurant / bar mentions in your activities will be summarized here once you export from the planner.
+            </li>
+          </ul>
+        </div>
+
+        <!-- NEW: Seasonal weather notes card -->
+        <div class="card" id="weatherCard">
+          <h3>Seasonal weather notes</h3>
+          <div class="card-sub">
+            Quick reminders based on the time of year you selected.
           </div>
-        </section>
+          <p class="weather-intro" id="weatherIntro">
+            When your itinerary includes season-aware tips, they’ll show up here after export.
+          </p>
+          <ul class="list" id="weatherList">
+            <!-- Filled dynamically from suggestion notes -->
+          </ul>
+        </div>
 
-        <!-- Right: Lists / notes -->
-        <section id="listsColumn">
-          <div class="card" id="quickFactsCard">
-            <h3>Trip snapshot</h3>
-            <div class="card-sub">Destination, dates, and who’s going.</div>
-            <div id="tripSnapshot">
-              <p class="print-section-body">
-                When you export from the planner, quick facts about your trip will show here.
-              </p>
-            </div>
-          </div>
+        <div class="card" id="packingCard">
+          <h3>Light packing checklist</h3>
+          <div class="card-sub">Suggested basics based on your destination and trip style.</div>
+          <ul class="list" id="packingList">
+            <li>Comfortable walking shoes</li>
+            <li>Weather-appropriate outerwear</li>
+            <li>Day bag / small backpack</li>
+            <li>Travel documents &amp; copies</li>
+            <li>Portable charger &amp; adapters</li>
+          </ul>
+        </div>
 
-          <div class="card" id="placesCard">
-            <h3>Places &amp; neighborhoods to remember</h3>
-            <div class="card-sub">Good for dropping into Google Maps or sharing with your group.</div>
-            <ul class="list" id="placesList">
-              <li>No places yet. After you export, this will list neighborhoods and key spots from your activities.</li>
-            </ul>
-          </div>
-
-          <div class="card" id="restaurantsCard">
-            <h3>Food &amp; drink ideas</h3>
-            <div class="card-sub">Use this as a starting list for restaurant and bar reservations.</div>
-            <ul class="list" id="restaurantsList">
-              <li>
-                Any restaurant / bar mentions in your activities will be summarized here once you export from the planner.
-              </li>
-            </ul>
-          </div>
-
-          <div class="card" id="packingCard">
-            <h3>Light packing checklist</h3>
-            <div class="card-sub">Suggested basics based on your destination and trip style.</div>
-            <ul class="list" id="packingList">
-              <li>Comfortable walking shoes</li>
-              <li>Weather-appropriate outerwear</li>
-              <li>Day bag / small backpack</li>
-              <li>Travel documents &amp; copies</li>
-              <li>Portable charger &amp; adapters</li>
-            </ul>
-          </div>
-
-          <div class="print-footer-note">
-            Generated with AITripPlan.com. Always confirm opening hours, reservations, and local guidance before you go.
-          </div>
-        </section>
-      </div>
+        <div class="print-footer-note">
+          Generated with AITripPlan.com. Always confirm opening hours, reservations, local guidance, and actual weather before you go.
+        </div>
+      </section>
     </div>
   </div>
 
@@ -446,6 +429,8 @@
         const tripSnapshot = document.getElementById("tripSnapshot");
         const placesList = document.getElementById("placesList");
         const restaurantsList = document.getElementById("restaurantsList");
+        const weatherList = document.getElementById("weatherList");
+        const weatherIntro = document.getElementById("weatherIntro");
 
         if (!suggestions.length) return;
 
@@ -617,6 +602,43 @@
             li.textContent = name;
             restaurantsList.appendChild(li);
           });
+        }
+
+        // NEW: Seasonal weather notes extraction
+        if (weatherList && weatherIntro) {
+          const weatherSet = new Set();
+          const reWeather = /\b(hot|warm|cold|cool|chilly|rain|rainy|showers?|storm|snow|snowy|humid|heat|heatwave|windy|breeze|breezy|jacket|coat|umbrella|layer(?:s)?|weather|daylight|sunset|sunrise|season|monsoon)\b/i;
+
+          suggestions.forEach((s) => {
+            if (!s.notes) return;
+            const rawNotes = String(s.notes);
+            const sentences = rawNotes.split(/(?<=[.!?])\s+/);
+            sentences.forEach((sentence) => {
+              const trimmed = sentence.trim();
+              if (!trimmed) return;
+              if (reWeather.test(trimmed)) {
+                weatherSet.add(trimmed);
+              }
+            });
+          });
+
+          if (weatherSet.size > 0) {
+            weatherList.innerHTML = "";
+            weatherIntro.textContent =
+              "These tips come from your activities’ notes. Use them as a quick weather reminder when packing and planning timing.";
+
+            Array.from(weatherSet)
+              .slice(0, 6)
+              .forEach((note) => {
+                const li = document.createElement("li");
+                li.textContent = note;
+                weatherList.appendChild(li);
+              });
+          } else {
+            // If no weather-specific guidance was detected, leave the intro text
+            // and keep the list empty (or you could add a light hint if you prefer).
+            weatherList.innerHTML = "";
+          }
         }
       } catch (e) {
         console.error("Failed to load printable itinerary:", e);
