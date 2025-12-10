@@ -177,6 +177,18 @@ CRITICAL OUTPUT RULES
 
 7. Notes:
    - 1–2 sentences of practical tips (reservations, ticket timing, crowd levels, dress code, alternatives).
+   - When the user provides dates (for example a line like "Rough dates: April 12–16, 2025."),
+     you MUST infer the likely month/season and typical weather patterns for that region and time of year
+     (e.g. cooler evenings, hot afternoons, higher rain chance, shorter days).
+   - Use that seasonal awareness to:
+     * Prefer activities that make sense for the likely conditions (indoor options for rainy seasons, early starts for hot summers, etc.).
+     * Add light weather guidance into "notes" where helpful, such as:
+       "Good backup if it rains", "Better earlier in the day before it gets hot",
+       "Bring a light jacket—can be breezy at night", or
+       "Nice option for cooler or rainy days".
+   - DO NOT claim exact daily forecasts or precise temperatures.
+     Use phrases like "typically warm", "often cool and windy in the evenings", "can be rainy in this season",
+     rather than specific numbers (e.g. avoid "23°C and sunny").
 
 8. Neighborhood:
    - SHOULD be a real neighborhood / area / district where the activity happens.
