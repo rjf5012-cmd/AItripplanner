@@ -2,83 +2,192 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Print Itinerary | AITripPlan</title>
+  <title>Printable Itinerary | AITripPlan</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta
+    name="description"
+    content="Printable, shareable view of your AITripPlan itinerary. Includes day-by-day schedule, notes, and map-friendly activity list."
+  />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="canonical" href="https://aitripplan.com/print.html" />
 
   <!-- Font (Inter) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="/styles.css" />
   <style>
     :root {
+      --bg-page: #f3f4f6;
+      --bg-card: #ffffff;
       --text-main: #0f172a;
       --text-soft: #4b5563;
       --text-muted: #6b7280;
-      --border-subtle: #e5e7eb;
       --accent: #2563eb;
+      --border-subtle: rgba(209, 213, 219, 1);
+      --radius-lg: 16px;
     }
 
     * {
       box-sizing: border-box;
     }
 
-    html, body {
+    html,
+    body {
       margin: 0;
       padding: 0;
       font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg-page);
       color: var(--text-main);
-      background: white;
     }
 
     .page {
-      max-width: 800px;
-      margin: 16px auto 32px;
-      padding: 0 16px;
+      max-width: 1024px;
+      margin: 32px auto;
+      padding: 0 16px 40px;
     }
 
-    header.print-header {
+    .print-header {
       display: flex;
+      align-items: center;
       justify-content: space-between;
-      align-items: baseline;
-      border-bottom: 1px solid var(--border-subtle);
-      padding-bottom: 8px;
-      margin-bottom: 12px;
+      gap: 16px;
+      margin-bottom: 20px;
     }
 
-    .print-title {
-      font-size: 22px;
+    .print-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .print-logo-mark {
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      box-shadow: 0 5px 14px rgba(15, 23, 42, 0.20);
+      overflow: hidden;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: white;
+    }
+
+    .print-logo-word {
       font-weight: 700;
+      font-size: 18px;
       letter-spacing: -0.03em;
     }
 
-    .print-subtitle {
+    .print-logo-word span.accent {
+      background: linear-gradient(135deg, #2563eb, #22c55e, #ec4899);
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .print-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    .btn-print,
+    .btn-back {
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      padding: 7px 12px;
+      font-size: 12px;
+      cursor: pointer;
+      background: #f9fafb;
+      color: var(--text-soft);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-print {
+      border-color: #2563eb;
+      background: #2563eb;
+      color: #f9fafb;
+    }
+
+    .btn-print:hover {
+      background: #1d4ed8;
+      border-color: #1d4ed8;
+    }
+
+    .btn-back:hover {
+      background: #eef2ff;
+    }
+
+    .print-meta {
+      margin-bottom: 16px;
+      font-size: 13px;
+      color: var(--text-soft);
+    }
+
+    .print-meta strong {
+      font-weight: 600;
+    }
+
+    .two-column {
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1.1fr);
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    @media (max-width: 800px) {
+      .two-column {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-subtle);
+      padding: 14px 14px 12px;
+      margin-bottom: 12px;
+    }
+
+    .card h2,
+    .card h3 {
+      margin: 0 0 6px;
+      font-size: 16px;
+    }
+
+    .card h3 {
+      font-size: 14px;
+    }
+
+    .card-sub {
       font-size: 12px;
       color: var(--text-muted);
-    }
-
-    .trip-meta {
-      font-size: 12px;
-      color: var(--text-soft);
-      margin-bottom: 16px;
-    }
-
-    .trip-meta span {
-      display: inline-block;
-      margin-right: 12px;
-    }
-
-    h2.section-heading {
-      font-size: 16px;
-      margin-top: 18px;
       margin-bottom: 6px;
     }
 
-    h3.day-heading {
+    .day-block {
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px dashed rgba(209, 213, 219, 1);
+    }
+
+    .day-block:last-of-type {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .day-title {
       font-size: 14px;
-      margin-top: 10px;
-      margin-bottom: 4px;
+      font-weight: 600;
+      margin-bottom: 2px;
     }
 
     .day-sub {
@@ -87,478 +196,391 @@
       margin-bottom: 4px;
     }
 
-    ul.itinerary-list {
-      list-style: none;
-      padding-left: 0;
-      margin: 0 0 6px;
+    .activity-line {
       font-size: 12px;
-    }
-
-    ul.itinerary-list li {
-      margin-bottom: 4px;
-    }
-
-    .time-label {
-      font-weight: 600;
-      text-transform: capitalize;
-      margin-right: 4px;
-    }
-
-    .item-notes {
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-
-    .divider {
-      border-top: 1px solid var(--border-subtle);
-      margin: 14px 0;
-    }
-
-    ul.simple-list {
-      padding-left: 18px;
-      margin-top: 4px;
-      margin-bottom: 8px;
-      font-size: 12px;
-    }
-
-    ul.simple-list li {
+      color: var(--text-main);
       margin-bottom: 3px;
     }
 
-    .print-controls {
-      text-align: right;
-      margin-bottom: 8px;
-      font-size: 11px;
+    .activity-line span.label {
+      font-weight: 600;
     }
 
-    .print-controls button {
+    .activity-notes {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .list {
+      font-size: 12px;
+      color: var(--text-main);
+      padding-left: 16px;
+      margin: 4px 0 4px;
+    }
+
+    .list li {
+      margin-bottom: 2px;
+    }
+
+    .print-footer-note {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 10px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
       border-radius: 999px;
-      border: 1px solid var(--border-subtle);
-      background: #f9fafb;
-      padding: 4px 10px;
-      cursor: pointer;
-      font-size: 11px;
+      border: 1px solid rgba(209, 213, 219, 1);
+      font-size: 10px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
     }
 
-    .print-controls button:hover {
-      background: #eef2ff;
+    .pill.accent {
+      border-color: rgba(37, 99, 235, 0.8);
+      color: #1d4ed8;
+      background: #eff6ff;
     }
 
+    .divider {
+      margin: 12px 0;
+      border-top: 1px dashed rgba(209, 213, 219, 1);
+    }
+
+    .print-section-title {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .print-section-body {
+      font-size: 12px;
+      color: var(--text-soft);
+      margin-bottom: 4px;
+    }
+
+    /* Hide buttons in actual printout */
     @media print {
-      .print-controls {
+      .print-actions {
         display: none;
       }
       .page {
-        margin: 0 auto;
-        padding: 0 10mm;
+        margin: 0;
+        padding: 0 8px 16px;
+        max-width: 100%;
       }
-      header.print-header {
-        margin-top: 4mm;
+      body {
+        background: #ffffff;
       }
-      .divider {
-        page-break-inside: avoid;
+      .card {
+        box-shadow: none;
+        border-radius: 0;
+        border-left: none;
+        border-right: none;
       }
     }
   </style>
 </head>
 <body>
   <div class="page">
-    <div class="print-controls">
-      <button type="button" onclick="window.print()">Print / Save as PDF</button>
-    </div>
-
     <header class="print-header">
-      <div>
-        <div class="print-title" id="printTitle">Trip Itinerary</div>
-        <div class="print-subtitle">
-          Generated with AITripPlan.com
+      <div class="print-brand">
+        <div class="print-logo-mark" aria-hidden="true">
+          <svg width="34" height="34" viewBox="0 0 34 34" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="printLogoGrad" x1="4" y1="4" x2="30" y2="30">
+                <stop offset="0%" stop-color="#2563EB"/>
+                <stop offset="50%" stop-color="#22C55E"/>
+                <stop offset="100%" stop-color="#EC4899"/>
+              </linearGradient>
+            </defs>
+            <circle cx="17" cy="17" r="17" fill="white"/>
+            <circle cx="17" cy="17" r="14" fill="url(#printLogoGrad)"/>
+            <path d="M17 8 L20.5 17 L17 26 L13.5 17 Z" fill="white" opacity="0.95"/>
+            <circle cx="17" cy="17" r="3" fill="white"/>
+          </svg>
+        </div>
+        <div class="print-logo-word">
+          AITrip<span class="accent">Plan</span>
         </div>
       </div>
-      <div class="print-subtitle" id="exportStamp"></div>
+      <div class="print-actions">
+        <button class="btn-back" type="button" onclick="window.location.href='/plan.html'">
+          ← Back to planner
+        </button>
+        <button class="btn-print" type="button" onclick="window.print()">
+          🖨️ Print / Save as PDF
+        </button>
+      </div>
     </header>
 
-    <section id="tripMeta" class="trip-meta">
-      <!-- Filled by JS -->
-    </section>
+    <div class="print-meta" id="metaSummary">
+      Your itinerary will appear here once you export it from the planner.
+    </div>
 
-    <section id="itinerarySection">
-      <h2 class="section-heading">Day-by-day itinerary</h2>
-      <div id="itineraryContent"></div>
-    </section>
+    <div class="two-column">
+      <!-- Left: Day-by-day schedule -->
+      <section id="daysColumn">
+        <div class="card">
+          <h2>Day-by-day schedule</h2>
+          <div class="card-sub">
+            Morning / afternoon / evening activities grouped by day. Great for a one-page overview.
+          </div>
+          <div id="daysContainer">
+            <p class="print-section-body">
+              No itinerary loaded yet. Go back to the planner, generate ideas, tweak the chips, and then use
+              “Open printable view”.
+            </p>
+          </div>
+        </div>
+      </section>
 
-    <div class="divider"></div>
+      <!-- Right: Lists / notes -->
+      <section id="listsColumn">
+        <div class="card" id="quickFactsCard">
+          <h3>Trip snapshot</h3>
+          <div class="card-sub">Destination, dates, and who’s going.</div>
+          <div id="tripSnapshot">
+            <p class="print-section-body">
+              When you export from the planner, quick facts about your trip will show here.
+            </p>
+          </div>
+        </div>
 
-    <section id="mapsSection">
-      <h2 class="section-heading">Maps &amp; locations</h2>
-      <p style="font-size:12px; margin:0 0 4px;">
-        Use these links to quickly open search results in Google Maps.
-      </p>
-      <ul class="simple-list" id="mapsList"></ul>
-    </section>
+        <div class="card" id="placesCard">
+          <h3>Places &amp; neighborhoods to remember</h3>
+          <div class="card-sub">Good for dropping into Google Maps or sharing with your group.</div>
+          <ul class="list" id="placesList">
+            <li>No places yet. After you export, this will list neighborhoods and key spots from your activities.</li>
+          </ul>
+        </div>
 
-    <div class="divider"></div>
+        <div class="card" id="restaurantsCard">
+          <h3>Food &amp; drink ideas</h3>
+          <div class="card-sub">Use this as a starting list for restaurant and bar reservations.</div>
+          <ul class="list" id="restaurantsList">
+            <li>
+              Any restaurant / bar mentions in your activities will be summarized here once you export from the planner.
+            </li>
+          </ul>
+        </div>
 
-    <section id="restaurantsSection">
-      <h2 class="section-heading">Restaurant &amp; food ideas</h2>
-      <p style="font-size:12px; margin:0 0 4px;">
-        Highlighted spots that look food-focused, based on your itinerary.
-      </p>
-      <ul class="simple-list" id="restaurantsList"></ul>
-    </section>
+        <div class="card" id="packingCard">
+          <h3>Light packing checklist</h3>
+          <div class="card-sub">Suggested basics based on your destination and trip style.</div>
+          <ul class="list" id="packingList">
+            <li>Comfortable walking shoes</li>
+            <li>Weather-appropriate outerwear</li>
+            <li>Day bag / small backpack</li>
+            <li>Travel documents &amp; copies</li>
+            <li>Portable charger &amp; adapters</li>
+          </ul>
+        </div>
 
-    <div class="divider"></div>
-
-    <section id="packingSection">
-      <h2 class="section-heading">Packing list (starter)</h2>
-      <p style="font-size:12px; margin:0 0 4px;">
-        Start here and customize based on your destination and season.
-      </p>
-      <ul class="simple-list" id="packingList">
-        <li>Comfortable walking shoes</li>
-        <li>Weather-appropriate outerwear (light jacket / raincoat)</li>
-        <li>Daypack or small backpack</li>
-        <li>Travel documents (ID/passport, confirmations, tickets)</li>
-        <li>Chargers, power adapters, and battery pack</li>
-        <li>Reusable water bottle</li>
-        <li>Any necessary medications</li>
-        <li>Swimwear and beach gear (if applicable)</li>
-        <li>One nicer outfit for dinners or shows</li>
-      </ul>
-    </section>
-
-    <div class="divider"></div>
-
-    <section id="weatherSection">
-      <h2 class="section-heading">Weather snapshot (check before you go)</h2>
-      <p style="font-size:12px; margin:0 0 4px;">
-        For the latest forecast, check a few days before departure:
-      </p>
-      <ul class="simple-list">
-        <li>Search “<span id="weatherSearchLabel"></span> 10 day forecast”</li>
-        <li>Use weather apps (Weather.com, local meteorological service, etc.)</li>
-        <li>Adjust layers, rain gear, and footwear based on the forecast.</li>
-      </ul>
-    </section>
+        <div class="print-footer-note">
+          Generated with AITripPlan.com. Always confirm opening hours, reservations, and local guidance before you go.
+        </div>
+      </section>
+    </div>
   </div>
 
   <script>
-    function groupSuggestions(suggestions) {
-      const dayBuckets = new Map();
-      const flex = [];
+    (function () {
+      try {
+        const raw = window.localStorage.getItem("aitripplan_export_v1");
+        if (!raw) return;
 
-      suggestions.forEach((s) => {
-        const day =
-          typeof s.dayHint === "number" && isFinite(s.dayHint)
-            ? s.dayHint
-            : null;
-        if (day === null) {
-          flex.push(s);
-        } else {
-          if (!dayBuckets.has(day)) dayBuckets.set(day, []);
-          dayBuckets.get(day).push(s);
-        }
-      });
+        const payload = JSON.parse(raw);
+        const meta = payload.meta || {};
+        const suggestions = Array.isArray(payload.suggestions) ? payload.suggestions : [];
 
-      const dayNumbers = Array.from(dayBuckets.keys()).sort((a, b) => a - b);
-      const timeWeights = { morning: 0, afternoon: 1, evening: 2, flex: 3 };
+        const metaSummary = document.getElementById("metaSummary");
+        const daysContainer = document.getElementById("daysContainer");
+        const tripSnapshot = document.getElementById("tripSnapshot");
+        const placesList = document.getElementById("placesList");
+        const restaurantsList = document.getElementById("restaurantsList");
 
-      function sortByTime(list) {
-        return list.slice().sort((a, b) => {
-          const ta = (a.timeOfDay || "flex").toString().toLowerCase();
-          const tb = (b.timeOfDay || "flex").toString().toLowerCase();
-          const wa = Object.prototype.hasOwnProperty.call(timeWeights, ta)
-            ? timeWeights[ta]
-            : 4;
-          const wb = Object.prototype.hasOwnProperty.call(timeWeights, tb)
-            ? timeWeights[tb]
-            : 4;
-          if (wa !== wb) return wa - wb;
-          return (a.title || "").localeCompare(b.title || "");
-        });
-      }
+        if (!suggestions.length) return;
 
-      return {
-        days: dayNumbers.map((d) => ({
-          dayNumber: d,
-          items: sortByTime(dayBuckets.get(d) || []),
-        })),
-        flex: sortByTime(flex),
-      };
-    }
+        // Meta summary
+        const parts = [];
+        if (meta.destination) parts.push(meta.destination);
+        if (meta.days) parts.push(meta.days + " days");
+        if (meta.dates) parts.push(meta.dates);
+        if (meta.travelers) parts.push(meta.travelers);
+        metaSummary.textContent = parts.join(" • ") || "Trip details";
 
-    function buildItineraryView(container, groups) {
-      container.innerHTML = "";
-
-      if ((!groups.days.length) && (!groups.flex.length)) {
-        container.innerHTML =
-          "<p style='font-size:12px; color:#6b7280;'>No items found in this itinerary.</p>";
-        return;
-      }
-
-      groups.days.forEach((dayObj) => {
-        const dayWrap = document.createElement("section");
-        const h = document.createElement("h3");
-        h.className = "day-heading";
-        h.textContent = "Day " + dayObj.dayNumber;
-        const sub = document.createElement("div");
-        sub.className = "day-sub";
-        sub.textContent = "Morning, afternoon and evening ideas.";
-
-        const list = document.createElement("ul");
-        list.className = "itinerary-list";
-
-        dayObj.items.forEach((item) => {
-          const li = document.createElement("li");
-          const time = (item.timeOfDay || "flex").toString().toLowerCase();
-          const timeLabel =
-            time === "flex" ? "Any time" : time.charAt(0).toUpperCase() + time.slice(1);
-          const strong = document.createElement("span");
-          strong.className = "time-label";
-          strong.textContent = timeLabel + ":";
-
-          const textSpan = document.createElement("span");
-          const title = item.title || "Activity";
-          const desc = item.description || "";
-          textSpan.textContent = " " + title + (desc ? " — " + desc : "");
-
-          li.appendChild(strong);
-          li.appendChild(textSpan);
-
-          if (item.neighborhood || item.travelTime) {
-            const meta = document.createElement("div");
-            meta.className = "item-notes";
-            const bits = [];
-            if (item.neighborhood) bits.push(item.neighborhood);
-            if (item.travelTime) bits.push(item.travelTime);
-            meta.textContent = bits.join(" · ");
-            li.appendChild(meta);
+        // Group by day
+        const byDay = new Map();
+        const flex = [];
+        suggestions.forEach((s) => {
+          const d = typeof s.dayHint === "number" && isFinite(s.dayHint) ? s.dayHint : null;
+          if (d == null) {
+            flex.push(s);
+            return;
           }
-
-          if (item.notes) {
-            const notes = document.createElement("div");
-            notes.className = "item-notes";
-            notes.textContent = item.notes;
-            li.appendChild(notes);
-          }
-
-          list.appendChild(li);
+          if (!byDay.has(d)) byDay.set(d, []);
+          byDay.get(d).push(s);
         });
 
-        dayWrap.appendChild(h);
-        dayWrap.appendChild(sub);
-        dayWrap.appendChild(list);
-        container.appendChild(dayWrap);
-      });
+        const sortedDays = Array.from(byDay.keys()).sort((a, b) => a - b);
 
-      if (groups.flex.length) {
-        const dayWrap = document.createElement("section");
-        const h = document.createElement("h3");
-        h.className = "day-heading";
-        h.textContent = "Any day ideas";
-        const sub = document.createElement("div");
-        sub.className = "day-sub";
-        sub.textContent = "Flexible activities you can plug into any day.";
+        const timeOrder = { morning: 0, afternoon: 1, evening: 2, flex: 3 };
+        const formatTime = (t) => {
+          const v = (t || "flex").toString().toLowerCase();
+          if (v === "morning") return "Morning";
+          if (v === "afternoon") return "Afternoon";
+          if (v === "evening") return "Evening";
+          return "Flexible";
+        };
 
-        const list = document.createElement("ul");
-        list.className = "itinerary-list";
+        const container = document.createElement("div");
 
-        groups.flex.forEach((item) => {
-          const li = document.createElement("li");
-          const strong = document.createElement("span");
-          strong.className = "time-label";
-          strong.textContent = "Any time:";
+        sortedDays.forEach((day) => {
+          const block = document.createElement("section");
+          block.className = "day-block";
 
-          const textSpan = document.createElement("span");
-          const title = item.title || "Activity";
-          const desc = item.description || "";
-          textSpan.textContent = " " + title + (desc ? " — " + desc : "");
+          const title = document.createElement("div");
+          title.className = "day-title";
+          title.textContent = "Day " + day;
+          block.appendChild(title);
 
-          li.appendChild(strong);
-          li.appendChild(textSpan);
+          const sub = document.createElement("div");
+          sub.className = "day-sub";
+          sub.textContent = "Morning, afternoon, and evening ideas.";
+          block.appendChild(sub);
 
-          if (item.neighborhood || item.travelTime) {
-            const meta = document.createElement("div");
-            meta.className = "item-notes";
-            const bits = [];
-            if (item.neighborhood) bits.push(item.neighborhood);
-            if (item.travelTime) bits.push(item.travelTime);
-            meta.textContent = bits.join(" · ");
-            li.appendChild(meta);
-          }
+          const items = (byDay.get(day) || []).slice().sort((a, b) => {
+            const ta = (a.timeOfDay || "flex").toString().toLowerCase();
+            const tb = (b.timeOfDay || "flex").toString().toLowerCase();
+            const wa = Object.prototype.hasOwnProperty.call(timeOrder, ta) ? timeOrder[ta] : 4;
+            const wb = Object.prototype.hasOwnProperty.call(timeOrder, tb) ? timeOrder[tb] : 4;
+            return wa === wb
+              ? (a.title || "").localeCompare(b.title || "")
+              : wa - wb;
+          });
 
-          if (item.notes) {
-            const notes = document.createElement("div");
-            notes.className = "item-notes";
-            notes.textContent = item.notes;
-            li.appendChild(notes);
-          }
+          items.forEach((s) => {
+            const line = document.createElement("div");
+            line.className = "activity-line";
 
-          list.appendChild(li);
+            const label = document.createElement("span");
+            label.className = "label";
+            label.textContent = formatTime(s.timeOfDay) + ": ";
+            line.appendChild(label);
+
+            line.append(s.title || "Activity");
+            block.appendChild(line);
+
+            if (s.description) {
+              const notes = document.createElement("div");
+              notes.className = "activity-notes";
+              notes.textContent = s.description;
+              block.appendChild(notes);
+            }
+          });
+
+          container.appendChild(block);
         });
 
-        dayWrap.appendChild(h);
-        dayWrap.appendChild(sub);
-        dayWrap.appendChild(list);
-        container.appendChild(dayWrap);
-      }
-    }
+        if (flex.length) {
+          const block = document.createElement("section");
+          block.className = "day-block";
 
-    function buildMapsList(container, meta, suggestions) {
-      container.innerHTML = "";
-      const used = new Set();
-      const items = [];
+          const title = document.createElement("div");
+          title.className = "day-title";
+          title.textContent = "Any day ideas";
+          block.appendChild(title);
 
-      suggestions.forEach((s) => {
-        let query = null;
-        if (s.mapsSearch && typeof s.mapsSearch === "string") {
-          query = s.mapsSearch.trim();
-        } else if (s.title) {
-          query = s.title;
+          const sub = document.createElement("div");
+          sub.className = "day-sub";
+          sub.textContent = "Flexible activities you can plug into any day.";
+          block.appendChild(sub);
+
+          flex.forEach((s) => {
+            const line = document.createElement("div");
+            line.className = "activity-line";
+            const label = document.createElement("span");
+            label.className = "label";
+            label.textContent = formatTime(s.timeOfDay) + ": ";
+            line.appendChild(label);
+            line.append(s.title || "Activity");
+            block.appendChild(line);
+          });
+
+          container.appendChild(block);
         }
-        if (!query) return;
-        const key = query.toLowerCase();
-        if (used.has(key)) return;
-        used.add(key);
 
-        const url =
-          "https://www.google.com/maps/search/?api=1&query=" +
-          encodeURIComponent(query);
-        items.push({ label: query, url });
-      });
+        daysContainer.innerHTML = "";
+        daysContainer.appendChild(container);
 
-      if (!items.length) {
-        container.innerHTML =
-          "<li>No specific locations were tagged. Use the activity names above as search terms in Google Maps.</li>";
-        return;
-      }
+        // Snapshot
+        const snapshotParts = [];
+        if (meta.destination) snapshotParts.push("Destination: " + meta.destination);
+        if (meta.days) snapshotParts.push("Trip length: " + meta.days + " days");
+        if (meta.dates) snapshotParts.push("Dates: " + meta.dates);
+        if (meta.travelers) snapshotParts.push("Who’s going: " + meta.travelers);
+        if (meta.tripType) snapshotParts.push("Trip type: " + meta.tripType);
+        if (meta.budget) snapshotParts.push("Budget: " + meta.budget);
+        if (meta.vibe) snapshotParts.push("Vibe: " + meta.vibe);
 
-      items.forEach((item) => {
-        const li = document.createElement("li");
-        const a = document.createElement("a");
-        a.href = item.url;
-        a.textContent = item.label;
-        a.target = "_blank";
-        a.rel = "noopener noreferrer";
-        li.appendChild(a);
-        container.appendChild(li);
-      });
-    }
-
-    function buildRestaurantsList(container, suggestions) {
-      container.innerHTML = "";
-      const used = new Set();
-      const items = [];
-      const foodKeywords = [
-        "restaurant","dinner","lunch","breakfast","brunch",
-        "cafe","bar","bistro","tapas","wine","cocktail"
-      ];
-
-      function looksFoodRelated(s) {
-        const text =
-          (s.title || "") + " " + (s.description || "") + " " + (s.notes || "");
-        const lower = text.toLowerCase();
-        return foodKeywords.some((kw) => lower.includes(kw));
-      }
-
-      suggestions.forEach((s) => {
-        if (!looksFoodRelated(s)) return;
-        const name = s.title || "Food / drink stop";
-        const key = name.toLowerCase();
-        if (used.has(key)) return;
-        used.add(key);
-        items.push(name);
-      });
-
-      if (!items.length) {
-        container.innerHTML =
-          "<li>No obviously food-focused stops were detected. Use your itinerary above to choose where to eat.</li>";
-        return;
-      }
-
-      items.forEach((name) => {
-        const li = document.createElement("li");
-        li.textContent = name;
-        container.appendChild(li);
-      });
-    }
-
-    document.addEventListener("DOMContentLoaded", () => {
-      const raw = localStorage.getItem("aitripplan_latest_export");
-      let payload = null;
-      if (raw) {
-        try {
-          payload = JSON.parse(raw);
-        } catch (e) {
-          console.error("Failed to parse export payload:", e);
+        if (snapshotParts.length) {
+          const frag = document.createDocumentFragment();
+          snapshotParts.forEach((p) => {
+            const div = document.createElement("div");
+            div.className = "activity-notes";
+            div.textContent = p;
+            frag.appendChild(div);
+          });
+          tripSnapshot.innerHTML = "";
+          tripSnapshot.appendChild(frag);
         }
-      }
 
-      if (!payload || !Array.isArray(payload.suggestions)) {
-        document.getElementById("itineraryContent").innerHTML =
-          "<p style='font-size:12px; color:#6b7280;'>No itinerary found. Go back to AITripPlan.com, generate a trip, and click Export again.</p>";
-        return;
-      }
+        // Places list (neighborhoods and map searches)
+        const placesSet = new Set();
+        suggestions.forEach((s) => {
+          if (s.neighborhood) placesSet.add(String(s.neighborhood).trim());
+          if (s.mapsSearch) placesSet.add(String(s.mapsSearch).trim());
+        });
 
-      const meta = payload.meta || {};
-      const suggestions = payload.suggestions || [];
-
-      const titleEl = document.getElementById("printTitle");
-      if (meta.destination) {
-        titleEl.textContent = meta.destination + " — Trip Itinerary";
-      }
-
-      const exportStamp = document.getElementById("exportStamp");
-      if (payload.exportedAt) {
-        const d = new Date(payload.exportedAt);
-        if (!isNaN(d.getTime())) {
-          exportStamp.textContent =
-            "Exported " + d.toLocaleDateString() + " " + d.toLocaleTimeString();
+        if (placesSet.size) {
+          placesList.innerHTML = "";
+          Array.from(placesSet).forEach((name) => {
+            const li = document.createElement("li");
+            li.textContent = name;
+            placesList.appendChild(li);
+          });
         }
-      }
 
-      const tripMetaEl = document.getElementById("tripMeta");
-      const bits = [];
-      if (meta.dates) bits.push("Dates: " + meta.dates);
-      if (meta.daysNumber) bits.push("Trip length: " + meta.daysNumber + " day(s)");
-      if (meta.travelers) bits.push("Who: " + meta.travelers);
-      if (meta.budget) bits.push("Budget: " + meta.budget);
-      if (meta.tripType) bits.push("Trip type: " + meta.tripType);
-      if (meta.mustInclude && meta.mustInclude.length) {
-        bits.push("Must include: " + meta.mustInclude.join(", "));
-      }
-      if (bits.length) {
-        tripMetaEl.innerHTML = bits.map((b) => "<span>" + b + "</span>").join("");
-      } else {
-        tripMetaEl.innerHTML =
-          "<span>No extra trip details were provided.</span>";
-      }
+        // Restaurants list (heuristic: title or description mentioning "restaurant", "bar", "cafe")
+        const restaurantSet = new Set();
+        const reFood = /\b(restaurant|bar|café|cafe|bistro|wine|tapas|pub)\b/i;
+        suggestions.forEach((s) => {
+          const check = [s.title || "", s.description || "", s.notes || ""].join(" ");
+          if (reFood.test(check)) {
+            const label = s.title || s.mapsSearch || s.neighborhood;
+            if (label) restaurantSet.add(String(label).trim());
+          }
+        });
 
-      const weatherLabel = document.getElementById("weatherSearchLabel");
-      if (weatherLabel) {
-        const dest = meta.destination || "your destination city";
-        weatherLabel.textContent = dest;
+        if (restaurantSet.size) {
+          restaurantsList.innerHTML = "";
+          Array.from(restaurantSet).forEach((name) => {
+            const li = document.createElement("li");
+            li.textContent = name;
+            restaurantsList.appendChild(li);
+          });
+        }
+      } catch (e) {
+        console.error("Failed to load printable itinerary:", e);
       }
-
-      const groups = groupSuggestions(suggestions);
-      buildItineraryView(
-        document.getElementById("itineraryContent"),
-        groups
-      );
-      buildMapsList(
-        document.getElementById("mapsList"),
-        meta,
-        suggestions
-      );
-      buildRestaurantsList(
-        document.getElementById("restaurantsList"),
-        suggestions
-      );
-
-      // Automatically prompt print after a short delay
-      setTimeout(() => {
-        window.print();
-      }, 600);
-    });
+    })();
   </script>
 </body>
 </html>
