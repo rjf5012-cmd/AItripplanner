@@ -16,9 +16,13 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
+  <!-- Shared styles (kept) -->
+  <link rel="stylesheet" href="/styles.css" />
+
+  <!-- Page-specific premium styling to match index.html -->
   <style>
     :root {
-      --bg-page: #e5e7eb;
+      --bg-page: #f3f4f6;
       --bg-card: #ffffff;
       --bg-soft: #f9fafb;
       --text-main: #0f172a;
@@ -28,7 +32,7 @@
       --accent-green: #22c55e;
       --accent-pink: #ec4899;
       --border-subtle: rgba(209, 213, 219, 1);
-      --shadow-soft: 0 20px 60px rgba(15, 23, 42, 0.16);
+      --shadow-soft: 0 24px 60px rgba(15, 23, 42, 0.14);
       --radius-lg: 18px;
       --danger: #dc2626;
     }
@@ -41,9 +45,8 @@
       margin: 0;
       font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background:
-        radial-gradient(circle at 0% 0%, rgba(37, 99, 235, 0.20), transparent 60%),
-        radial-gradient(circle at 100% 0%, rgba(236, 72, 153, 0.16), transparent 55%),
-        radial-gradient(circle at 0% 100%, rgba(34, 197, 94, 0.14), transparent 55%),
+        radial-gradient(circle at 0% 0%, rgba(37, 99, 235, 0.10), transparent 60%),
+        radial-gradient(circle at 100% 0%, rgba(236, 72, 153, 0.10), transparent 60%),
         var(--bg-page);
       color: var(--text-main);
     }
@@ -53,7 +56,7 @@
       text-decoration: none;
     }
 
-    /* Header / Nav */
+    /* Header / Nav (match index.html) */
     header.site-header {
       position: fixed;
       inset-inline: 0;
@@ -67,7 +70,7 @@
     .nav-inner {
       max-width: 1120px;
       margin: 0 auto;
-      padding: 12px 18px;
+      padding: 14px 18px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -155,7 +158,7 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      white-space: nowrap;
+      transition: transform 0.14s ease, box-shadow 0.14s ease, filter 0.14s ease;
     }
 
     .nav-cta span.icon {
@@ -165,31 +168,46 @@
     .nav-cta:hover {
       transform: translateY(-1px);
       box-shadow: 0 12px 28px rgba(37, 99, 235, 0.40);
+      filter: brightness(1.03);
     }
 
     main {
-      padding-top: 84px;
+      padding-top: 88px;
       padding-bottom: 40px;
     }
 
-    /* Planner layout */
+    /* Planner layout – premium panel */
     .planner-shell {
       max-width: 1120px;
       margin: 0 auto;
-      padding: 0 16px 40px;
+      padding: 0 18px 40px;
     }
 
     .planner-panel {
       background:
         radial-gradient(circle at 0% 0%, rgba(255,255,255,0.96), rgba(239,246,255,0.98) 55%, rgba(250,245,255,0.99));
       border-radius: 26px;
-      border: 1px solid rgba(148, 163, 184, 0.45);
+      border: 1px solid rgba(148, 163, 184, 0.40);
       box-shadow: var(--shadow-soft);
-      padding: 18px 14px 20px;
+      padding: 20px 18px 24px;
+    }
+
+    @media (min-width: 1024px) {
+      main {
+        padding-top: 96px;
+        padding-bottom: 64px;
+      }
+      .planner-shell {
+        padding-inline: 24px;
+      }
+      .planner-panel {
+        border-radius: 30px;
+        box-shadow: 0 24px 60px rgba(15, 23, 42, 0.16);
+      }
     }
 
     .planner-header {
-      margin-bottom: 18px;
+      margin-bottom: 20px;
     }
 
     .planner-eyebrow {
@@ -211,7 +229,7 @@
 
     .planner-title {
       margin: 8px 0 4px;
-      font-size: 24px;
+      font-size: 28px;
       font-weight: 800;
       letter-spacing: -0.04em;
     }
@@ -223,21 +241,34 @@
     }
 
     .planner-subtitle {
-      font-size: 13px;
+      font-size: 14px;
       color: var(--text-soft);
       max-width: 680px;
-      line-height: 1.55;
     }
 
     .planner-grid {
-      margin-top: 14px;
+      margin-top: 16px;
       background: rgba(255, 255, 255, 0.96);
-      border-radius: 20px;
+      border-radius: 22px;
       border: 1px solid rgba(229, 231, 235, 0.9);
-      padding: 14px 12px;
+      padding: 18px 14px;
       display: grid;
-      gap: 14px;
+      gap: 16px;
       align-items: flex-start;
+    }
+
+    @media (min-width: 900px) {
+      .planner-grid {
+        padding: 18px 18px;
+        grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.25fr);
+      }
+    }
+
+    @media (min-width: 1200px) {
+      .planner-grid {
+        max-width: 1080px;
+        margin-inline: auto;
+      }
     }
 
     .planner-card {
@@ -245,7 +276,7 @@
       border-radius: 18px;
       border: 1px solid rgba(229, 231, 235, 1);
       box-shadow: 0 10px 26px rgba(15, 23, 42, 0.08);
-      padding: 16px 15px 14px;
+      padding: 18px 18px 16px;
     }
 
     .planner-card--primary {
@@ -257,8 +288,8 @@
       content: "";
       position: absolute;
       left: 0;
-      top: 10px;
-      bottom: 10px;
+      top: 12px;
+      bottom: 12px;
       width: 4px;
       border-radius: 999px;
       background: linear-gradient(180deg, #2563eb, #22c55e, #ec4899);
@@ -274,17 +305,17 @@
     }
 
     .planner-card-title {
-      font-size: 15px;
+      font-size: 16px;
       font-weight: 600;
       margin-bottom: 4px;
     }
 
     .planner-card-sub {
-      font-size: 12px;
+      font-size: 13px;
       color: var(--text-muted);
     }
 
-    /* Form */
+    /* Form & fields */
     form#tripForm {
       display: flex;
       flex-direction: column;
@@ -299,7 +330,7 @@
     }
 
     .field-col {
-      flex: 1 1 150px;
+      flex: 1 1 140px;
       min-width: 0;
     }
 
@@ -355,7 +386,7 @@
       border-radius: 999px;
       background: var(--bg-soft);
       border: 1px solid rgba(209, 213, 219, 0.8);
-      margin: 4px 0 4px;
+      margin: 4px 0 6px;
     }
 
     .sample-strip button {
@@ -368,7 +399,6 @@
       padding: 0;
       text-decoration: underline;
       text-underline-offset: 2px;
-      white-space: nowrap;
     }
 
     .actions {
@@ -392,11 +422,13 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
+      transition: transform 0.14s ease, box-shadow 0.14s ease, filter 0.14s ease;
     }
 
     button.primary:hover:not(:disabled) {
       transform: translateY(-1px);
       box-shadow: 0 14px 30px rgba(37, 99, 235, 0.36);
+      filter: brightness(1.03);
     }
 
     button.primary:disabled {
@@ -416,16 +448,21 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      white-space: nowrap;
+      transition: background 0.14s ease, box-shadow 0.14s ease, transform 0.14s ease, border-color 0.14s ease;
     }
 
     button.secondary:hover:not(:disabled) {
       background: #eef2ff;
+      border-color: rgba(129, 140, 248, 0.8);
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+      transform: translateY(-1px);
     }
 
     button.secondary:disabled {
       opacity: 0.5;
       cursor: default;
+      box-shadow: none;
+      transform: none;
     }
 
     .spinner-dot {
@@ -593,8 +630,9 @@
     .suggestion-card {
       border-radius: 12px;
       border: 1px solid rgba(209, 213, 219, 1);
-      padding: 9px 10px;
+      padding: 10px 11px;
       background: #ffffff;
+      box-shadow: 0 6px 18px rgba(15, 23, 42, 0.04);
     }
 
     .suggestion-top-row {
@@ -610,7 +648,6 @@
       font-weight: 600;
     }
 
-    /* Smaller, tighter chips */
     .chip-row {
       display: flex;
       flex-wrap: wrap;
@@ -658,7 +695,6 @@
       margin-bottom: 2px;
     }
 
-    /* Price line */
     .price-line {
       font-size: 11px;
       color: var(--text-muted);
@@ -732,76 +768,36 @@
       text-decoration: underline;
     }
 
-    /* MOBILE TWEAKS */
+    /* Mobile tweaks to match index */
     @media (max-width: 640px) {
       header.site-header {
         padding-inline: 0;
       }
       .nav-inner {
-        padding-inline: 14px;
+        padding-inline: 10px;
+      }
+      .logo-mark {
+        width: 30px;
+        height: 30px;
+      }
+      .logo-word {
+        font-size: 16px;
+      }
+      nav.primary-nav {
+        gap: 10px;
+        font-size: 13px;
+      }
+      nav.primary-nav a[href="/about.html"],
+      nav.primary-nav a[href="/faq.html"],
+      .nav-cta {
+        display: none;
       }
       .planner-panel {
-        padding: 14px 12px 18px;
-        border-radius: 22px;
+        border-radius: 20px;
+        padding: 18px 14px 22px;
       }
       .planner-grid {
-        padding: 12px 10px;
-      }
-      .suggestions-list {
-        max-height: none;
-      }
-    }
-
-    /* DESKTOP / LARGE SCREEN TWEAKS */
-    @media (min-width: 900px) {
-      main {
-        padding-top: 96px;
-      }
-
-      .planner-shell {
-        padding: 10px 24px 52px;
-      }
-
-      .planner-panel {
-        padding: 24px 26px 26px;
-        border-radius: 30px;
-        box-shadow: 0 26px 70px rgba(15, 23, 42, 0.18);
-      }
-
-      .planner-header {
-        margin-bottom: 22px;
-      }
-
-      .planner-title {
-        font-size: 30px;
-      }
-
-      .planner-subtitle {
-        font-size: 14px;
-      }
-
-      .planner-grid {
-        padding: 18px 18px;
-        grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.25fr);
-        gap: 18px;
-        align-items: stretch;
-      }
-
-      .planner-card {
-        padding: 18px 18px 16px;
-      }
-
-      .suggestions-list {
-        max-height: 540px;
-      }
-    }
-
-    @media (min-width: 1200px) {
-      .planner-shell {
-        max-width: 1160px;
-      }
-      .planner-title {
-        font-size: 32px;
+        padding: 14px 10px;
       }
     }
   </style>
