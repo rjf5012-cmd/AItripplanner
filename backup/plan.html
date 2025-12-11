@@ -1,0 +1,1701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Plan a Trip | AITripPlan — AI Itinerary Builder</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta
+    name="description"
+    content="Use AITripPlan to generate personalized trip ideas and simple itineraries. Enter your destination and preferences to get structured activity suggestions in seconds."
+  />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="canonical" href="https://aitripplan.com/plan.html" />
+
+  <!-- Font (Inter) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Shared styles (kept) -->
+  <link rel="stylesheet" href="/styles.css" />
+
+  <!-- Page-specific premium styling to match index.html -->
+  <style>
+    :root {
+      --bg-page: #f3f4f6;
+      --bg-card: #ffffff;
+      --bg-soft: #f9fafb;
+      --text-main: #0f172a;
+      --text-soft: #4b5563;
+      --text-muted: #6b7280;
+      --accent: #2563eb;
+      --accent-green: #22c55e;
+      --accent-pink: #ec4899;
+      --border-subtle: rgba(209, 213, 219, 1);
+      --shadow-soft: 0 24px 60px rgba(15, 23, 42, 0.14);
+      --radius-lg: 18px;
+      --danger: #dc2626;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 0% 0%, rgba(37, 99, 235, 0.10), transparent 60%),
+        radial-gradient(circle at 100% 0%, rgba(236, 72, 153, 0.10), transparent 60%),
+        var(--bg-page);
+      color: var(--text-main);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* Header / Nav (match index.html) */
+    header.site-header {
+      position: fixed;
+      inset-inline: 0;
+      top: 0;
+      z-index: 40;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(209, 213, 219, 0.8);
+    }
+
+    .nav-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-mark {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      box-shadow: 0 5px 14px rgba(15, 23, 42, 0.20);
+      overflow: hidden;
+    }
+
+    .logo-word {
+      font-weight: 700;
+      font-size: 18px;
+      letter-spacing: -0.03em;
+    }
+
+    .logo-word span.accent {
+      background: linear-gradient(135deg, #2563eb, #22c55e, #ec4899);
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    nav.primary-nav {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      font-size: 14px;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+    }
+
+    nav.primary-nav a {
+      position: relative;
+      padding-bottom: 2px;
+    }
+
+    nav.primary-nav a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 2px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #2563eb, #22c55e);
+      transform: scaleX(0);
+      transform-origin: center;
+      transition: transform 140ms ease-out;
+    }
+
+    nav.primary-nav a:hover::after {
+      transform: scaleX(1);
+    }
+
+    /* Active nav item */
+    nav.primary-nav a[href="/plan.html"]::after {
+      transform: scaleX(1);
+    }
+
+    .nav-cta {
+      padding: 7px 14px;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(135deg, #2563eb, #22c55e, #ec4899);
+      color: #f9fafb;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: transform 0.14s ease, box-shadow 0.14s ease, filter 0.14s ease;
+    }
+
+    .nav-cta span.icon {
+      font-size: 15px;
+    }
+
+    .nav-cta:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 28px rgba(37, 99, 235, 0.40);
+      filter: brightness(1.03);
+    }
+
+    main {
+      padding-top: 88px;
+      padding-bottom: 40px;
+    }
+
+    /* Planner layout – premium panel */
+    .planner-shell {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 18px 40px;
+    }
+
+    .planner-panel {
+      background:
+        radial-gradient(circle at 0% 0%, rgba(255,255,255,0.96), rgba(239,246,255,0.98) 55%, rgba(250,245,255,0.99));
+      border-radius: 26px;
+      border: 1px solid rgba(148, 163, 184, 0.40);
+      box-shadow: var(--shadow-soft);
+      padding: 20px 18px 24px;
+    }
+
+    @media (min-width: 1024px) {
+      main {
+        padding-top: 96px;
+        padding-bottom: 64px;
+      }
+      .planner-shell {
+        padding-inline: 24px;
+      }
+      .planner-panel {
+        border-radius: 30px;
+        box-shadow: 0 24px 60px rgba(15, 23, 42, 0.16);
+      }
+    }
+
+    .planner-header {
+      margin-bottom: 20px;
+    }
+
+    .planner-eyebrow {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--text-muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .planner-eyebrow-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #2563eb, #22c55e, #ec4899);
+    }
+
+    .planner-title {
+      margin: 8px 0 4px;
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+    }
+
+    .planner-title span.accent {
+      background: linear-gradient(135deg, #2563eb, #22c55e);
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .planner-subtitle {
+      font-size: 14px;
+      color: var(--text-soft);
+      max-width: 680px;
+    }
+
+    .planner-grid {
+      margin-top: 16px;
+      background: rgba(255, 255, 255, 0.96);
+      border-radius: 22px;
+      border: 1px solid rgba(229, 231, 235, 0.9);
+      padding: 18px 14px;
+      display: grid;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    @media (min-width: 900px) {
+      .planner-grid {
+        padding: 18px 18px;
+        grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.25fr);
+      }
+    }
+
+    @media (min-width: 1200px) {
+      .planner-grid {
+        max-width: 1080px;
+        margin-inline: auto;
+      }
+    }
+
+    .planner-card {
+      background: var(--bg-card);
+      border-radius: 18px;
+      border: 1px solid rgba(229, 231, 235, 1);
+      box-shadow: 0 10px 26px rgba(15, 23, 42, 0.08);
+      padding: 18px 18px 16px;
+    }
+
+    .planner-card--primary {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .planner-card--primary::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 12px;
+      bottom: 12px;
+      width: 4px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, #2563eb, #22c55e, #ec4899);
+    }
+
+    .planner-card--primary-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .planner-card-header {
+      margin-bottom: 10px;
+    }
+
+    .planner-card-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .planner-card-sub {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    /* Form & fields */
+    form#tripForm {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 6px;
+    }
+
+    .field-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .field-col {
+      flex: 1 1 140px;
+      min-width: 0;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-soft);
+      margin-bottom: 3px;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      border-radius: 11px;
+      border: 1px solid var(--border-subtle);
+      padding: 8px 9px;
+      font-size: 13px;
+      font-family: inherit;
+      color: var(--text-main);
+      background-color: #ffffff;
+      outline: none;
+      transition: border-color 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.18);
+      background-color: #f9fafb;
+    }
+
+    textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    .helper {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+
+    .sample-strip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      color: var(--text-muted);
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: var(--bg-soft);
+      border: 1px solid rgba(209, 213, 219, 0.8);
+      margin: 4px 0 6px;
+    }
+
+    .sample-strip button {
+      border: none;
+      background: transparent;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent);
+      cursor: pointer;
+      padding: 0;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-top: 4px;
+    }
+
+    button.primary {
+      border-radius: 999px;
+      border: none;
+      padding: 9px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      color: #f9fafb;
+      background: linear-gradient(135deg, #2563eb, #22c55e, #ec4899);
+      box-shadow: 0 10px 24px rgba(37, 99, 235, 0.30);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: transform 0.14s ease, box-shadow 0.14s ease, filter 0.14s ease;
+    }
+
+    button.primary:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 30px rgba(37, 99, 235, 0.36);
+      filter: brightness(1.03);
+    }
+
+    button.primary:disabled {
+      opacity: 0.6;
+      cursor: default;
+      box-shadow: none;
+    }
+
+    button.secondary {
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      background: #f9fafb;
+      color: var(--text-soft);
+      font-size: 11px;
+      padding: 6px 10px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.14s ease, box-shadow 0.14s ease, transform 0.14s ease, border-color 0.14s ease;
+    }
+
+    button.secondary:hover:not(:disabled) {
+      background: #eef2ff;
+      border-color: rgba(129, 140, 248, 0.8);
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+      transform: translateY(-1px);
+    }
+
+    button.secondary:disabled {
+      opacity: 0.5;
+      cursor: default;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .spinner-dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 999px;
+      border: 2px solid rgba(15, 23, 42, 0.15);
+      border-top-color: #f9fafb;
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .status-text {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .status-text strong {
+      color: var(--accent);
+    }
+
+    .status-error {
+      color: var(--danger);
+    }
+
+    /* Checkbox inline */
+    .checkbox-inline {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--text-soft);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .checkbox-inline input[type="checkbox"] {
+      width: 14px;
+      height: 14px;
+      cursor: pointer;
+    }
+
+    /* Checklist pills */
+    .checklist-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 10px;
+      margin-top: 4px;
+    }
+
+    .check-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--text-soft);
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      background: #f9fafb;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .check-pill input[type="checkbox"] {
+      width: 14px;
+      height: 14px;
+      cursor: pointer;
+    }
+
+    /* Suggestions */
+    .suggestions-header-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+
+    .suggestions-title {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .suggestions-meta {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: right;
+      max-width: 220px;
+    }
+
+    .suggestions-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 8px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .chip-tip {
+      font-size: 11px;
+      color: var(--text-muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .chip-tip span.icon {
+      font-size: 12px;
+    }
+
+    .suggestions-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 430px;
+      overflow-y: auto;
+      padding-right: 2px;
+    }
+
+    .day-group {
+      margin-bottom: 18px;
+      padding-bottom: 10px;
+      border-bottom: 1px dashed rgba(209, 213, 219, 1);
+    }
+
+    .day-group:last-of-type {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .day-heading-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .day-heading {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .day-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .day-suggestions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .suggestion-card {
+      border-radius: 12px;
+      border: 1px solid rgba(209, 213, 219, 1);
+      padding: 10px 11px;
+      background: #ffffff;
+      box-shadow: 0 6px 18px rgba(15, 23, 42, 0.04);
+    }
+
+    .suggestion-top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .suggestion-title {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      font-size: 10px;
+      align-items: center;
+    }
+
+    .chip {
+      border-radius: 999px;
+      padding: 1px 6px;
+      border: 1px solid rgba(209, 213, 219, 1);
+      background: #f9fafb;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      cursor: pointer;
+      font-size: 10px;
+      line-height: 1.3;
+    }
+
+    .chip.accent {
+      border-color: rgba(37, 99, 235, 0.7);
+      color: #1d4ed8;
+      background: #eff6ff;
+    }
+
+    .chip .caret {
+      font-size: 8px;
+      opacity: 0.75;
+    }
+
+    .suggestion-meta-line {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin: 0 0 4px;
+    }
+
+    .suggestion-desc {
+      font-size: 12px;
+      color: var(--text-soft);
+      margin-bottom: 2px;
+    }
+
+    .price-line {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin: 0 0 4px;
+    }
+
+    .price-line strong {
+      font-weight: 600;
+      color: var(--text-soft);
+    }
+
+    .price-line a {
+      color: #1d4ed8;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .suggestion-notes {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .empty-state {
+      border-radius: 12px;
+      border: 1px dashed rgba(209, 213, 219, 1);
+      padding: 12px;
+      font-size: 12px;
+      color: var(--text-muted);
+      background: #f9fafb;
+    }
+
+    .toast-tip {
+      margin-top: 6px;
+      font-size: 11px;
+      color: var(--text-muted);
+      padding: 6px 8px;
+      border-radius: 10px;
+      background: #eff6ff;
+      border: 1px solid rgba(191, 219, 254, 1);
+      display: none;
+    }
+
+    footer.site-footer {
+      border-top: 1px solid rgba(209, 213, 219, 1);
+      padding: 18px 18px 26px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .footer-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .footer-links a {
+      color: var(--text-muted);
+    }
+
+    .footer-links a:hover {
+      text-decoration: underline;
+    }
+
+    /* Mobile tweaks to match index */
+    @media (max-width: 640px) {
+      header.site-header {
+        padding-inline: 0;
+      }
+      .nav-inner {
+        padding-inline: 10px;
+      }
+      .logo-mark {
+        width: 30px;
+        height: 30px;
+      }
+      .logo-word {
+        font-size: 16px;
+      }
+      nav.primary-nav {
+        gap: 10px;
+        font-size: 13px;
+      }
+      nav.primary-nav a[href="/about.html"],
+      nav.primary-nav a[href="/faq.html"],
+      .nav-cta {
+        display: none;
+      }
+      .planner-panel {
+        border-radius: 20px;
+        padding: 18px 14px 22px;
+      }
+      .planner-grid {
+        padding: 14px 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="site-header">
+    <div class="nav-inner">
+      <div class="nav-left">
+        <div class="logo-mark" aria-hidden="true">
+          <svg width="34" height="34" viewBox="0 0 34 34" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="logoGrad" x1="4" y1="4" x2="30" y2="30">
+                <stop offset="0%" stop-color="#2563EB"/>
+                <stop offset="50%" stop-color="#22C55E"/>
+                <stop offset="100%" stop-color="#EC4899"/>
+              </linearGradient>
+            </defs>
+            <circle cx="17" cy="17" r="17" fill="white"/>
+            <circle cx="17" cy="17" r="14" fill="url(#logoGrad)"/>
+            <path d="M17 8 L20.5 17 L17 26 L13.5 17 Z" fill="white" opacity="0.95"/>
+            <circle cx="17" cy="17" r="3" fill="white"/>
+          </svg>
+        </div>
+        <div class="logo-word">
+          AITrip<span class="accent">Plan</span>
+        </div>
+      </div>
+
+      <nav class="primary-nav" aria-label="Primary navigation">
+        <a href="/plan.html">Plan a Trip</a>
+        <a href="/about.html">About</a>
+        <a href="/faq.html">FAQ</a>
+        <button class="nav-cta" type="button" onclick="window.location.href='/plan.html'">
+          <span class="icon">🧭</span>
+          <span>Launch Planner</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="planner-shell" aria-labelledby="planner-title">
+      <div class="planner-panel">
+        <header class="planner-header">
+          <div class="planner-eyebrow">
+            <span class="planner-eyebrow-dot"></span>
+            AI Trip Planner
+          </div>
+          <h1 class="planner-title" id="planner-title">
+            Turn a destination into <span class="accent">structured trip ideas.</span>
+          </h1>
+          <p class="planner-subtitle">
+            Start simple: tell the AI where you’re going, who you’re with, the vibe, and your budget. Choose
+            between a loose list of ideas or a full day-by-day itinerary, then tweak it like a real trip-planning app.
+          </p>
+        </header>
+
+        <div class="planner-grid">
+          <!-- Left card: Input form -->
+          <section class="planner-card planner-card--primary" aria-label="Trip details form">
+            <div class="planner-card--primary-inner">
+              <div class="planner-card-header">
+                <div class="planner-card-title">Trip details</div>
+                <div class="planner-card-sub">
+                  High-level info is enough. You can always regenerate with more specifics.
+                </div>
+              </div>
+
+              <div class="sample-strip">
+                <span>Not sure where to start?</span>
+                <button type="button" id="sampleTripBtn">
+                  Load a sample Lisbon city break
+                </button>
+              </div>
+
+              <form id="tripForm">
+                <div class="field-row">
+                  <div class="field-col">
+                    <label for="destination">Destination *</label>
+                    <input
+                      id="destination"
+                      name="destination"
+                      type="text"
+                      placeholder="Lisbon, Portugal"
+                      autocomplete="off"
+                      required
+                    />
+                  </div>
+                  <div class="field-col">
+                    <label for="days">Trip length (days)</label>
+                    <input
+                      id="days"
+                      name="days"
+                      type="number"
+                      min="1"
+                      max="30"
+                      placeholder="4"
+                    />
+                  </div>
+                </div>
+
+                <div class="field-row">
+                  <div class="field-col">
+                    <label for="dates">Rough dates (optional)</label>
+                    <input
+                      id="dates"
+                      name="dates"
+                      type="text"
+                      placeholder="April 12–16, 2025"
+                    />
+                  </div>
+                  <div class="field-col">
+                    <label for="travelers">Who’s going?</label>
+                    <input
+                      id="travelers"
+                      name="travelers"
+                      type="text"
+                      placeholder="Couple, family with kids, solo, friends..."
+                    />
+                  </div>
+                </div>
+
+                <!-- Budget selector -->
+                <div class="field-row">
+                  <div class="field-col">
+                    <label for="budget">Rough budget</label>
+                    <select id="budget" name="budget">
+                      <option value="">No preference / mixed</option>
+                      <option value="budget / backpacker level">
+                        Budget / backpacker
+                      </option>
+                      <option value="mid-range, a mix of value and comfort">
+                        Mid-range — value & comfort
+                      </option>
+                      <option value="comfortable with some splurges">
+                        Comfortable with some splurges
+                      </option>
+                      <option value="mostly luxury experiences">
+                        Mostly luxury
+                      </option>
+                    </select>
+                    <p class="helper">
+                      Helps the AI choose neighborhoods, activities, and restaurant styles that fit your spend.
+                    </p>
+                  </div>
+                </div>
+
+                <!-- Trip type selector -->
+                <div class="field-row">
+                  <div class="field-col">
+                    <label for="tripType">Trip type</label>
+                    <select id="tripType" name="tripType">
+                      <option value="">General trip / not sure</option>
+                      <option value="romantic getaway">Romantic getaway</option>
+                      <option value="golf trip with friends">Golf trip</option>
+                      <option value="bachelor or bachelorette party">Bachelor / bachelorette party</option>
+                      <option value="family vacation with kids">Family vacation</option>
+                      <option value="relaxing recharge trip">Relaxing / recharge</option>
+                      <option value="food and wine focused trip">Food &amp; wine</option>
+                      <option value="adventure and outdoors focused trip">Adventure &amp; outdoors</option>
+                      <option value="city break focused on sightseeing and museums">City break / first-time visitor</option>
+                    </select>
+                    <p class="helper">
+                      Gives the AI a quick sense of what kind of trip you’re planning.
+                    </p>
+                  </div>
+                </div>
+
+                <div>
+                  <label for="vibe">What kind of experience are you hoping for? (optional)</label>
+                  <input
+                    id="vibe"
+                    name="vibe"
+                    type="text"
+                    placeholder="Slow mornings, lots of food, 1–2 big sights, some nightlife..."
+                  />
+                </div>
+
+                <div>
+                  <label for="prefs">Anything specific to include or avoid?</label>
+                  <textarea
+                    id="prefs"
+                    name="prefs"
+                    placeholder="Example: No rental car. Prefer walkable areas and casual restaurants. One nice dinner with a view."
+                  ></textarea>
+                  <p class="helper">
+                    The AI uses this to tune recommendations. Bullet points or short sentences are fine.
+                  </p>
+                </div>
+
+                <!-- Must include checklist -->
+                <div>
+                  <label>Must include (quick checklist)</label>
+                  <div class="checklist-grid">
+                    <label class="check-pill">
+                      <input type="checkbox" name="mustInclude" value="best restaurants" />
+                      <span>Best restaurants</span>
+                    </label>
+                    <label class="check-pill">
+                      <input type="checkbox" name="mustInclude" value="beaches" />
+                      <span>Beaches</span>
+                    </label>
+                    <label class="check-pill">
+                      <input type="checkbox" name="mustInclude" value="museums" />
+                      <span>Museums</span>
+                    </label>
+                    <label class="check-pill">
+                      <input type="checkbox" name="mustInclude" value="hidden gems and local spots" />
+                      <span>Hidden gems</span>
+                    </label>
+                    <label class="check-pill">
+                      <input type="checkbox" name="mustInclude" value="budget friendly food options" />
+                      <span>Budget food</span>
+                    </label>
+                    <label class="check-pill">
+                      <input type="checkbox" name="mustInclude" value="nightlife and bars" />
+                      <span>Nightlife</span>
+                    </label>
+                    <label class="check-pill">
+                      <input type="checkbox" name="mustInclude" value="walkable areas and neighborhoods" />
+                      <span>Walkability</span>
+                    </label>
+                    <label class="check-pill">
+                      <input type="checkbox" name="mustInclude" value="kid friendly activities" />
+                      <span>Kid-friendly</span>
+                    </label>
+                    <label class="check-pill">
+                      <input type="checkbox" name="mustInclude" value="nature and outdoor activities" />
+                      <span>Nature/outdoors</span>
+                    </label>
+                    <label class="check-pill">
+                      <input type="checkbox" name="mustInclude" value="shopping areas and markets" />
+                      <span>Shopping</span>
+                    </label>
+                  </div>
+                  <p class="helper">
+                    The AI will try to weave these into the plan wherever they fit naturally.
+                  </p>
+                </div>
+
+                <!-- Full itinerary toggle -->
+                <div>
+                  <label class="checkbox-inline">
+                    <input type="checkbox" id="fullItinerary" name="fullItinerary" />
+                    <span>Full itinerary mode (3 suggestions per day)</span>
+                  </label>
+                  <p class="helper">
+                    Turn this on for a structured morning/afternoon/evening plan for each day. Leave it off for a looser list of ideas.
+                  </p>
+                </div>
+
+                <div class="actions">
+                  <button type="submit" class="primary" id="generateBtn">
+                    <span class="spinner-dot" id="spinner" style="display:none;"></span>
+                    <span id="btnText">Generate trip ideas</span>
+                  </button>
+                  <span class="status-text" id="statusText">
+                    Powered by AI. Usually just a few seconds.
+                  </span>
+                </div>
+
+                <p class="helper">
+                  Your inputs are used to generate ideas on the fly and are not stored as a saved itinerary yet.
+                </p>
+              </form>
+            </div>
+          </section>
+
+          <!-- Right card: Suggestions -->
+          <section class="planner-card" aria-label="Suggested activities">
+            <div class="planner-card-header">
+              <div class="suggestions-header-row">
+                <div>
+                  <div class="planner-card-title suggestions-title">Suggested activities</div>
+                  <div class="planner-card-sub">
+                    Ideas are grouped by day so you can quickly sketch your itinerary, then adjust days and times.
+                  </div>
+                </div>
+                <div class="suggestions-meta" id="metaSummary">
+                  No results yet.
+                </div>
+              </div>
+            </div>
+
+            <div class="suggestions-toolbar">
+              <button type="button" class="secondary" id="exportBtn" disabled>
+                <span>🖨️</span>
+                <span>Open printable view</span>
+              </button>
+              <div class="chip-tip">
+                <span class="icon">💡</span>
+                <span>Click the Day or time chips on a card to adjust where it falls.</span>
+              </div>
+            </div>
+
+            <div id="suggestionsContainer" class="suggestions-list">
+              <div class="empty-state" id="emptyState">
+                <strong>Nothing here yet.</strong> Enter a destination and click
+                <em>Generate trip ideas</em> to see AI suggestions you can turn into an itinerary.
+              </div>
+            </div>
+
+            <div class="toast-tip" id="firstTimeTip">
+              Tip: tap the <strong>Day</strong> or <strong>Morning/Afternoon/Evening</strong> chips on a card
+              to cycle where it sits in your plan.
+            </div>
+
+            <p class="helper" style="margin-top: 10px;">
+              When you’re happy with the plan, open the printable view to copy it into Notes, Google Docs, or email.
+            </p>
+          </section>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span>© 2025 AITripPlan.com · Not official travel advice. Always verify important details before you travel.</span>
+      <div class="footer-links">
+        <a href="/privacy.html">Privacy</a>
+        <a href="/about.html">About</a>
+        <a href="/faq.html">FAQ</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const form = document.getElementById("tripForm");
+    const generateBtn = document.getElementById("generateBtn");
+    const spinner = document.getElementById("spinner");
+    const btnText = document.getElementById("btnText");
+    const statusText = document.getElementById("statusText");
+    const suggestionsContainer = document.getElementById("suggestionsContainer");
+    const emptyState = document.getElementById("emptyState");
+    const metaSummary = document.getElementById("metaSummary");
+    const exportBtn = document.getElementById("exportBtn");
+    const firstTimeTip = document.getElementById("firstTimeTip");
+    const sampleTripBtn = document.getElementById("sampleTripBtn");
+
+    let currentSuggestions = [];
+    let currentMeta = null;
+    let tipShown = false;
+
+    function setLoading(isLoading, msg) {
+      if (isLoading) {
+        generateBtn.disabled = true;
+        spinner.style.display = "inline-block";
+        btnText.textContent = "Generating...";
+        statusText.innerHTML =
+          msg || "<strong>Thinking...</strong> Asking AI for trip ideas.";
+      } else {
+        generateBtn.disabled = false;
+        spinner.style.display = "none";
+        btnText.textContent = "Generate trip ideas";
+        if (!msg) {
+          statusText.textContent = "Powered by AI. Usually just a few seconds.";
+        } else {
+          statusText.innerHTML = msg;
+        }
+      }
+    }
+
+    function normalizeSuggestions(rawSuggestions) {
+      const nowBase = Date.now();
+      return rawSuggestions.map((s, idx) => {
+        const id =
+          typeof s.id === "string" && s.id.trim()
+            ? s.id.trim()
+            : "s-" + nowBase + "-" + idx + "-" + Math.random().toString(16).slice(2);
+        return {
+          id,
+          title: s.title || "Activity " + (idx + 1),
+          description: s.description || "",
+          notes: s.notes || "",
+          dayHint:
+            typeof s.dayHint === "number" && isFinite(s.dayHint)
+              ? s.dayHint
+              : null,
+          timeOfDay: (s.timeOfDay || "flex").toString().toLowerCase(),
+          neighborhood: s.neighborhood || "",
+          travelTime: s.travelTime || "",
+          mapsSearch: s.mapsSearch || "",
+          approxCost: s.approxCost || "",
+          bookingLink: s.bookingLink || "",
+          closedDays: s.closedDays || "",
+          sellOut: s.sellOut || s.sellsOut || ""
+        };
+      });
+    }
+
+    function getDayBuckets(suggestions) {
+      const buckets = new Map();
+      const flex = [];
+      suggestions.forEach((s) => {
+        if (typeof s.dayHint === "number" && isFinite(s.dayHint)) {
+          const d = s.dayHint;
+          if (!buckets.has(d)) buckets.set(d, []);
+          buckets.get(d).push(s);
+        } else {
+          flex.push(s);
+        }
+      });
+      const sortedDays = Array.from(buckets.keys()).sort((a, b) => a - b);
+      return { buckets, dayOrder: sortedDays, flex };
+    }
+
+    function sortByTimeOfDay(list) {
+      const order = { morning: 0, afternoon: 1, evening: 2, flex: 3 };
+      return list.slice().sort((a, b) => {
+        const ta = (a.timeOfDay || "flex").toString().toLowerCase();
+        const tb = (b.timeOfDay || "flex").toString().toLowerCase();
+        const wa = Object.prototype.hasOwnProperty.call(order, ta)
+          ? order[ta]
+          : 4;
+        const wb = Object.prototype.hasOwnProperty.call(order, tb)
+          ? order[tb]
+          : 4;
+        if (wa !== wb) return wa - wb;
+        return (a.title || "").localeCompare(b.title || "");
+      });
+    }
+
+    function formatTimeOfDayLabel(tod) {
+      const v = (tod || "flex").toString().toLowerCase();
+      if (v === "morning") return "Morning";
+      if (v === "afternoon") return "Afternoon";
+      if (v === "evening") return "Evening";
+      return "Flexible";
+    }
+
+    function formatDayChipLabel(dayHint) {
+      if (typeof dayHint === "number" && isFinite(dayHint)) {
+        return "Day " + dayHint;
+      }
+      return "Any day";
+    }
+
+    function cycleTimeOfDay(current) {
+      const order = ["morning", "afternoon", "evening", "flex"];
+      const idx = order.indexOf((current || "flex").toString().toLowerCase());
+      const nextIdx = idx === -1 ? 0 : (idx + 1) % order.length;
+      return order[nextIdx];
+    }
+
+    function cycleDayHint(current, availableDays) {
+      const pool = [null].concat(availableDays);
+      const idx = pool.indexOf(
+        typeof current === "number" && isFinite(current) ? current : null
+      );
+      const nextIdx = idx === -1 ? 0 : (idx + 1) % pool.length;
+      return pool[nextIdx];
+    }
+
+    function renderSuggestions(suggestions) {
+      currentSuggestions = normalizeSuggestions(suggestions || []);
+      suggestionsContainer.innerHTML = "";
+
+      if (!currentSuggestions.length) {
+        emptyState.style.display = "block";
+        suggestionsContainer.appendChild(emptyState);
+        metaSummary.textContent = "No results. Try tweaking your input.";
+        exportBtn.disabled = true;
+        return;
+      }
+
+      emptyState.style.display = "none";
+      exportBtn.disabled = false;
+
+      const { buckets, dayOrder, flex } = getDayBuckets(currentSuggestions);
+      const availableDays =
+        dayOrder.length > 0
+          ? dayOrder
+          : [1, 2, 3];
+
+      const timeLabel = (tod) => formatTimeOfDayLabel(tod);
+
+      const buildCard = (s) => {
+        const card = document.createElement("article");
+        card.className = "suggestion-card";
+        card.dataset.id = s.id;
+
+        const topRow = document.createElement("div");
+        topRow.className = "suggestion-top-row";
+
+        const title = document.createElement("div");
+        title.className = "suggestion-title";
+        title.textContent = s.title || "Activity";
+
+        const chips = document.createElement("div");
+        chips.className = "chip-row";
+
+        const todChip = document.createElement("button");
+        todChip.type = "button";
+        todChip.className = "chip accent";
+        todChip.dataset.role = "timeOfDayChip";
+        todChip.dataset.id = s.id;
+        todChip.textContent = timeLabel(s.timeOfDay);
+        const caret1 = document.createElement("span");
+        caret1.className = "caret";
+        caret1.textContent = "▾";
+        todChip.appendChild(caret1);
+
+        const dayChip = document.createElement("button");
+        dayChip.type = "button";
+        dayChip.className = "chip";
+        dayChip.dataset.role = "dayChip";
+        dayChip.dataset.id = s.id;
+        dayChip.textContent = formatDayChipLabel(s.dayHint);
+        const caret2 = document.createElement("span");
+        caret2.className = "caret";
+        caret2.textContent = "▾";
+        dayChip.appendChild(caret2);
+
+        chips.appendChild(todChip);
+        chips.appendChild(dayChip);
+
+        topRow.appendChild(title);
+        topRow.appendChild(chips);
+        card.appendChild(topRow);
+
+        const neighborhood = s.neighborhood && String(s.neighborhood).trim();
+        const travelTime = s.travelTime && String(s.travelTime).trim();
+        if (neighborhood || travelTime) {
+          const meta = document.createElement("p");
+          meta.className = "suggestion-meta-line";
+          const pieces = [];
+          if (neighborhood) pieces.push(neighborhood);
+          if (travelTime) pieces.push(travelTime);
+          meta.textContent = pieces.join(" · ");
+          card.appendChild(meta);
+        }
+
+        if (s.description) {
+          const desc = document.createElement("p");
+          desc.className = "suggestion-desc";
+          desc.textContent = s.description;
+          card.appendChild(desc);
+        }
+
+        // Price & booking line
+        const hasPricing =
+          (s.approxCost && String(s.approxCost).trim()) ||
+          (s.closedDays && String(s.closedDays).trim()) ||
+          (s.sellOut && String(s.sellOut).trim()) ||
+          (s.bookingLink && String(s.bookingLink).trim());
+
+        if (hasPricing) {
+          const price = document.createElement("p");
+          price.className = "price-line";
+
+          const segments = [];
+          if (s.approxCost && String(s.approxCost).trim()) {
+            segments.push("Approx " + String(s.approxCost).trim());
+          }
+          if (s.closedDays && String(s.closedDays).trim()) {
+            segments.push(String(s.closedDays).trim());
+          }
+          if (s.sellOut && String(s.sellOut).trim()) {
+            segments.push(String(s.sellOut).trim());
+          }
+
+          const linkIsValid =
+            s.bookingLink &&
+            typeof s.bookingLink === "string" &&
+            /^https?:\/\//i.test(s.bookingLink);
+
+          if (segments.length) {
+            const strong = document.createElement("strong");
+            strong.textContent = segments[0];
+            price.appendChild(strong);
+            if (segments.length > 1) {
+              price.append(" · " + segments.slice(1).join(" · "));
+            }
+          }
+
+          if (linkIsValid) {
+            if (segments.length) price.append(" · ");
+            const a = document.createElement("a");
+            a.href = s.bookingLink;
+            a.target = "_blank";
+            a.rel = "noopener noreferrer";
+            a.textContent = "Booking link";
+            price.appendChild(a);
+          }
+
+          card.appendChild(price);
+        }
+
+        const notes = document.createElement("p");
+        notes.className = "suggestion-notes";
+        const baseNotes =
+          s.notes ||
+          "No extra notes from the AI for this one.";
+        if (s.mapsSearch && typeof s.mapsSearch === "string") {
+          notes.textContent =
+            baseNotes + ' Maps search: "' + s.mapsSearch.trim() + '".';
+        } else {
+          notes.textContent = baseNotes;
+        }
+        card.appendChild(notes);
+
+        return card;
+      };
+
+      dayOrder.forEach((day) => {
+        const groupEl = document.createElement("section");
+        groupEl.className = "day-group";
+
+        const headingRow = document.createElement("div");
+        headingRow.className = "day-heading-row";
+
+        const heading = document.createElement("div");
+        heading.className = "day-heading";
+        heading.textContent = "Day " + day;
+
+        headingRow.appendChild(heading);
+        groupEl.appendChild(headingRow);
+
+        const sub = document.createElement("div");
+        sub.className = "day-sub";
+        sub.textContent = "Morning, afternoon, and evening ideas.";
+        groupEl.appendChild(sub);
+
+        const listEl = document.createElement("div");
+        listEl.className = "day-suggestions";
+
+        const items = sortByTimeOfDay(buckets.get(day) || []);
+        items.forEach((s) => {
+          listEl.appendChild(buildCard(s));
+        });
+
+        groupEl.appendChild(listEl);
+        suggestionsContainer.appendChild(groupEl);
+      });
+
+      if (flex.length > 0) {
+        const groupEl = document.createElement("section");
+        groupEl.className = "day-group";
+
+        const headingRow = document.createElement("div");
+        headingRow.className = "day-heading-row";
+
+        const heading = document.createElement("div");
+        heading.className = "day-heading";
+        heading.textContent = "Any day ideas";
+
+        headingRow.appendChild(heading);
+        groupEl.appendChild(headingRow);
+
+        const sub = document.createElement("div");
+        sub.className = "day-sub";
+        sub.textContent = "Flexible suggestions you can plug into any day.";
+        groupEl.appendChild(sub);
+
+        const listEl = document.createElement("div");
+        listEl.className = "day-suggestions";
+
+        const items = sortByTimeOfDay(flex);
+        items.forEach((s) => {
+          listEl.appendChild(buildCard(s));
+        });
+
+        groupEl.appendChild(listEl);
+        suggestionsContainer.appendChild(groupEl);
+      }
+
+      const total = currentSuggestions.length;
+      const dayCount = dayOrder.length;
+      if (dayCount > 0) {
+        metaSummary.textContent =
+          total +
+          " ideas across " +
+          dayCount +
+          " day" +
+          (dayCount === 1 ? "" : "s") +
+          (flex.length ? " (+ flexible ideas)" : "");
+      } else {
+        metaSummary.textContent =
+          total +
+          " flexible idea" +
+          (total === 1 ? "" : "s") +
+          " with no specific day.";
+      }
+
+      const allChips = suggestionsContainer.querySelectorAll(".chip");
+      allChips.forEach((chip) => {
+        const role = chip.dataset.role;
+        const id = chip.dataset.id;
+        if (!role || !id) return;
+
+        chip.addEventListener("click", () => {
+          const idx = currentSuggestions.findIndex((s) => s.id === id);
+          if (idx === -1) return;
+          const s = currentSuggestions[idx];
+
+          if (role === "timeOfDayChip") {
+            const next = cycleTimeOfDay(s.timeOfDay);
+            s.timeOfDay = next;
+          } else if (role === "dayChip") {
+            const nextDay = cycleDayHint(s.dayHint, availableDays);
+            s.dayHint = nextDay;
+          }
+
+          renderSuggestions(currentSuggestions);
+
+          if (!tipShown && firstTimeTip) {
+            firstTimeTip.style.display = "block";
+            tipShown = true;
+            setTimeout(() => {
+              firstTimeTip.style.display = "none";
+            }, 6000);
+          }
+        });
+      });
+    }
+
+    /* Sample trip prefill */
+    if (sampleTripBtn) {
+      sampleTripBtn.addEventListener("click", () => {
+        document.getElementById("destination").value = "Lisbon, Portugal";
+        document.getElementById("days").value = "4";
+        document.getElementById("dates").value = "April 12–16, 2025";
+        document.getElementById("travelers").value = "Couple";
+        document.getElementById("budget").value = "comfortable with some splurges";
+        document.getElementById("tripType").value = "city break focused on sightseeing and museums";
+        document.getElementById("vibe").value = "Slow mornings, lots of views and neighborhoods, a couple of big sights, and great food.";
+        document.getElementById("prefs").value =
+          "Prefer walkable areas like Baixa, Chiado, and Alfama. One sunset viewpoint. One special dinner with a view. Avoid very late nights.";
+
+        document
+          .querySelectorAll('input[name="mustInclude"]')
+          .forEach((el) => (el.checked = false));
+        const defaults = ["best restaurants", "hidden gems and local spots", "walkable areas and neighborhoods", "nature and outdoor activities"];
+        defaults.forEach((val) => {
+          const el = document.querySelector('input[name="mustInclude"][value="' + val + '"]');
+          if (el) el.checked = true;
+        });
+        document.getElementById("fullItinerary").checked = true;
+
+        statusText.innerHTML =
+          "Sample trip loaded. Adjust anything you like, then click <strong>Generate trip ideas</strong>.";
+      });
+    }
+
+    /* Export to printable view */
+    if (exportBtn) {
+      exportBtn.addEventListener("click", () => {
+        if (!currentSuggestions.length) return;
+
+        const payload = {
+          version: "v1",
+          generatedAt: new Date().toISOString(),
+          meta: currentMeta || {},
+          suggestions: currentSuggestions
+        };
+
+        try {
+          window.localStorage.setItem(
+            "aitripplan_export_v1",
+            JSON.stringify(payload)
+          );
+        } catch (e) {
+          console.error("Failed to write export payload to localStorage:", e);
+        }
+
+        window.location.href = "/print.html";
+      });
+    }
+
+    /* Form submit */
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const destination = document.getElementById("destination").value.trim();
+      const days = document.getElementById("days").value.trim();
+      const dates = document.getElementById("dates").value.trim();
+      const travelers = document.getElementById("travelers").value.trim();
+      const budget = document.getElementById("budget").value.trim();
+      const tripType = document.getElementById("tripType").value.trim();
+      const vibe = document.getElementById("vibe").value.trim();
+      const prefs = document.getElementById("prefs").value.trim();
+      const fullItinerary = document.getElementById("fullItinerary").checked;
+
+      const mustIncludeEls = document.querySelectorAll(
+        'input[name="mustInclude"]:checked'
+      );
+      const mustInclude = Array.from(mustIncludeEls).map((el) => el.value);
+
+      if (!destination) {
+        statusText.innerHTML =
+          "<span class='status-error'>Please enter a destination first.</span>";
+        return;
+      }
+
+      const parts = [];
+      parts.push("Destination: " + destination + ".");
+      if (days) parts.push("Trip length: " + days + " days.");
+      if (dates) parts.push("Rough dates: " + dates + ".");
+      if (travelers) parts.push("Who is going: " + travelers + ".");
+      if (budget) parts.push("Budget level: " + budget + ".");
+      if (tripType) parts.push("Trip type: " + tripType + ".");
+      if (vibe) parts.push("Trip vibe / pacing: " + vibe + ".");
+      if (prefs) parts.push("Preferences: " + prefs + ".");
+      if (mustInclude.length) {
+        parts.push(
+          "Must include elements: " + mustInclude.join(", ") + "."
+        );
+      }
+
+      if (fullItinerary) {
+        if (days) {
+          parts.push(
+            "The user wants a full day-by-day itinerary with morning, afternoon, and evening suggestions for each of the " +
+              days +
+              " days."
+          );
+        } else {
+          parts.push(
+            "The user wants a full day-by-day itinerary with morning, afternoon, and evening suggestions for each day."
+          );
+        }
+      } else {
+        parts.push(
+          "The user wants a looser list of activity ideas they can mix and match across the trip."
+        );
+      }
+
+      currentMeta = {
+        destination,
+        days: days ? Number(days) : null,
+        dates,
+        travelers,
+        budget,
+        tripType,
+        vibe,
+        prefs,
+        mustInclude,
+        fullItinerary
+      };
+
+      const finalPrompt =
+        "Generate activity suggestions for this trip. " +
+        parts.join(" ") +
+        " Respond only with JSON object: { \"suggestions\": [ ... ] }.";
+
+      const mode = fullItinerary ? "full-itinerary" : "ideas";
+
+      setLoading(true);
+
+      try {
+        const res = await fetch("/api/generate-itinerary", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ prompt: finalPrompt, mode }),
+        });
+
+        const text = await res.text();
+        let data;
+        try {
+          data = JSON.parse(text);
+        } catch (err) {
+          console.error("Failed to parse JSON from server:", err, text);
+          setLoading(
+            false,
+            "<span class='status-error'>Server returned invalid JSON. Check console logs.</span>"
+          );
+          return;
+        }
+
+        if (!res.ok) {
+          console.error("Server error:", data);
+          setLoading(
+            false,
+            "<span class='status-error'>Server error: " +
+              (data.error || res.status) +
+              "</span>"
+          );
+          return;
+        }
+
+        const suggestions = Array.isArray(data.suggestions)
+          ? data.suggestions
+          : [];
+
+        renderSuggestions(suggestions);
+        setLoading(false, "<strong>Done.</strong> Tweak days and time slots, then open the printable view.");
+      } catch (err) {
+        console.error("Network error calling /api/generate-itinerary:", err);
+        setLoading(
+          false,
+          "<span class='status-error'>Network error. Check console logs.</span>"
+        );
+      }
+    });
+  </script>
+</body>
+</html>
