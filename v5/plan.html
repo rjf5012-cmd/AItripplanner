@@ -909,6 +909,9 @@
                       type="text"
                       placeholder="April 12–16, 2025"
                     />
+                    <p class="helper">
+                      Including dates helps the AI add season- and weather-aware notes to your activities.
+                    </p>
                   </div>
                   <div class="field-col">
                     <label for="travelers">Who’s going?</label>
@@ -1108,6 +1111,7 @@
 
             <p class="helper" style="margin-top: 10px;">
               When you’re happy with the plan, open the printable view to copy it into Notes, Google Docs, or email.
+              The printable view also pulls any seasonal weather tips into a single list.
             </p>
           </section>
         </div>
@@ -1626,6 +1630,11 @@
           "The user wants a looser list of activity ideas they can mix and match across the trip."
         );
       }
+
+      // 🔹 New weather-aware instruction
+      parts.push(
+        "If rough dates or an approximate season can be inferred, weave in short, practical weather and daylight tips into the \"notes\" field for suggestions where it matters (e.g. rain, heat, early sunsets, wind at viewpoints). Keep these notes concise."
+      );
 
       currentMeta = {
         destination,
